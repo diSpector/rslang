@@ -2,7 +2,7 @@ import '../../../css/footer.scss';
 
 const Footer = {
   render: async () => {
-    const view =  /*html*/`
+    const view = /* html */`
     <div class="wrapper">
       <div class="footer__content">
         <div class="footer__links">
@@ -18,11 +18,10 @@ const Footer = {
         </div>
       </div>
     </div>
-        `
+        `;
     return view;
   },
-  afterRender: async () => { }
-
-}
+  afterRender: async () => { },
+};
 
 export default Footer;

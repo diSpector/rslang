@@ -5,7 +5,7 @@ const Header = {
     const view =  /*html*/`
     <div class="wrapper">
         <div class="header__content">
-            <h1 class="header__logo">RS Lang</h1>
+            <h1 class="header__logo"><a href="/#">RS Lang</a></h1>
             <nav class="header__nav">
                 <ul class="header__navList">
                     <li class="header__navItem"><a href="#/games">Games</a></li>
