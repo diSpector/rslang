@@ -1,7 +1,7 @@
 /* @import 'filename.css'; */ /* импорт другого файла стилей (например, шрифта) - вебпак соберет и его*/
 /* @import '~normalize.css'; */ /* тильда означает, что пакет нужно искать в node_modules */
 
-@import 'module.css';
+// @import 'module.scss';
 
 html {
     font-family: 'Montserrat', sans-serif;

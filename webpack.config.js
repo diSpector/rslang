@@ -45,6 +45,8 @@ module.exports = {
     alias: { // шаблоны
       '@modules': path.resolve(__dirname, 'src/js/modules'),
       '@settings': path.resolve(__dirname, 'src/js/settings'),
+      '@styles': path.resolve(__dirname, 'src/css'),
+      '@images': path.resolve(__dirname, 'src/img'),
     },
   },
   optimization: optimization(), // чтобы webpack не загружал скрипты одинаковых библиотек
