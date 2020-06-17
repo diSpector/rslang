@@ -17,6 +17,18 @@ html, body {
     max-width: 1200px;
     margin: 0 auto;
     height: 100%;
+    @include media-laptop-small {
+        max-width: 900px;
+    }
+    @include media-tablet {
+    max-width: 700px;
+    }
+    @include media-mobile-big {
+    max-width: 425px;
+    }
+    @include media-mobile-small {
+    max-width: 300px;
+    }
 }
 
 body {

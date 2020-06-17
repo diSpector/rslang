@@ -19,8 +19,8 @@ const Header = {
     `
     return view;
   },
-  afterRender: async () => { }
+  afterRender: async () => { },
 
-}
+};
 
 export default Header;

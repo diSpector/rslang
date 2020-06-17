@@ -41,7 +41,8 @@
     "build": "npx webpack --mode production",
     "watch": "npx webpack --mode development watch",
     "start": "webpack-dev-server --mode development --open",
-    "test": "jest"
+    "test": "jest",
+    "lint" : "npx eslint ./src/**/*.js --fix"
   },
   "repository": {
     "type": "git",

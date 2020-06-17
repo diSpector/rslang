@@ -3,5 +3,5 @@ export default {
     containers: {
       siteContainer: '.container',
     },
-  }
-}
+  },
+};
