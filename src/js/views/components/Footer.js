@@ -1,4 +1,4 @@
-import '../../../css/footer.scss';
+import '../../../css/layout/footer.scss';
 
 const Footer = {
   render: async () => {

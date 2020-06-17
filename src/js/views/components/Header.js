@@ -1,4 +1,4 @@
-import '../../../css/header.scss';
+import '../../../css/layout/header.scss';
 
 const Header = {
   render: async () => {
