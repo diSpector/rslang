@@ -1,12 +1,12 @@
 const Team = {
   render: async () => {
-    const view =  /*html*/`
+    const view = /* html */`
   
-            `
+            `;
     return view;
   },
-  afterRender: async () => { }
+  afterRender: async () => { },
 
-}
+};
 
 export default Team;

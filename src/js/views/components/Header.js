@@ -1,6 +1,6 @@
 const Header = {
   render: async () => {
-    const view =  /*html*/`
+    const view = /* html */`
              <nav class="navbar" role="navigation" aria-label="main navigation">
                 <div class="container">
                     <div id="navbarBasicExample" class="navbar-menu is-active" aria-expanded="false">
@@ -30,11 +30,11 @@ const Header = {
                     </div>
                 </div>
             </nav>
-        `
+        `;
     return view;
   },
-  afterRender: async () => { }
+  afterRender: async () => { },
 
-}
+};
 
 export default Header;

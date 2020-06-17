@@ -3,8 +3,8 @@ export default {
     backendApi: {
       url: 'https://afternoon-falls-25894.herokuapp.com/',
       defaultHeaders: {
-        'Accept': 'application/json',
-        'Content-Type': 'application/json'
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
       },
       loginPage: {
         login: {
@@ -16,6 +16,6 @@ export default {
           method: 'POST',
         },
       },
-    }
+    },
   },
 };

@@ -1,6 +1,6 @@
 const Footer = {
   render: async () => {
-    const view =  /*html*/`
+    const view = /* html */`
         <footer class="footer">
             <div class="footer__content">
                 <p>
@@ -8,11 +8,11 @@ const Footer = {
                 </p>
             </div>
         </footer>
-        `
+        `;
     return view;
   },
-  afterRender: async () => { }
+  afterRender: async () => { },
 
-}
+};
 
 export default Footer;
