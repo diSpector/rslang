@@ -2,7 +2,13 @@ const Audition = {
 
   render: async () => {
     const view = /* html */`
-            <h1>Audition Game</h1>
+      <div class="wrapper">
+        <div class="gameDetails">
+          <h1 class="game__title">Аудиовызов</h1>
+          <p class="game__description">В этой игре вы улучшите восприятие английской речи на слух.</p>
+          <button class="game__startGame">Начать игру</button>
+        </div>
+      </div>
         `;
     return view;
   },
