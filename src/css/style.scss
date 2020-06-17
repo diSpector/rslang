@@ -3,6 +3,9 @@
 
 // @import 'module.scss';
 
+@import './abstract/constants.scss';
+@import './abstract/mixins.scss';
+
 html {
     font-family: 'Montserrat', sans-serif;
     font-size: 10px;
@@ -13,8 +16,26 @@ html, body {
     margin: 0;
 }
 
-body {
+.wrapper {
+    max-width: 1024px;
+    margin: 0 auto;
+    height: 100%;
+    @include media-laptop-small {
+        max-width: 768px;
+    }
+    @include media-tablet {
+    max-width: 600px;
+    }
+    @include media-mobile-big {
+    max-width: 400px;
+    }
+    @include media-mobile-small {
+    max-width: 300px;
+    }
+}
 
+body {
+    margin: 71px 0 0;
 }
 
 .container {
