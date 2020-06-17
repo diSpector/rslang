@@ -3,7 +3,7 @@
 // import apiConfig from '@settings/apiConfig';
 
 import '../css/style.scss'; // общий файл стилей
-import '../css/module.scss';
+import '../css/pages/module.scss';
 
 // Все страницы - по одному импорту на одну страницу
 import Home from './views/pages/Home';

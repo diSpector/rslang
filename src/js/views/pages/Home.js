@@ -1,4 +1,4 @@
-import '../../../css/home.scss';
+import '../../../css/pages/home.scss';
 
 const getPostsList = async () => {
   const options = {
