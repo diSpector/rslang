@@ -10,10 +10,14 @@
   padding: 20px 0;
 }
 
+.footer__navList {
+  padding: 0;
+}
+
 .footer__navItem {
   display: inline;
   text-decoration: none;
-  margin-right: 29px;
+  margin: 10px;
 }
 
 .footer__navItem a {

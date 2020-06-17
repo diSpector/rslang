@@ -21,6 +21,10 @@
   }
 }
 
+.header__nav {
+  display: flex;
+}
+
 .header__navList {
   margin: 16px 0;
 }
@@ -29,7 +33,7 @@
   display: inline;
   text-transform: uppercase;
   text-decoration: none;
-  margin-right: 29px;
+  margin: 10px;
 }
 
 .header__navItem a {

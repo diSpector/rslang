@@ -2,8 +2,6 @@
 // import appConfig from '@settings/appConfig';
 // import apiConfig from '@settings/apiConfig';
 
-import '../css/abstract/constants.scss';
-import '../css/abstract/mixins.scss';
 import '../css/style.scss'; // общий файл стилей
 import '../css/module.scss';
 
