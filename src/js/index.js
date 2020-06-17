@@ -73,3 +73,10 @@ window.addEventListener('hashchange', router);
 
 // слушатель на загрузку страницы
 window.addEventListener('load', router);
+/* async function getWords() {
+  const url = 'https://afternoon-falls-25894.herokuapp.com/words?group=1&page=1';
+  const responce = await fetch(url);
+  const data = await responce.json();
+  console.log(data);
+}
+getWords(); */

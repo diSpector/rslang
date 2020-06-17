@@ -8,6 +8,9 @@ const Header = {
                             <a class="navbar-item" href="/#/">
                                 Home
                             </a>
+                            <a class="navbar-item" href="/#/dictionary/1">
+                            Dictionary
+                            </a>
                             <a class="navbar-item" href="/#/about">
                                 About
                             </a>
