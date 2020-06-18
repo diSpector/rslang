@@ -1,0 +1,83 @@
+.sprint--card__button{
+  button{
+    width: 90px;
+    margin: 10px;
+    height: 35px;
+    border-radius: 3px;
+  }
+}
+.sprint--button__correct{
+  background-color: #89cc7d;
+}
+
+.sprint--button__error{
+  background-color: crimson;;
+}
+
+
+.sprint--game{
+  font-size: 2rem;
+  display: flex;
+  width: 600px;
+  margin-left: calc(50vw - 300px);
+  margin-top: calc(50vh - 150px);
+}
+.sprint--game__card{
+  text-align: center;
+  width: 400px;
+  height: 300px;
+  background-color: white;
+  border-radius: 15px;
+  box-shadow:3px 3px 3px darkgrey;
+  overflow: hidden;
+  img{
+    transform: rotate(90deg);
+    width: 70px;
+  }
+}
+
+.list{
+  margin-left: 31px;
+}
+.list2{
+  margin-left: -70px;
+  display: none;
+}
+.sprint--card__title{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  background-color: #fde28e;
+  height: 50px;
+  span{
+    display: block;
+    height: 13px;
+    width: 13px;
+    background: #dac994;
+    border-radius: 50%;
+    margin: 3px;
+  }
+}
+.sprint--card__word{
+  width: 100%;
+  p{
+    margin: 12px;
+  }
+}
+.sprint--game__result {
+  font-size: 5rem;
+  width: 100px;
+}
+.sprint--game__time{
+  width: 100px;
+  padding-left: 54px;
+  font-size: 5rem;
+}
+
+.sprint{
+  width: 100vw;
+    height: 100vh;
+    background-color: black;
+    margin-top: -71px;
+}
