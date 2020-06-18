@@ -12,7 +12,6 @@ const Header = {
                     <li class="header__navItem"><a href="#/dictionary">Dictionary</a></li>
                     <li class="header__navItem"><a href="#/statistic">Statistic</a></li>
                     <li class="header__navItem"><a href="#/about">About</a></li>
-                    <li class="header__navItem"><a href="#/savannah">Savannah</a></li>
                 </ul>
             </nav>
         </div>

@@ -11,7 +11,6 @@ import Login from './views/pages/Login';
 import Statistics from './views/pages/Statistics';
 import Dictionary from './views/pages/Dictionary';
 import Games from './views/pages/Games';
-// import Savannah from './views/pages/Savannah';
 import Promo from './views/pages/Promo';
 import Team from './views/pages/Team';
 
@@ -32,7 +31,6 @@ const routes = {
   '/stats': Statistics, // Статистика,
   '/dictionary/:id': Dictionary, // Словарь,
   '/games/:id': Games, // Мини-игры,
-  // '/savannah': Savannah, // Мини-игра "Саванна",
   '/promo': Promo, // О приложении,
   '/team': Team, // О команде,
 
@@ -63,11 +61,6 @@ const router = async () => {
   const verb = request.verb ? `/${request.verb}` : '';
 
   const parsedURL = `${resource}${id}${verb}`;
-  // console.log(parsedURL);
-  // if (parsedURL === '/savannah') {
-  //   header.innerHTML = '';
-  //   footer.innerHTML = '';
-  // }
 
   // Найти совпадение в объекте routes, и загрузить нужную страницу (или 404, если совпадения нет)
   const page = routes[parsedURL] ? routes[parsedURL] : Error404;

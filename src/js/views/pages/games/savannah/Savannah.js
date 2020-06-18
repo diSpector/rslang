@@ -1,8 +1,21 @@
-import '../../../css/pages/games/savannah.scss';
-import '../../../css/pages/games/allGames.scss';
+import '../../../../../css/pages/games/savannah/savannah.scss';
+import '../../../../../css/pages/games/allGames.scss';
+import Utils from '../../../../services/Utils';
 
 const Savannah = {
+
+  beforeRender() {
+    this.clearHeaderAndFooter();
+  },
+
+  clearHeaderAndFooter: () => {
+    Utils.clearBlock('.header');
+    Utils.clearBlock('.footer');
+  },
+
   render: async () => {
+    Savannah.beforeRender();
+
     const view = `
     <div class="savannah  allGames">
         <section class="savannah__startScreen  allGames__startScreen">
