@@ -18,6 +18,24 @@ const Utils = {
 
     return request;
   },
+
+  /**
+   * очистить блок с переданным селектором
+   * @param string cssClass - селектор, который будет очищен
+   */
+  clearBlock: (cssClass) => {
+    const element = document.querySelector(cssClass);
+    element.innerHTML = '';
+  },
+
+  /**
+   * удалить блок с переданным селектором
+   * @param string cssClass - селектор, который будет удален
+   */
+  removeBlock: (cssClass) => {
+    const element = document.querySelector(cssClass);
+    element.remove();
+  },
 };
 
 export default Utils;
