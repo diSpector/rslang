@@ -23,6 +23,11 @@ import Footer from './views/components/Footer';
 // Файлы-хелперы
 import Utils from './services/Utils';
 
+// Импорт модели
+import AppModel from '../model/AppModel';
+
+const model = new AppModel();
+
 // список всех маршрутов (routes) в формате:
 // 'маршрут' : 'файл страницы для этого маршрута'
 const routes = {
@@ -50,7 +55,7 @@ const router = async () => {
   header.innerHTML = await Header.render();
   await Header.afterRender();
   footer.innerHTML = await Footer.render();
-  await Footer.afterRender();
+  await Footer.afterRender(await model.getUserData('defaultUser'));
 
   // парсинг url
   const request = Utils.parseRequestURL();
@@ -73,10 +78,5 @@ window.addEventListener('hashchange', router);
 
 // слушатель на загрузку страницы
 window.addEventListener('load', router);
-/* async function getWords() {
-  const url = 'https://afternoon-falls-25894.herokuapp.com/words?group=1&page=1';
-  const responce = await fetch(url);
-  const data = await responce.json();
-  console.log(data);
-}
-getWords(); */
+// сохранение данных пользователя при закрытии страницы
+window.addEventListener('beforeunload', model.saveUserData('defaultUser'));
