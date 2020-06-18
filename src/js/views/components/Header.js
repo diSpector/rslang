@@ -2,7 +2,7 @@ import '../../../css/layout/header.scss';
 
 const Header = {
   render: async () => {
-    const view =  /*html*/`
+    const view = /* html */`
     <div class="wrapper">
         <div class="header__content">
             <h1 class="header__logo"><a href="/#">RS Lang</a></h1>
@@ -16,7 +16,7 @@ const Header = {
             </nav>
         </div>
     </div>
-    `
+    `;
     return view;
   },
   afterRender: async () => { },
