@@ -23,7 +23,7 @@ const Utils = {
    * очистить блок с переданным селектором
    * @param string cssClass - селектор, который будет очищен
    */
-  clearBlock: (cssClass) => { 
+  clearBlock: (cssClass) => {
     const element = document.querySelector(cssClass);
     element.innerHTML = '';
   },
@@ -32,7 +32,7 @@ const Utils = {
    * удалить блок с переданным селектором
    * @param string cssClass - селектор, который будет удален
    */
-  removeBlock: (cssClass) => { 
+  removeBlock: (cssClass) => {
     const element = document.querySelector(cssClass);
     element.remove();
   },
