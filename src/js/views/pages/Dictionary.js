@@ -8,14 +8,14 @@ const Dictionary = {
   render: async () => {
     const view = /* html */`
     <section class="section">
-      <button class="dictionary-getInfo-button">Получить словарь для текушего пользователя</button>
+      <button class="dictionary--getInfo__button">Получить словарь для текушего пользователя</button>
       <h1 class="dictionary-subheader">Словарь для пользователя 1</h1>
       <h2>Изучаемые слова</h2>
-      <div class="dictionary-currentWords"></div>
+      <div class="dictionary--currentWords"></div>
       <h2>Сложные слова</h2>
-      <div class="dictionary-hardWords"></div>
+      <div class="dictionary--hardWords"></div>
       <h2>Удалённые слова</h2>
-      <div class="dictionary-deletedWords"></div>
+      <div class="dictionary--deletedWords"></div>
     </section>
           `;
     return view;
