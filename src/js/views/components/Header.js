@@ -3,16 +3,37 @@ import '../../../css/layout/header.scss';
 const Header = {
   render: async () => {
     const view = /* html */`
-    <div class="wrapper">
-        <div class="header__content">
-            <h1 class="header__logo"><a href="/#">RS Lang</a></h1>
-            <nav class="header__nav">
-                <ul class="header__navList">
-                    <li class="header__navItem"><a href="#/games">Games</a></li>
-                    <li class="header__navItem"><a href="#/dictionary">Dictionary</a></li>
-                    <li class="header__navItem"><a href="#/statistic">Statistic</a></li>
-                    <li class="header__navItem"><a href="#/about">About</a></li>
-                </ul>
+             <nav class="navbar" role="navigation" aria-label="main navigation">
+                <div class="container">
+                    <div id="navbarBasicExample" class="navbar-menu is-active" aria-expanded="false">
+                        <div class="navbar-start">
+                            <a class="navbar-item" href="/#/">
+                                Home
+                            </a>
+                            <a class="navbar-item" href="/#/dictionary/1">
+                            Dictionary
+                            </a>
+                            <a class="navbar-item" href="/#/about">
+                                About
+                            </a>
+                            <a class="navbar-item" href="/#/secret">
+                                Secret
+                            </a>
+                        </div>
+                        <div class="navbar-end">
+                            <div class="navbar-item">
+                                <div class="buttons">
+                                    <a class="button is-primary" href="/#/register">
+                                        <strong>Sign up</strong>
+                                    </a>
+                                    <a class="button is-light">
+                                        Log in
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </nav>
         </div>
     </div>
