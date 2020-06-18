@@ -1,3 +1,6 @@
+@import '../abstract/constants.scss';
+@import '../abstract/mixins.scss';
+
 .header {
   box-shadow: 0 0 10px 0 rgba(0,0,0,.2);
   background-color: $light;
