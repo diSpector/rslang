@@ -2,7 +2,7 @@ import '../../../css/layout/header.scss';
 
 const Header = {
   render: async () => {
-    const view =  /*html*/`
+    const view = /* html */`
     <div class="wrapper">
         <div class="header__content">
             <h1 class="header__logo"><a href="/#">RS Lang</a></h1>
@@ -12,11 +12,12 @@ const Header = {
                     <li class="header__navItem"><a href="#/dictionary">Dictionary</a></li>
                     <li class="header__navItem"><a href="#/statistic">Statistic</a></li>
                     <li class="header__navItem"><a href="#/about">About</a></li>
+                    <li class="header__navItem"><a href="#/savannah">Savannah</a></li>
                 </ul>
             </nav>
         </div>
     </div>
-    `
+    `;
     return view;
   },
   afterRender: async () => { },
