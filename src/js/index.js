@@ -55,7 +55,7 @@ const router = async () => {
   header.innerHTML = await Header.render();
   await Header.afterRender();
   footer.innerHTML = await Footer.render();
-  await Footer.afterRender(await model.getUserData('defaultUser'));
+  await Footer.afterRender();
 
   // парсинг url
   const request = Utils.parseRequestURL();
@@ -70,7 +70,7 @@ const router = async () => {
   // Найти совпадение в объекте routes, и загрузить нужную страницу (или 404, если совпадения нет)
   const page = routes[parsedURL] ? routes[parsedURL] : Error404;
   content.innerHTML = await page.render();
-  await page.afterRender();
+  await page.afterRender(model);
 };
 
 // слушатель на изменение текста за хэштегом в адресной строке
