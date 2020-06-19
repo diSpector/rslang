@@ -4,7 +4,7 @@ import EnglishPuzzle from './games/english-puzzle/EnglishPuzzle';
 // import SpeakIt from './games/english-puzzle/SpeakIt';
 // import Savanna from './games/english-puzzle/Savanna';
 // import Sprint from './games/english-puzzle/Sprint';
-// import Square from './games/english-puzzle/Square';
+import letterSquare from './games/letterSquare/letterSquare';
 import Error404 from './Error404';
 
 const gameList = {
@@ -13,7 +13,7 @@ const gameList = {
   // 'speakit'         : SpeakIt,
   // 'savanna'         : Savanna,
   // 'sprint'          : Sprint,
-  // 'square'          : Square,
+  'letterSquare': letterSquare,
 };
 
 const Games = {
