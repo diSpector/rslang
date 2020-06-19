@@ -13,6 +13,10 @@
     padding: 10px;
 
     height: 100vh;
+
+    &-hidden {
+        display: none;
+    }
 }
 
 .allGames__heading {
@@ -35,6 +39,10 @@
     justify-content: center;
     align-items: center;
     height: 100vh;
+
+    &-hidden {
+        display: none;
+    }
 }
 
 .allGames__timer {
@@ -45,4 +53,11 @@
     position: absolute;
     bottom: 30px;
     text-align: center;
+}
+
+.allGames__playScreen {
+    
+    &-hidden {
+        display: none;
+    }
 }

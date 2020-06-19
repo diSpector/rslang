@@ -1,6 +1,7 @@
 import '../../../../../css/pages/games/savannah/savannah.scss';
 import '../../../../../css/pages/games/allGames.scss';
 import Utils from '../../../../services/Utils';
+import Game from '../Game';
 
 const Savannah = {
 
@@ -25,12 +26,12 @@ const Savannah = {
             <button class="allGames__startBtn  btn">Начать</button>
         </section>
 
-        <section class="savannah__timerScreen  allGames__timerScreen">
+        <section class="savannah__timerScreen  allGames__timerScreen  allGames__timerScreen-hidden">
             <div class="allGames__timer">3</div>
             <div class="allGames__tip">Используй клавиши 1, 2, 3 и 4, чтобы дать быстрый ответ</div>
         </section>
 
-        <section class="savannah__playScreen">
+        <section class="savannah__playScreen  allGames__playScreen  allGames__playScreen-hidden">
             <div>Let's play</div>
         </section>
     </div>
@@ -38,8 +39,10 @@ const Savannah = {
 
     return view;
   },
-  afterRender: async () => { },
 
+  afterRender: async () => {
+    Game.startGame();
+  },
 };
 
 export default Savannah;
