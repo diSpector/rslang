@@ -1,5 +1,6 @@
 import '../../../../../css/pages/games/Sprint/Sprint.scss';
 import Utils from '../../../../services/Utils';
+import game from './SprintGame';
 
 const Sprint = {
 
@@ -21,12 +22,10 @@ const Sprint = {
         <div class="sprint--game__result">0</div>
         <div class="sprint--game__card">
           <div class="sprint--card__title">
-            <span></span>
-            <span></span>
-            <span></span>
+            <span class="sprint--card__title_check"></span>
+            <span class="sprint--card__title_check"></span>
+            <span class="sprint--card__title_check"></span>
           </div>
-          <img class="list" src="./img/list.png" alt="">
-          <img class="list2" src="./img/list2.png" alt="">
           <div class="sprint--card__word">
             <p class="word">word</p>
             <p class="translate">слово</p>
@@ -45,12 +44,8 @@ const Sprint = {
   },
 
   afterRender: () => {
-    const game = document.querySelector('.game__buttons'); //
-
-    game.addEventListener('click', () => {
-      console.log('clicked!');
-    });
     console.log('Im afterRender!');
+    game();
   },
 };
 

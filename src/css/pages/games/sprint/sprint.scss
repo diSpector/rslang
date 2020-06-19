@@ -1,3 +1,7 @@
+@import '../../../abstract/constants.scss';
+@import '../../../abstract/mixins.scss';
+
+
 .sprint--card__button{
   button{
     width: 90px;
@@ -19,8 +23,16 @@
   font-size: 2rem;
   display: flex;
   width: 600px;
-  margin-left: calc(50vw - 300px);
-  margin-top: calc(50vh - 150px);
+  padding-left: calc(50vw - 300px);
+  padding-top: calc(50vh - 150px);
+  @include media-tablet {
+    padding-left: calc(50vw - 200px);
+    width: 400px;
+  }
+  @include media-mobile-big {
+    width: 95%;
+    padding-left: calc(2.5vw);
+  }
 }
 .sprint--game__card{
   text-align: center;
@@ -50,13 +62,41 @@
   width: 100%;
   background-color: #fde28e;
   height: 50px;
-  span{
+  .sprint--card__title_check{
     display: block;
     height: 13px;
     width: 13px;
     background: #dac994;
     border-radius: 50%;
     margin: 3px;
+    &.active{
+      position: relative;
+      display: inline-block;
+      background-color: green;
+    }  
+    &.active::before{
+      position: absolute;
+      left: -3px;
+      top: 50%;
+      height: 50%;
+      width: 3px;
+      background-color: white;
+      content: "";
+      transform: translateX(10px) rotate(-45deg);
+      transform-origin: left bottom;
+    }
+  
+    &.active::after{
+      position: absolute;
+      left: -3px;
+      bottom: 0;
+      height: 3px;
+      width: 100%;
+      background-color: white;
+      content: "";
+      transform: translateX(10px) rotate(-45deg);
+      transform-origin: left bottom;
+    }
   }
 }
 .sprint--card__word{
@@ -68,16 +108,32 @@
 .sprint--game__result {
   font-size: 5rem;
   width: 100px;
+  @include media-tablet {
+    position: absolute;
+    top: 40px;
+  }
 }
 .sprint--game__time{
   width: 100px;
   padding-left: 54px;
   font-size: 5rem;
+  @include media-tablet {
+    position: absolute;
+    top: 40px;
+    width: 62px;
+    right: calc(50% - 200px);
+  }
+  @include media-mobile-big {
+    right: calc(5%);
+  }
 }
 
 .sprint{
-  width: 100vw;
-    height: 100vh;
-    background-color: black;
-    margin-top: -71px;
+  height: 100vh;
+  background-image: url(../../../../img/common/backgrounds/background2.jpg);
+  background-size: 100vw 100vh;
+  @include media-tablet {
+    background-size: auto 100%;
+  }
+  margin-top: -71px;
 }
