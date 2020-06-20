@@ -1,15 +1,18 @@
 import '../../../../../css/pages/games/english-puzzle/english-puzzle.scss';
 import Utils from '../../../../services/Utils';
 import Model from './helpers/Model';
+import WordsHelper from './helpers/WordsHelper';
 
 const EnglishPuzzle = {
 
   settings: {
+    game: {},
     words: [],
   },
 
   beforeRender: async () => {
     EnglishPuzzle.clearHeaderAndFooter();
+    EnglishPuzzle.settings.game = await Model.getCurrentLevelPageRound();
     // EnglishPuzzle.settings = await Model.getWordsFromGithub(1, 10, 10);
     EnglishPuzzle.settings.words = await Model.getWordsFromBackend(1, 2);
     // EnglishPuzzle.settings.words = await Model.getWordsFromGithub(1);
@@ -23,6 +26,7 @@ const EnglishPuzzle = {
   render: async () => {
     await EnglishPuzzle.beforeRender();
     console.log('words', EnglishPuzzle.settings.words);
+    console.log('game settings', EnglishPuzzle.settings.game);
     const view = `
     <div class="game">
     <div class="game__background"></div>

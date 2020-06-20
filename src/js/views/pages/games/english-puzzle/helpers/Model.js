@@ -45,6 +45,19 @@ const Model = {
       return null;
     }
   },
+
+  /**
+   * получить из хранилища текущий level, page, round
+   * 
+   * @return {Object} объект с настройками
+   */
+  getCurrentLevelPageRound: async () => {
+    return {
+      level: 1,
+      page: 1,
+      round: 5,
+    }
+  },
 };
 
 export default Model;
