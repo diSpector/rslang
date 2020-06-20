@@ -106,10 +106,11 @@ export default class AppModel {
     const url = `https://afternoon-falls-25894.herokuapp.com/words?group=${group}&page=${page}`;
     const responce = await fetch(url);
     const data = await responce.json();
-    return this.reformatWordData(data[wordIndex]);
+    const result = this.reformatWordData(data[wordIndex]);
+    return result;
   }
 
-  getFivePossibleTranslations() {
+  async getFivePossibleTranslations() {
     const correctWordData = this.getNewUnknownWord();
     const incorrectTranslation1 = this.getRandomLearnedWord();
     const incorrectTranslation2 = this.getRandomLearnedWord();
