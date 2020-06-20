@@ -1,17 +1,74 @@
 
 const WordsHelper = {
   /**
-   * получить определенное количество слов с github
+   * вернуть массив слов с удаленными тегами <b>
    *
-   * @param {number} page - страница по сложности (от 1 до 6)
-   * @param {number} count - количество слов, которое нужно вернуть
-   * @param {number} offset - сдвиг слов от нуля
+   * @param {Object[]} words - массив объектов со словами [ {id, group, page, word, translate, textExample, textExampleTranslate ...}] 
    *
-   * @return {Object[]} - массив объектов со словами
+   * @return {Object[]} - массив объектов со словами без тегов <br>
    */
-  getWordsFromGithub: async () => {
-    
+  correctWords(words) {
+    return words
+      .map((word) => Object
+        .assign(word, { textExample: this.replaceTags(word.textExample) }));
   },
+
+  /**
+   * удалить теги <b> из строки
+   * @param {string} phrase 
+   * 
+   * @return {string} строка без тегов <b>
+   */
+  replaceTags(phrase) { // 
+    const regExp = /<b>(.+)<\/b>/;
+    return phrase.replace(regExp, '$1');
+  },
+
+  /**
+   * вернуть массив из угаданных слов из текущего раунда и страницы
+   * @param {Object[]} allWords - все слова раунда 
+   * @param {Object[]} round - текущий раунд 
+   * 
+   * @return [] - массив хар-ками одного слова
+   */
+  getSolvedBySettings(allWords, round) {
+    return allWords.slice(0, round);
+  },
+
+  /**
+   * вернуть объект слова для текущего раунда 
+   * @param {Object[]} allWords - все слова раунда 
+   * @param {Object[]} round - текущий раунд 
+   * 
+   * @return [] - массив хар-ками одного слова
+   */
+  getCurrentBySettings(allWords, round) {
+    return allWords.slice(round, round + 1)[0];
+  },
+
+  shuffleCurrent(currentWordObj) {
+    const { textExample: phrase } = currentWordObj;
+    console.log('phrase', phrase)
+    const phraseArr = phrase.split(' ');
+    this.shuffleArray(phraseArr);
+    const shuffledWordObjArr = phraseArr.map((word, index) => ({
+      text: word,
+      order: index,
+      width: null,
+    }));
+    return shuffledWordObjArr;
+  },
+
+  /** 
+   * перемешать слова в предложении (алгоритм Фишера-Ейтса) 
+   * */
+  shuffleArray(wordsArr) {
+    for (let i = wordsArr.length - 1; i > 0; i -= 1) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [wordsArr[i], wordsArr[j]] = [wordsArr[j], wordsArr[i]];
+    }
+    return wordsArr;
+  }
 };
 
 export default WordsHelper;

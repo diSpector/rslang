@@ -53,8 +53,8 @@ const Model = {
    */
   getCurrentLevelPageRound: async () => {
     return {
-      level: 1,
-      page: 1,
+      level: 0,
+      page: 0,
       round: 5,
     }
   },

@@ -1,6 +1,6 @@
 $imgPath: '../../../../img/games/english-puzzle/';
 
-.game {
+.englishPuzzle {
     width: 100%;
     padding-top: 300px;
     box-sizing: border-box;
@@ -8,7 +8,7 @@ $imgPath: '../../../../img/games/english-puzzle/';
     padding: 100px;
 }
 
-.game__background{
+.englishPuzzle__background{
     background-image: url($imgPath + 'back_game.jpg');
     background-size: cover;
     background-position: center;
@@ -22,7 +22,34 @@ $imgPath: '../../../../img/games/english-puzzle/';
     z-index: -1;
 }
 
-.field {
+.englishPuzzle__logout {
+  display: flex;
+  justify-content: flex-end;
+  color: black;
+  margin-bottom: 20px;
+  font-size: 2.0rem;
+}
+
+.logout__button {
+  width: 55px;
+  height: 50px;
+  text-align: center;
+  border-radius: 7px;
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-size: 40px 40px;
+  background-position-y: 7px;
+  background-position-x: 10px;
+  background-color: white;
+  background-image: url($imgPath + 'icons/logout.png');
+}
+
+.logout__button:hover{
+  cursor: pointer;
+  box-shadow: 0px 0px 10px 2px blueviolet;
+}
+
+.englishPuzzle__field {
     background-color: white;
     border-radius: 7px;
     padding: 20px;
@@ -34,12 +61,12 @@ $imgPath: '../../../../img/games/english-puzzle/';
     padding: 6px 4px;
 }
 
-.menu {
+.englishPuzzle__menu {
     display: flex;
     justify-content: space-between;
 }
 
-.controls {
+.englishPuzzle__controls {
     display: flex;
 }
 
@@ -102,10 +129,10 @@ $imgPath: '../../../../img/games/english-puzzle/';
     background-color: darkgray;
 }
 
-.tips {
+.menu__tips {
     display: flex;
 }
-.tip__button {
+.tips__button {
     width: 32px;
     height: 32px;
     background-color: darkgrey;
@@ -116,37 +143,37 @@ $imgPath: '../../../../img/games/english-puzzle/';
     border-radius: 7px;
 }
 
-.tip__button:hover {
+.tips__button:hover {
     /* background-color: rebeccapurple; */
     cursor: pointer;
 }
 
-.pushed {
+.tips__button-pushed {
     background-color: purple;
 }
 
-.autosound {
+.tips__button-autosound {
     background-image: url($imgPath + 'icons/sound_white.png');
 }
 
-.translate {
+.tips__button-translate {
     background-image: url($imgPath + 'icons/text_white.svg');
 }
 
-.audio {
+.tips__button-audio {
     background-image: url($imgPath + 'icons/music_note.svg');
 }
 
-.picture{
+.tips__button-picture{
     background-image: url($imgPath + 'icons/image_white.svg');
 }
 
-.sound__block{
+.englishPuzzle__sound{
     margin-top: 30px;
 }
 .sound__icon{
     margin: 0 auto;
-    background-image: url($imgPath + '/icons/sound.png');
+    background-image: url($imgPath + 'icons/sound.png');
     width: 40px;
     height: 40px;
     background-size: 30px 30px;
@@ -165,23 +192,23 @@ $imgPath: '../../../../img/games/english-puzzle/';
     border-radius: 7px;
 }
 
-.translation__block{
+.englishPuzzle__translation{
     text-align: center;
     margin-top: 10px;
     font-size: 18px;
 }
 
-.phrases {
+.englishPuzzle__phrases {
     margin-top: 20px;
 }
 
-.phrase {
+.englishPuzzle__phrase {
     display: flex;
     flex-direction: row;
     line-height: 30px; 
 }
 
-.number {
+.phrase__number {
     width: 35px;
     height: 35px;
     border-radius: 50%;
@@ -200,8 +227,8 @@ $imgPath: '../../../../img/games/english-puzzle/';
     width: calc(100% - 40px);
     box-shadow: 0px 0px 4px -2px;  
     border: 1px solid lightgrey;
-    /* border: 1px solid black; */
     border-bottom: none;
+    // box-sizing: border-box;
 }
 
 .phrase:last-child .phrase__words{
@@ -215,6 +242,11 @@ $imgPath: '../../../../img/games/english-puzzle/';
     /* border-right: 1px solid rgb(156, 144, 144); */
     border-right: 1px solid lightgray;
     position: relative;
+    box-sizing: border-box;
+}
+
+.englishPuzzle__phrases-round .phrase__word:not(.empty):hover{
+  cursor: pointer;
 }
 
 /* .phrase__word::after {
@@ -255,7 +287,7 @@ $imgPath: '../../../../img/games/english-puzzle/';
     display: none;
 } */
 
-.number__current {
+.phrase__number-current {
     color: red;
 }
 
@@ -290,7 +322,7 @@ $imgPath: '../../../../img/games/english-puzzle/';
 
 .task{
     margin-top: 30px;
-    margin-left: 49px;
+    margin-left: 46px;
 }
 
 .task__words{
@@ -308,6 +340,7 @@ $imgPath: '../../../../img/games/english-puzzle/';
     padding: 5px 10px; 
     line-height: 30px;
     flex-grow: 1;
+    box-sizing: border-box;
 }
 
 .task__word:last-child{
@@ -322,13 +355,13 @@ $imgPath: '../../../../img/games/english-puzzle/';
 
 }
 
-.game__buttons {
+.englishPuzzle__buttons {
     margin: 30px auto;
     display: flex;
     justify-content: center;
 }
 
-.game__button{ 
+.gameButtons__button{ 
     background-color: darkslateblue;
     color: white;
     padding: 10px 20px;
@@ -337,23 +370,23 @@ $imgPath: '../../../../img/games/english-puzzle/';
 }
 
 
-.game__button.idk{
+.gameButtons__button-idk{
     background-color: mediumvioletred;
 }
 
-.game__button.idk:hover {
+.gameButtons__button-idk:hover {
     background-color: purple;
 }
 
-.game__button.cont{
+.gameButtons__button-cont{
     background-color: green;
 }
 
-.game__button.cont:hover {
+.gameButtons__button-cont:hover {
     background-color: darkgreen;
 }
 
-.game__button:hover{
+.gameButtons__button:hover{
     background-color: rebeccapurple;
     cursor: pointer;
 }
@@ -362,7 +395,7 @@ $imgPath: '../../../../img/games/english-puzzle/';
     display: none;
 }
 
-.disabled {
+.sound__icon-disabled {
     opacity: 0.5;
 }
 
