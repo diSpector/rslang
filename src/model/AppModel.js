@@ -39,27 +39,12 @@ export default class AppModel {
   // get a single learned word
   async getRandomLearnedWord() {
     const randomIndex = Math.floor(Math.random() * Math.floor(this.wordsCounter));
-    const group = Math.floor(randomIndex / 600);
-    const page = Math.floor((randomIndex - group * 600) / 30);
-    const wordIndex = randomIndex - (group * 600) - (page * 30);
-    const url = `https://afternoon-falls-25894.herokuapp.com/words?group=${group}&page=${page}`;
-    const responce = await fetch(url);
-    const data = await responce.json();
-    console.log(data[wordIndex], wordIndex);
-    return this.reformatWordData(data[wordIndex]);
+    return this.getWordDataByIndex(randomIndex);
   }
 
-  async getNewWords() {
-    this.wordsCounter += 20;
-    const url = 'https://afternoon-falls-25894.herokuapp.com/words?group=1&page=2';
-    const responce = await fetch(url);
-    const data = await responce.json();
-    this.newWords = [];
-    for (let i = 0; i < data.length; i += 1) {
-      this.newWords.push(data[i].word);
-      this.learnedWords.push(data[i].word);
-    }
-    return this.newWords;
+  async getNewUnknownWord() {
+    this.wordsCounter += 1;
+    return this.getWordDataByIndex(this.wordsCounter);
   }
 
   // initialize user data for the first load
@@ -111,6 +96,33 @@ export default class AppModel {
       audioMeaning: `${this.contentURL}${wordData.audioMeaning}`,
       audioExample: `${this.contentURL}${wordData.audioExample}`,
       image: `${this.contentURL}${wordData.image}`,
+    };
+  }
+
+  async getWordDataByIndex(index) {
+    const group = Math.floor(index / 600);
+    const page = Math.floor((index - group * 600) / 20);
+    const wordIndex = index - (group * 600) - (page * 20);
+    const url = `https://afternoon-falls-25894.herokuapp.com/words?group=${group}&page=${page}`;
+    const responce = await fetch(url);
+    const data = await responce.json();
+    return this.reformatWordData(data[wordIndex]);
+  }
+
+  getFivePossibleTranslations() {
+    const correctWordData = this.getNewUnknownWord();
+    const incorrectTranslation1 = this.getRandomLearnedWord();
+    const incorrectTranslation2 = this.getRandomLearnedWord();
+    const incorrectTranslation3 = this.getRandomLearnedWord();
+    const incorrectTranslation4 = this.getRandomLearnedWord();
+    return {
+      correct: correctWordData,
+      incorrect: [
+        incorrectTranslation1,
+        incorrectTranslation2,
+        incorrectTranslation3,
+        incorrectTranslation4,
+      ],
     };
   }
 }

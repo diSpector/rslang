@@ -81,3 +81,12 @@ window.addEventListener('load', router);
 // сохранение данных пользователя при закрытии страницы
 window.addEventListener('beforeunload', model.saveUserData('defaultUser'));
 model.getRandomLearnedWord();
+// console.log(model.getFivePossibleTranslations());
+console.log(model.getNewUnknownWord());
+console.log(model.getRandomLearnedWord());
+(async () => {
+  console.log(await model.getNewUnknownWord());
+})();
+(async () => {
+  console.log(await model.getRandomLearnedWord());
+})();
