@@ -1,6 +1,6 @@
 const Dictionary = {
 
-  render: async () => {
+  render: async (model) => {
     const view = /* html */`
     <section class="section dictionary--container">
       <button class="dictionary--getInfo__button">Получить словарь для текушего пользователя</button>
@@ -14,9 +14,6 @@ const Dictionary = {
       <div class="dictionary--deletedWords"></div>
     </section>
           `;
-    return view;
-  },
-  afterRender: async (model) => {
     document.querySelector('.dictionary--getInfo__button').addEventListener('click', async () => {
       document.querySelector('.dictionary--subheader').innerHTML = 'Изученные слова для пользователя defaultUser';
       const currentWords = document.querySelector('.dictionary--currentWords');
@@ -43,6 +40,9 @@ const Dictionary = {
       hardWords.innerHTML = 'Empty';
       deletedWords.innerHTML = 'Empty';
     });
+    return view;
+  },
+  afterRender: async () => {
   },
 
 };

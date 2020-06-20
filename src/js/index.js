@@ -69,8 +69,8 @@ const router = async () => {
 
   // Найти совпадение в объекте routes, и загрузить нужную страницу (или 404, если совпадения нет)
   const page = routes[parsedURL] ? routes[parsedURL] : Error404;
-  content.innerHTML = await page.render();
-  await page.afterRender(model);
+  content.innerHTML = await page.render(model);
+  await page.afterRender();
 };
 
 // слушатель на изменение текста за хэштегом в адресной строке
@@ -80,3 +80,4 @@ window.addEventListener('hashchange', router);
 window.addEventListener('load', router);
 // сохранение данных пользователя при закрытии страницы
 window.addEventListener('beforeunload', model.saveUserData('defaultUser'));
+model.getRandomLearnedWord();
