@@ -111,11 +111,11 @@ export default class AppModel {
   }
 
   async getFivePossibleTranslations() {
-    const correctWordData = this.getNewUnknownWord();
-    const incorrectTranslation1 = this.getRandomLearnedWord();
-    const incorrectTranslation2 = this.getRandomLearnedWord();
-    const incorrectTranslation3 = this.getRandomLearnedWord();
-    const incorrectTranslation4 = this.getRandomLearnedWord();
+    const correctWordData = await this.getNewUnknownWord();
+    const incorrectTranslation1 = await this.getRandomLearnedWord();
+    const incorrectTranslation2 = await this.getRandomLearnedWord();
+    const incorrectTranslation3 = await this.getRandomLearnedWord();
+    const incorrectTranslation4 = await this.getRandomLearnedWord();
     return {
       correct: correctWordData,
       incorrect: [
