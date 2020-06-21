@@ -26,7 +26,6 @@ const check = (count) => {
       document.querySelector('.sprint--game__result').innerHTML = k + 20;
       document.querySelector('.sprint--card__list2').classList.remove('hidden');
     } else {
-      document.querySelector('.sprint--card__list2').classList.add('hidden');
       document.querySelector('.sprint--game__result').innerHTML = k + 10;
       document.querySelector('.sprint--card__title').children[countCorrect - 1].classList.add('active');
     }
@@ -36,6 +35,7 @@ const check = (count) => {
   document.querySelector('.sprint--card__title').children[1].classList.remove('active');
   document.querySelector('.sprint--card__title').children[2].classList.remove('active');
   countCorrect = 0;
+  document.querySelector('.sprint--card__list2').classList.add('hidden');
   return 0;
 };
 
