@@ -48,6 +48,17 @@ export default class AppModel {
     return this.getWordDataByIndex(this.wordsCounter);
   }
 
+  // get a single random word with set difficulty
+  async getRandomWordByDifficulty(difficulty) {
+    if (difficulty > 5 || difficulty < 0) {
+      return null;
+    }
+    const startOfGroup = Math.floor(difficulty * 600); // index of first element in our group
+    const index = startOfGroup + Math.floor(Math.random() * 600);
+    const result = await this.getWordDataByIndex(index);
+    return result;
+  }
+
   // initialize user data for the first load
   setDefaultUserData(userName) {
     this.userName = userName;
@@ -100,6 +111,7 @@ export default class AppModel {
       audioMeaning: `${this.contentURL}${wordData.audioMeaning}`,
       audioExample: `${this.contentURL}${wordData.audioExample}`,
       image: `${this.contentURL}${wordData.image}`,
+      difficulty: wordData.group,
     };
   }
 
