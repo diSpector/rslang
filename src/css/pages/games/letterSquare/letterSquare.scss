@@ -1,0 +1,105 @@
+.letterSquare {
+    height: 100vh;
+    background-size: 100vw 100vh;
+  }
+  
+  .letterSquare--container {
+    display: flex;
+    flex-wrap: wrap;
+    margin-left: 300px;
+    margin-top: 60px;
+  }
+  
+  .letterSquare--wordList {
+    width: 200px;
+    height: 600px;
+    border-radius: 5px;
+    margin-left: 50px;
+  }
+  
+  .letterSquare--wordList__titleList {
+    margin-top: 150px;
+    text-decoration: none;
+    text-align: center;
+  }
+  
+  .letterSquare--wordList__itemList {
+    text-decoration: none;
+    text-align: center;
+  }
+  
+  .letterSquare---wordList__btnCheck {
+    margin-top: 10px;
+    margin-left: 40px;
+  }
+  
+  table {
+    width: 600px;
+    height: 600px;
+  }
+  
+  td {
+    width: 40px;
+    height: 40px;
+    text-align: center;
+    cursor: pointer;
+    margin-left: 14px;
+    font-weight: bold;
+    font-size: 20px;
+    color: #fff;
+    text-decoration: none;
+    text-align: center;
+    text-shadow: 0 -1px rgba(0,0,0,.5);
+    user-select: none;
+    border: 1px solid #1b362d;
+    border-radius: 5px;
+    outline: none;
+    background: #517b6d linear-gradient(#436e5f, #60be9d 80%);
+  
+  }
+  td:hover {
+    background: #517b6d linear-gradient(#65ac93, #85d4b8 80%);
+  }
+  
+  .letterSquare--btn__nextLevel{
+    margin-left: 620px;
+    cursor: pointer;
+    font-family: Arial,Helvetica,"Liberation Sans","Nimbus Sans L",sans-serif;
+    font-size: 1.4em;
+    font-weight: 70;
+    color: rgb(245,245,245);
+    text-shadow: 0 -1px rgba(0,0,0,.1);
+    text-decoration: none;
+    user-select: none;
+    padding: .3em 1em;
+    outline: none;
+    border: none;
+    border-radius: 5px;
+    background: #615ff3 linear-gradient(#6d6bfe, #638cfd);
+    box-shadow: inset #2a39bd 0 -1px 1px, inset 0 1px 1px #3243da, #4176d8 0 0 0 1px, rgba(0,0,0,.3) 0 2px 5px;
+    -webkit-animation: pulsate 1.2s linear infinite;
+    animation: pulsate 1.2s linear infinite;
+  }
+  
+  
+  input.letterSquare--btn__nextLevel:hover {
+    -webkit-animation-play-state: paused;
+    animation-play-state: paused;
+    cursor: pointer;
+  }
+  
+  input.letterSquare--btn__nextLevel:active {
+    top: 1px;
+    color: #fff;
+    text-shadow: 0 -1px rgba(0,0,0,.3), 0 0 5px #ffd, 0 0 8px #fff;
+    box-shadow: 0 -1px 3px rgba(0,0,0,.3), 0 1px 1px #fff, inset 0 1px 2px rgba(0,0,0,.8), inset 0 -1px 0 rgba(0,0,0,.05);
+  }
+  
+  @-webkit-keyframes pulsate {
+    50% {color: #fff; text-shadow: 0 -1px rgba(0,0,0,.3), 0 0 5px #ffd, 0 0 8px #fff;}
+  }
+  
+  @keyframes pulsate {
+    50% {color: #fff; text-shadow: 0 -1px rgba(0,0,0,.3), 0 0 5px #ffd, 0 0 8px #fff;}
+  }
+  
