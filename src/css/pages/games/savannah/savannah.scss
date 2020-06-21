@@ -60,15 +60,31 @@
 .savannah--game__question {
     position: absolute;
     top: 0;
+    height: 100%;
 
     font-size: 4rem;
+
+    // animation-name: fall;
+    // animation-duration: 5s;
+    // animation-timing-function: linear;
+    // animation-fill-mode: forwards;
 }
 
-.savannah--game__answers-list {
+// @keyframes fall {
+//     from {
+//         transform: translateY(0);
+//     }
+//     to {
+//         transform: translateY(50%);
+//     }
+// }
+
+.savannah--game__answersList {
     display: flex;
     justify-content: center;
     align-content: center;
     flex-wrap: wrap;
+    z-index: 1;
 
     @include media-tablet {
         flex-direction: column;
@@ -82,8 +98,7 @@
     transition: background-color 0.3s;
 
     span {
-        padding-right: 10px;
-        opacity: 0.6;
+        padding-left: 10px;
     }
 
     &:hover {
