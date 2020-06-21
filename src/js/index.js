@@ -23,6 +23,11 @@ import Footer from './views/components/Footer';
 // Файлы-хелперы
 import Utils from './services/Utils';
 
+// Импорт модели
+import AppModel from './model/AppModel';
+
+const model = new AppModel();
+
 // список всех маршрутов (routes) в формате:
 // 'маршрут' : 'файл страницы для этого маршрута'
 const routes = {
@@ -64,7 +69,7 @@ const router = async () => {
 
   // Найти совпадение в объекте routes, и загрузить нужную страницу (или 404, если совпадения нет)
   const page = routes[parsedURL] ? routes[parsedURL] : Error404;
-  content.innerHTML = await page.render();
+  content.innerHTML = await page.render(model);
   await page.afterRender();
 };
 
@@ -73,3 +78,5 @@ window.addEventListener('hashchange', router);
 
 // слушатель на загрузку страницы
 window.addEventListener('load', router);
+// сохранение данных пользователя при закрытии страницы
+window.addEventListener('beforeunload', model.saveUserData('defaultUser'));
