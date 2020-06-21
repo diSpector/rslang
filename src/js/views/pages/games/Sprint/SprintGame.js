@@ -1,4 +1,6 @@
 let countCorrect = 0;
+const data = JSON.parse(localStorage.getItem('data'));
+
 const generate = (words) => {
   const word = words[0];
   const translate = words[1];
@@ -22,7 +24,9 @@ const check = (count) => {
     const k = Number(document.querySelector('.sprint--game__result').innerText);
     if (countCorrect >= 4) {
       document.querySelector('.sprint--game__result').innerHTML = k + 20;
+      document.querySelector('.sprint--card__list2').classList.remove('hidden');
     } else {
+      document.querySelector('.sprint--card__list2').classList.add('hidden');
       document.querySelector('.sprint--game__result').innerHTML = k + 10;
       document.querySelector('.sprint--card__title').children[countCorrect - 1].classList.add('active');
     }
@@ -33,6 +37,29 @@ const check = (count) => {
   document.querySelector('.sprint--card__title').children[2].classList.remove('active');
   countCorrect = 0;
   return 0;
+};
+
+let timer;
+let time = 0;
+const timerw = () => {
+  document.querySelector('.sprint--game__time').innerHTML = time;
+  time -= 1;
+  if (time < 0) {
+    clearTimeout(timer);
+    document.querySelector('.sprint--game').classList.add('hidden');
+    document.querySelector('.sprint--end').classList.remove('hidden');
+    const result = document.querySelector('.sprint--game__result').innerHTML;
+    document.querySelector('.sprint__message__result').innerHTML = result;
+    data.push(result);
+    localStorage.setItem('data', JSON.stringify(data));
+    document.querySelector('.sprint__message__record').innerHTML = Math.max(...data);
+    console.log(data);
+    const average = data.reduce((accum, item) => Number(accum) + Number(item)) / data.length;
+    console.log(Math.round(average));
+    document.querySelector('.sprint__message__average').innerHTML = Math.round(average);
+  } else {
+    timer = setTimeout(timerw, 1000);
+  }
 };
 
 const game = () => {
@@ -49,4 +76,4 @@ const game = () => {
   };
 };
 
-export default game;
+export { game, timerw };

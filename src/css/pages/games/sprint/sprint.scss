@@ -20,6 +20,9 @@
 
 
 .sprint--game{
+  &.hidden{
+    display: none;
+  }
   font-size: 2rem;
   display: flex;
   width: 600px;
@@ -42,18 +45,28 @@
   border-radius: 15px;
   box-shadow:3px 3px 3px darkgrey;
   overflow: hidden;
-  img{
-    transform: rotate(90deg);
-    width: 70px;
-  }
 }
 
-.list{
-  margin-left: 31px;
+.sprint--card__list{
+  background-size: contain;
+  background-image: url(../../../../img/games/sprint/list.png);
+  transform: rotate(90deg);
+  width: 81px;
+  height: 104px;
+  margin: auto;
 }
-.list2{
-  margin-left: -70px;
-  display: none;
+.sprint--card__list2{
+  background-size: contain;
+  &.hidden{
+    display: none;
+  }
+  background-image: url(../../../../img/games/sprint/list2.png);
+  transform: rotate(90deg);
+  width: 81px;
+  height: 104px;
+  position: absolute;
+  margin-top: -107px;
+  margin-left: 120px;
 }
 .sprint--card__title{
   display: flex;
@@ -107,7 +120,7 @@
 }
 .sprint--game__result {
   font-size: 5rem;
-  width: 100px;
+  width: 150px;
   @include media-tablet {
     position: absolute;
     top: 40px;
@@ -136,4 +149,51 @@
     background-size: auto 100%;
   }
   margin-top: -71px;
+}
+
+.sprint--end{
+  padding-top: calc(50vh - 150px);
+  text-align: center;
+  &.hidden{
+    display: none;
+  }
+  font-size: 1.5rem;
+}
+
+.sprint--end__message{
+  p{
+    margin: 5px;
+  }
+  padding-top: 10px;
+  text-align: center;
+  width: 400px;
+  height: 200px;
+  background-color: white;
+  border-radius: 15px;
+  box-shadow:3px 3px 3px darkgrey;
+  margin-left: calc(50vw - 200px);
+  @include media-tablet {
+    margin-left: calc(50vw - 200px);
+  }
+  @include media-mobile-big {
+    width: 95%;
+    margin-left: calc(2.5vw);
+  }
+
+  .sprint--card__list{
+    transform: rotate(35deg);
+    margin: auto 177px;
+  }
+  .sprint--card__list2{
+    transform: rotate(12deg);
+    margin-top: -115px;
+    margin-left: 163px;
+  }
+}
+.sprint--end__title{
+  font-size: 3rem;
+}
+.sprint__result{
+    color: #23ad00;
+    font-size: 2.5rem;
 }
