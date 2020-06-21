@@ -48,7 +48,6 @@ const WordsHelper = {
 
   shuffleCurrent(currentWordObj) {
     const { textExample: phrase } = currentWordObj;
-    console.log('phrase', phrase)
     const phraseArr = phrase.split(' ');
     this.shuffleArray(phraseArr);
     const shuffledWordObjArr = phraseArr.map((word, index) => ({

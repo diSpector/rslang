@@ -52,12 +52,25 @@ const Model = {
    * @return {Object} объект с настройками
    */
   getCurrentLevelPageRound: async () => {
-    return {
-      level: 0,
-      page: 0,
-      round: 5,
+    let currentLevelPageRound = localStorage.getItem('EnglishPuzzleSettings');
+    if (!currentLevelPageRound) {
+      currentLevelPageRound = {
+        level: 0,
+        page: 0,
+        round: 0,
+      };
+      Model.saveNewLevelPageRound(currentLevelPageRound);
+    } else {
+      currentLevelPageRound = JSON.parse(currentLevelPageRound);
     }
+
+    return currentLevelPageRound;
   },
+
+  /** установить настройки level/page/round для игры */
+  saveNewLevelPageRound: async (gameSettingsObj) => {
+    localStorage.setItem('EnglishPuzzleSettings', JSON.stringify(gameSettingsObj));
+  }
 };
 
 export default Model;
