@@ -147,4 +147,15 @@ export default class AppModel {
       ],
     };
   }
+
+  async getTwoPossibleTranslations() {
+    const correctWordDataPromise = this.getRandomLearnedWord();
+    const incorrectTranslationPromise = this.getRandomLearnedWord();
+    const correctWordData = await correctWordDataPromise;
+    const incorrectTranslation = await incorrectTranslationPromise;
+    return {
+      correct: correctWordData,
+      incorrect: incorrectTranslation.wordTranslate,
+    };
+  }
 }

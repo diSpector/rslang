@@ -14,7 +14,7 @@ const Dictionary = {
       <div class="dictionary--deletedWords"></div>
     </section>
           `;
-    console.log(await model.getFivePossibleTranslations());
+    console.log(await model.getTwoPossibleTranslations());
     return view;
   },
   afterRender: async () => {
