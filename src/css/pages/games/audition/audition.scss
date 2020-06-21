@@ -11,6 +11,15 @@
   100% { left: 0; }
 }
 
+.audition--progressBar {
+  height: 5px;
+  position: absolute;
+  top: 0;
+  left: 0;
+  background-color: black;
+  transition: ease 1s;
+}
+
 .audition--startScreen {
   width: 100vw;
   position: relative;
@@ -24,8 +33,11 @@
   justify-content: center;
   align-items: center;
   text-align: center;
-  background: rgb(120,101,166);
-  background: linear-gradient(0deg, rgba(120,101,166,1) 0%, rgba(193,138,158,1) 100%);
+  background-image: url(../../../../img/common/backgrounds/background7.jpg);
+  background-size: cover;
+  background-repeat: no-repeat;
+  // background: rgb(120,101,166);
+  // background: linear-gradient(0deg, rgba(120,101,166,1) 0%, rgba(193,138,158,1) 100%);
   height: 100vh;
   margin: -71px 0 0;
   overflow: hidden;
@@ -38,21 +50,55 @@
   &.hidden {
     left: 100vw;
   }
+  &.hide {
+    animation: hide 2s forwards;
+  }
+}
+
+.wordScreen__image {
+  height: 150px;
+  width: 150px;
+  object-fit: cover;
+  border: 3px solid black;
+  border-radius: 50%;
+  display: none;
+  &.show {
+    display: inline-block;
+  }
+}
+
+.wordScreen__wordArea {
+  display: flex;
+  justify-content: center;
 }
 
 .wordScreen__speaker {
   height: 100px;
   width: 100px;
   border-radius: 50%;
-  margin: auto;
-  background-color: rgba(255, 255, 255,0.2);
+  background-color: rgba(255, 255, 255, 0.5);
   background-image: url(../../../../img/games/audition/speaker.svg);
-  background-size: 70px;
+  background-size: 70%;
   background-repeat: no-repeat;
   background-position: center;
   cursor: pointer;
+  transition: ease 0.5s;
   &:hover {
-    background-color: rgba(255, 255, 255,0.5);
+    background-color: rgba(255, 255, 255, 0.7);
+  }
+  &.show {
+    margin: 0 20px 0 0;
+    height: 60px;
+    width: 60px;
+  }
+}
+
+.wordScreen__word {
+  font-size: 5rem;
+  color: black;
+  display: none;
+  &.show {
+    display: block;
   }
 }
 
@@ -64,14 +110,15 @@
 
 .wordsList__word {
   margin: 0 10px;
-  color: white;
+  color: black;
   font-size: 2rem;
-  border: 1px solid white;
+  border: 1px solid black;
   border-radius: 10px;
   padding: 10px;
   cursor: pointer;
+  background-color: white;
   &:hover {
-    background-color: rgba(255, 255, 255,0.5);
+    background-color: rgba(0, 0, 0,0.2);
   }
   span {
     margin: 0 10px 0 0;
@@ -84,23 +131,25 @@
     padding: 10px 10px 10px 42px;
   }
   &.wrong {
-    color: rgba(255, 255, 255, 0.3);
+    color: rgba(0, 0, 0,0.2);
     cursor: not-allowed;
+  }
+  &.checked {
+    text-decoration: line-through;
   }
 }
 
 .wordScreen__button {
-  border: 1px solid white;
+  border: 1px solid black;
   border-radius: 10px;
-  background-color: rgba(255, 255, 255, 0.5);
+  background-color: white;
   padding: 10px;
   font-size: 2rem;
-  color: white;
+  color: black;
   outline: none;
-  background: transparent;
   cursor: pointer;
   &:hover {
-    background-color: rgba(255, 255, 255,0.5);
+    background-color: rgba(0, 0, 0, 0.2);
   }
   &.correct {
     background-image: url(../../../../img/games/audition/arrow.svg);
