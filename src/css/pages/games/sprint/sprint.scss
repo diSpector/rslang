@@ -1,21 +1,35 @@
 @import '../../../abstract/constants.scss';
 @import '../../../abstract/mixins.scss';
 
-
+ 
 .sprint--card__button{
   button{
     width: 90px;
     margin: 10px;
     height: 35px;
+    color: white;
+    border: 0;
+    outline: none;
     border-radius: 3px;
+    transition: 0.1s;
   }
 }
 .sprint--button__correct{
-  background-color: #89cc7d;
+  background: rgb(64,199,129);
+  box-shadow: -3px -3px rgb(53,167,110) inset;
+  &:active{
+    background: rgb(33,147,90);
+    box-shadow: 3px 3px #17653e inset;
+  }
 }
 
 .sprint--button__error{
-  background-color: crimson;;
+  background: #ef5f5f;
+  box-shadow: -3px -3px #c34040 inset;
+  &:active{
+    background: #9e2a2a;
+    box-shadow: 3px 3px #7d1a1a inset;
+  }
 }
 
 
@@ -177,17 +191,24 @@
   }
   @include media-mobile-big {
     width: 95%;
+    height: 220px;
     margin-left: calc(2.5vw);
   }
 
   .sprint--card__list{
     transform: rotate(35deg);
     margin: auto 177px;
+    @include media-mobile-big {
+      margin-left:40%;
+    }
   }
   .sprint--card__list2{
     transform: rotate(12deg);
     margin-top: -115px;
     margin-left: 163px;
+    @include media-mobile-big {
+      margin-left:40%;
+    }
   }
 }
 .sprint--end__title{

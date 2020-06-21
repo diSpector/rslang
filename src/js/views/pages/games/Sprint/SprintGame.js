@@ -40,7 +40,7 @@ const check = (count) => {
 };
 
 let timer;
-let time = 0;
+let time = 60;
 const timerw = () => {
   document.querySelector('.sprint--game__time').innerHTML = time;
   time -= 1;
