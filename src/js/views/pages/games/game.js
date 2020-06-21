@@ -23,7 +23,7 @@ const Game = {
       // отображаем экран игры после остановки таймера
       setTimeout(() => {
         timerScreen.classList.add('allGames__timerScreen-hidden');
-        // playScreen.classList.remove('allGames__playScreen-hidden');
+        playScreen.classList.remove('allGames__playScreen-hidden');
         if (cb) cb();
       }, 3000);
     });

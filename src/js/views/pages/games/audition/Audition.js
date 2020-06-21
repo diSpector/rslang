@@ -66,7 +66,7 @@ const getWords = async () => {
   }
 };
 
-const generateWordSlide = () => {
+const generateWordSlideHTML = () => {
   const gameArea = document.querySelector('.audition--game');
   const wordSlide = `
   <section class="audition--wordScreen hidden">
@@ -95,11 +95,11 @@ const generateProgressBar = () => {
 
 const changeProgressBar = () => {
   const progressBar = document.querySelector('.audition--progressBar');
-  document.querySelector('.audition--progressBar').style.width = `${Number(progressBar.style.width.slice(0, -2)) + 20}vw`;
+  document.querySelector('.audition--progressBar').style.width = `${Number(progressBar.style.width.slice(0, -2)) + 10}vw`;
 };
 
 const generateNextWordSlide = (prevSlide) => {
-  generateWordSlide();
+  generateWordSlideHTML();
   const wordScreens = document.querySelectorAll('.audition--wordScreen');
   if (wordScreens[1] !== undefined) {
     wordScreens[1].classList.remove('hidden');
@@ -107,9 +107,7 @@ const generateNextWordSlide = (prevSlide) => {
   } else {
     wordScreens[0].classList.remove('hidden');
   }
-  setTimeout(() => {
-    if (prevSlide) Utils.removeBlock(prevSlide);
-  }, 1000);
+  if (prevSlide) setTimeout(() => Utils.removeBlock(prevSlide), 1000);
   getWords().then((data) => {
     console.log(data);
     const correctWord = data[currentWord];
@@ -173,24 +171,24 @@ const Audition = {
     Utils.clearBlock('.footer');
   },
 
-  render: () => {
+  render: (model) => {
     Audition.beforeRender();
-
     const view = `
+    <div class="allGames__playScreen"></div>
     <div class="audition--game allGames">
-    <section class="audition__startScreen  allGames__startScreen">
-        <h1 class="allGames__heading">Аудиовызов</h1>
-        <p class="allGames__description">В этой игре вы улучшите восприятие английской речи на слух. Чем больше слов ты
-            знаешь, тем больше очков опыта получишь.</p>
-        <button class="allGames__startBtn  btn">Начать</button>
-    </section>
+      <section class="audition__startScreen  allGames__startScreen">
+          <h1 class="allGames__heading">Аудиовызов</h1>
+          <p class="allGames__description">В этой игре вы улучшите восприятие английской речи на слух. Чем больше слов ты
+              знаешь, тем больше очков опыта получишь.</p>
+          <button class="allGames__startBtn  btn">Начать</button>
+      </section>
 
-    <section class="audition__timerScreen  allGames__timerScreen  allGames__timerScreen-hidden">
-        <div class="allGames__timer">3</div>
-        <div class="allGames__tip">Используй клавиши 1, 2, 3, 4 и 5 чтобы дать быстрый ответ</div>
-    </section>
-</div>
-  `;
+      <section class="audition__timerScreen  allGames__timerScreen  allGames__timerScreen-hidden">
+          <div class="allGames__timer">3</div>
+          <div class="allGames__tip">Используй клавиши 1, 2, 3, 4 и 5 чтобы дать быстрый ответ</div>
+      </section>
+    </div>
+     `;
     return view;
   },
 
