@@ -42,6 +42,7 @@ export default class AppModel {
     return this.getWordDataByIndex(randomIndex);
   }
 
+  // get a single unknown word
   async getNewUnknownWord() {
     this.wordsCounter += 1;
     return this.getWordDataByIndex(this.wordsCounter);
@@ -69,19 +70,22 @@ export default class AppModel {
     });
   }
 
-  // supposed to be used only for debugging
+  // manually set counter for learned words, supposed to be used only for debugging!!
   setLearnedWords(num) {
     this.learnedWords = num;
   }
 
+  // increase counter forlearned words by 1
   increaseLearnedWordsBy1() {
     this.learnedWords += 1;
   }
 
+  // decrease counter forlearned words by 1
   decreaseLearnedWordsBy1() {
     this.learnedWords -= 1;
   }
 
+  // utility function, cuts useless word data and sets correct paths for img/mp3 assets
   reformatWordData(wordData) {
     return {
       id: wordData.id,
@@ -99,6 +103,7 @@ export default class AppModel {
     };
   }
 
+  // utilty function, gets word data from API by its index
   async getWordDataByIndex(index) {
     const group = Math.floor(index / 600);
     const page = Math.floor((index - group * 600) / 20);
@@ -112,10 +117,14 @@ export default class AppModel {
 
   async getFivePossibleTranslations() {
     const correctWordData = await this.getNewUnknownWord();
-    const incorrectTranslation1 = await this.getRandomLearnedWord();
-    const incorrectTranslation2 = await this.getRandomLearnedWord();
-    const incorrectTranslation3 = await this.getRandomLearnedWord();
-    const incorrectTranslation4 = await this.getRandomLearnedWord();
+    const incorrectTranslation1Promise = this.getRandomLearnedWord();
+    const incorrectTranslation2Promise = this.getRandomLearnedWord();
+    const incorrectTranslation3Promise = this.getRandomLearnedWord();
+    const incorrectTranslation4Promise = this.getRandomLearnedWord();
+    const incorrectTranslation1 = await incorrectTranslation1Promise;
+    const incorrectTranslation2 = await incorrectTranslation2Promise;
+    const incorrectTranslation3 = await incorrectTranslation3Promise;
+    const incorrectTranslation4 = await incorrectTranslation4Promise;
     return {
       correct: correctWordData,
       incorrect: [
