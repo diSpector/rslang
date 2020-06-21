@@ -1,10 +1,18 @@
 import '../../../../../css/pages/games/english-puzzle/english-puzzle.scss';
 import Utils from '../../../../services/Utils';
+import Model from './helpers/Model';
 
 const EnglishPuzzle = {
 
-  beforeRender() {
-    this.clearHeaderAndFooter();
+  settings: {
+    words: [],
+  },
+
+  beforeRender: async () => {
+    EnglishPuzzle.clearHeaderAndFooter();
+    // EnglishPuzzle.settings = await Model.getWordsFromGithub(1, 10, 10);
+    EnglishPuzzle.settings.words = await Model.getWordsFromBackend(1, 2);
+    // EnglishPuzzle.settings.words = await Model.getWordsFromGithub(1);
   },
 
   clearHeaderAndFooter: () => {
@@ -12,9 +20,9 @@ const EnglishPuzzle = {
     Utils.clearBlock('.footer');
   },
 
-  render: () => {
-    EnglishPuzzle.beforeRender();
-
+  render: async () => {
+    await EnglishPuzzle.beforeRender();
+    console.log('words', EnglishPuzzle.settings.words);
     const view = `
     <div class="game">
     <div class="game__background"></div>
@@ -89,13 +97,19 @@ const EnglishPuzzle = {
   },
 
   afterRender: () => {
-    const game = document.querySelector('.game__buttons'); //
+    const gameFieldWords = document.querySelector('.phrases');
+    const allPhrases = EnglishPuzzle.settings.words;
 
-    game.addEventListener('click', () => {
-      console.log('clicked!');
+    allPhrases.forEach((phrase, i) => {
+      const phraseBlock = Utils.createBlockInside('div', 'phrase');
+      Utils.createBlockInside('div', 'number', phraseBlock, i + 1);
+      const phraseWordsBlock = Utils.createBlockInside('div', 'phrase__words', phraseBlock);
+
+      const wordsArr = phrase.textExample.split(' ');
+      wordsArr.forEach((word) => Utils
+        .createBlockInside('div', ['phrase__word'], phraseWordsBlock, word));
+      gameFieldWords.append(phraseBlock);
     });
-
-    console.log('Im afterRender!');
   },
 };
 
