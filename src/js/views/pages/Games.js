@@ -13,7 +13,7 @@ const gameList = {
   // 'speakit'         : SpeakIt,
   savannah: Savannah,
   // 'sprint'          : Sprint,
-  'letterSquare': letterSquare,
+  'letter-square': letterSquare,
 };
 
 const Games = {
