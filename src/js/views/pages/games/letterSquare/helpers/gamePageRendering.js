@@ -5,7 +5,9 @@ export default function gamePageRendering() {
       <div class="letterSquare--playingField"></div>
       <div id="words" class="letterSquare--wordList">
         <div class="letterSquare--wordList__list">
-          <div class="letterSquare--wordList__titleList">Спрятанные слова:</div>
+          <div class="letterSquare--wordList__titleList">
+          <div class="letterSquare--wordList__title">Спрятанные слова:</div>
+          </div>
         </div>
         <button class="letterSquare---wordList__btnCheck">Найдено слово</button>
       </div>
@@ -14,7 +16,7 @@ export default function gamePageRendering() {
       <span> </span>
       <span> </span>
     </div>
-    <button class="letterSquare--btn__nextLevel">Следующий уровень</button>
+    <!--<button class="letterSquare--btn__nextLevel">Следующий уровень</button>-->
     </section>
         `;
 }

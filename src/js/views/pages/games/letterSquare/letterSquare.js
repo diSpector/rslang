@@ -1,5 +1,5 @@
 import '../../../../../css/pages/games/letterSquare/letterSquare.scss';
-// import '../../../../../css/pages/games/allGames.scss';
+import '../../../../../css/pages/games/allGames.scss';
 import Utils from '../../../../services/Utils';
 
 import gamePageRendering from './helpers/gamePageRendering';

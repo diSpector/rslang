@@ -1,11 +1,11 @@
-export default function findingWord() {
-  document.querySelector('#myTable').addEventListener('click',
-    function e(element) {
-      const id = element.target.id; 
-      console.log(id);
-      catchLetters(id);
-    });
+/* import words from '../model/words.js';
 
+export default function findingWord() {
+  function checkWord(letter) {
+    let word = '';
+    word += String(letter);
+    console.log(word);
+  }
   function catchLetters(idLetters) {
     if (idLetters === 'myTable') {
       return;
@@ -15,5 +15,13 @@ export default function findingWord() {
     } else {
       document.getElementById(`${idLetters}`).classList.add('td_active');
     }
+    const letter = document.getElementById(idLetters).innerHTML;
+    checkWord(letter);
+    console.log(letter);
   }
-}
+  document.querySelector('#myTable').addEventListener('click',
+    (element) => {
+      const { id } = element.target;
+      catchLetters(id);
+    });
+} */
