@@ -74,6 +74,19 @@ const game = () => {
     check(count);
     game();
   };
+  document.addEventListener('keyup', (event) => {
+    console.log(event);
+    if (event.code === 'ArrowLeft') {
+      count += 1;
+      check(count);
+      game();
+    }
+    if (event.code === 'ArrowRight') {
+      count += 0;
+      check(count);
+      game();
+    }
+  });
 };
 
 export { game, timerw };
