@@ -60,6 +60,29 @@
   td:hover {
     background: #517b6d linear-gradient(#65ac93, #85d4b8 80%);
   }
+
+  .td_active {
+    width: 40px;
+    height: 40px;
+    text-align: center;
+    cursor: pointer;
+    margin-left: 14px;
+    font-weight: bold;
+    font-size: 20px;
+    color: #fff;
+    text-decoration: none;
+    text-align: center;
+    text-shadow: 0 -1px rgba(0,0,0,.5);
+    user-select: none;
+    border: 1px solid #573a0e;
+    border-radius: 5px;
+    outline: none;
+    background: #cab644 linear-gradient(#99844e, #ddba59 80%);
+  
+  }
+  .td_active:hover {
+    background: #b9a23c linear-gradient(#c6d15f, #cfc755 80%);
+  }
   
   .letterSquare--btn__nextLevel{
     margin-left: 620px;
