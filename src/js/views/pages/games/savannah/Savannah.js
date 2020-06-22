@@ -128,16 +128,16 @@ const Savannah = {
     return view;
   },
 
-  clearWords() {
+  removeWords() {
     Utils.removeBlock('.savannah--game__question');
     Utils.removeBlock('.savannah--game__answersList');
   },
 
-  showNewWords(roundIndex) {
+  createNewWords(roundIndex) {
     const game = document.querySelector('.savannah--game');
     const words = rounds[roundIndex];
 
-    Utils.createBlockInside('div', 'savannah--game__question', game, words[0].word);
+    Utils.createBlockInside('div', ['savannah--game__question', 'savannah--game__question-fall'], game, words[0].word);
     const answersList = Utils.createBlockInside('div', 'savannah--game__answersList', game);
 
     const shuffledWords = shuffle(words);
@@ -151,26 +151,61 @@ const Savannah = {
   },
 
   checkAnswer(roundIndex) {
+    const question = document.querySelector('.savannah--game__question');
     const answersList = document.querySelector('.savannah--game__answersList');
+
+    // при отсутствии ответа
+    // показываем правильный перевод, когда кончится анимация (5,5 секунд)
+    const timerShowCorrectTranslation = setTimeout(() => {
+      const correct = document.querySelector('.correct');
+      correct.classList.add('savannah--game__answer-correct');
+
+      question.classList.add('savannah--game__question-explode');
+    }, 5500);
+
+    // смена раунда или конец игры
+    const timerChangeRound = setTimeout(() => {
+      if (roundIndex <= 1) {
+        this.play(roundIndex + 1);
+      } else {
+        Utils.clearBlock('.savannah--game__question');
+        Utils.clearBlock('.savannah--game__answersList');
+        console.log('Game over. Show Statistic');
+      }
+    }, 6500);
+
+
     answersList.addEventListener('click', (e) => {
       // клик по переводу
       if (e.target.classList.contains('savannah--game__answer')) {
         if (e.target.classList.contains('correct')) {
           // если правильно
           e.target.classList.add('savannah--game__answer-correct');
+          question.classList.remove('savannah--game__question-fall');
+          // Utils.clearBlock('.savannah--game__question');
+          // question.setAttribute('style', 'animation-name: none');
+          // question.setAttribute('style', 'animation-play-state: paused');
+
+          clearInterval(timerShowCorrectTranslation);
+          clearInterval(timerChangeRound);
         } else {
           // неправильно
           e.target.classList.add('savannah--game__answer-wrong');
+          Utils.clearBlock('.savannah--game__question');
 
           const correct = document.querySelector('.correct');
           correct.classList.add('savannah--game__answer-correct');
+          clearInterval(timerShowCorrectTranslation);
+          clearInterval(timerChangeRound);
         }
 
+        // смена раунда или конец игры
         setTimeout(() => {
           if (roundIndex <= 1) {
             this.play(roundIndex + 1);
           } else {
-            this.clearWords();
+            Utils.clearBlock('.savannah--game__question');
+            Utils.clearBlock('.savannah--game__answersList');
             console.log('Game over. Show Statistic');
           }
         }, 1000);
@@ -179,16 +214,14 @@ const Savannah = {
   },
 
   play(roundIndex) {
-    this.clearWords();
-    this.showNewWords(roundIndex);
+    this.removeWords();
+    this.createNewWords(roundIndex);
     this.checkAnswer(roundIndex);
   },
 
   afterRender: async () => {
-    Game.startGame();
-
     const roundIndex = 0;
-    Savannah.play(roundIndex);
+    Game.startGame(() => Savannah.play(roundIndex));
   },
 };
 

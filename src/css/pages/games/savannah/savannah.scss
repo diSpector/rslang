@@ -60,24 +60,50 @@
 .savannah--game__question {
     position: absolute;
     top: 0;
-    height: 100%;
+    height: 50vh;
 
     font-size: 4rem;
-
-    // animation-name: fall;
-    // animation-duration: 5s;
-    // animation-timing-function: linear;
-    // animation-fill-mode: forwards;
+    opacity: 0;
 }
 
-// @keyframes fall {
-//     from {
-//         transform: translateY(0);
-//     }
-//     to {
-//         transform: translateY(50%);
-//     }
-// }
+.savannah--game__question-fall {
+    animation-name: fall;
+    animation-duration: 5s;
+    animation-delay: 0.5s;
+    animation-timing-function: linear;
+    animation-fill-mode: forwards;
+}
+
+@keyframes fall {
+    from {
+        transform: translateY(0);
+    }
+    10% {
+        opacity: 1;
+    }
+    to {
+        transform: translateY(100%);
+        opacity: 1;
+    }
+}
+
+.savannah--game__question-explode {
+    opacity: 1;
+    transform: translateY(100%);
+
+    animation-name: explode;
+    animation-duration: 0.5s;
+    animation-delay: unset;
+    animation-timing-function: linear;
+    animation-fill-mode: forwards;
+}
+
+@keyframes explode {
+    to {
+        transform: scaleX(4);
+        opacity: 0;
+    }
+}
 
 .savannah--game__answersList {
     display: flex;
