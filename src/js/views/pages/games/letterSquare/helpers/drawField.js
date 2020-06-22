@@ -6,9 +6,9 @@ export default function drawPlayField() {
   const numberСell = 10;
   const playField = document.createElement('table');
   playField.setAttribute('id', 'myTable');
-  for (let i = 0; i < numberСell; i++) {
+  for (let i = 0; i < numberСell; i += 1) {
     const tr = document.createElement('tr');
-    for (let j = 0; j < numberСell; j++) {
+    for (let j = 0; j < numberСell; j += 1) {
       const td = document.createElement('td');
       td.setAttribute('id', `${i}${j}`);
       tr.appendChild(td);
@@ -16,7 +16,7 @@ export default function drawPlayField() {
     playField.appendChild(tr);
   }
   document.querySelector('.letterSquare--playingField').appendChild(playField);
-  for (let i = 0; i < words.length; i++) {
+  for (let i = 0; i < words.length; i += 1) {
     wordFilling(words[i]);
   }
   GetCellValues();
