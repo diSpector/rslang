@@ -2,11 +2,12 @@ import '../../../../../css/pages/games/audition/audition.scss';
 import Utils from '../../../../services/Utils';
 import Game from '../Game';
 
+let isGameActive = true;
+let currentWordCounter = 1;
+let correctAnswersCounter = 0;
+let wrongAnswersCounter = 0;
+
 const getRandomInRange = (min, max) => Math.floor(Math.random() * (max - min + 1)) + min;
-
-const anotherWords = ['школа', 'улица', 'человек', 'кошка'];
-
-let currentWord = 0;
 
 const setWords = (data, correctWord) => {
   const wordsList = document.querySelectorAll('.wordsList__word');
@@ -19,7 +20,7 @@ const setWords = (data, correctWord) => {
   let wordNum = 0;
   for (let i = startPoint; i < wordsList.length; i += 1) {
     if (i !== correctWordPlace) {
-      wordsList[i].innerHTML += anotherWords[wordNum];
+      wordsList[i].innerHTML += data.incorrect[wordNum].wordTranslate;
       wordNum += 1;
     }
   }
@@ -39,7 +40,7 @@ const setAnswer = (wordData) => {
   if (wordAreas.length !== 1) {
     [, wordArea] = wordAreas;
   }
-  const wordImage = Utils.createBlockInside('img', 'wordScreen__image', '', '', { src: `https://raw.githubusercontent.com/dispector/rslang-data/master/${wordData.image}` });
+  const wordImage = Utils.createBlockInside('img', 'wordScreen__image', '', '', { src: wordData.image });
   wordArea.prepend(wordImage);
   const correctWords = document.querySelectorAll('.wordScreen__word');
   if (correctWords.length !== 1) {
@@ -53,17 +54,6 @@ const showAnswer = () => {
   document.querySelector('.wordScreen__image').classList.add('show');
   document.querySelector('.wordScreen__speaker').classList.add('show');
   document.querySelector('.wordScreen__word').classList.add('show');
-};
-
-const getWords = async () => {
-  try {
-    const urlWords = 'https://afternoon-falls-25894.herokuapp.com/words?page=2&group=0';
-    const res = await fetch(urlWords);
-    const data = await res.json();
-    return data;
-  } catch (error) {
-    throw new Error('Error in getWords!');
-  }
 };
 
 const generateWordSlideHTML = () => {
@@ -87,6 +77,20 @@ const generateWordSlideHTML = () => {
   gameArea.innerHTML += wordSlide;
 };
 
+const generateStatisticHTML = () => {
+  const gameArea = document.querySelector('.audition--game');
+  const statistic = `
+  <section class="audition--statistic hidden">
+    <div class="statistic__title">Статистика игры</div>
+    <div class="statistic__correctAnswers">Верных ответов: ${correctAnswersCounter}</div>
+    <div class="statistic__wrongAnswers">Неверных ответов: ${wrongAnswersCounter}</div>
+    <button class="statistic__button">Начать заново</button>
+    <button class="statistic__button">Перейти на главную страницу</button>
+  </section>
+  `;
+  gameArea.innerHTML += statistic;
+};
+
 const generateProgressBar = () => {
   const gameArea = document.querySelector('.audition--game');
   const progressBar = Utils.createBlockInside('section', 'audition--progressBar', '', '', { style: 'width: 0vw;' });
@@ -107,17 +111,24 @@ const generateNextWordSlide = (prevSlide) => {
   } else {
     wordScreens[0].classList.remove('hidden');
   }
-  if (prevSlide) setTimeout(() => Utils.removeBlock(prevSlide), 1000);
-  getWords().then((data) => {
-    console.log(data);
-    const correctWord = data[currentWord];
-    currentWord += 1;
+  if (prevSlide) setTimeout(() => Utils.removeBlock(prevSlide), 2000);
+  Audition.settings.model.getFivePossibleTranslations().then((data) => {
+    const correctWord = data.correct;
     setWords(data, correctWord);
     setAnswer(correctWord);
-    const wordAudio = new Audio(`https://raw.githubusercontent.com/dispector/rslang-data/master/${correctWord.audio}`);
+    const wordAudio = new Audio(correctWord.audio);
     setTimeout(() => wordAudio.play(), 1000);
     addGameClickHandler(wordAudio, correctWord);
   });
+};
+
+const generateStatistic = (prevSlide) => {
+  generateStatisticHTML();
+  const wordScreen = document.querySelector('.audition--wordScreen');
+  const statisticScreen = document.querySelector('.audition--statistic');
+  statisticScreen.classList.remove('hidden');
+  wordScreen.classList.add('hide');
+  if (prevSlide) setTimeout(() => Utils.removeBlock(prevSlide), 2000);
 };
 
 const addGameClickHandler = (wordAudio, correctWord) => {
@@ -128,7 +139,36 @@ const addGameClickHandler = (wordAudio, correctWord) => {
     [, gameScreen] = document.querySelectorAll('.audition--wordScreen');
     [, button] = document.querySelectorAll('.wordScreen__button');
   }
-  let isGameActive = true;
+  isGameActive = true;
+  document.onkeyup = (event) => {
+    if (event.key > 0 && event.key < 6 && isGameActive) {
+      const answers = document.querySelectorAll('.wordsList__word');
+      const targetWord = answers[event.key - 1];
+      setClassesForWrongWords(correctWord.wordTranslate);
+      if (targetWord.innerHTML.includes(correctWord.wordTranslate) && isGameActive) {
+        targetWord.innerHTML = targetWord.innerHTML.slice(15);
+        targetWord.classList.add('correct');
+        correctAnswersCounter += 1;
+      } else if (!targetWord.innerHTML.includes(correctWord.wordTranslate) && isGameActive) {
+        targetWord.classList.add('checked');
+        wrongAnswersCounter += 1;
+      }
+      showAnswer();
+      Utils.clearBlock('.wordScreen__button');
+      button.classList.add('correct');
+      isGameActive = false;
+      currentWordCounter += 1;
+    }
+    if (event.key === 'Enter' && !isGameActive) {
+      if (currentWordCounter <= 10) {
+        generateNextWordSlide('.audition--wordScreen');
+        changeProgressBar();
+      } else {
+        generateStatistic('.audition--wordScreen');
+        Utils.removeBlock('.audition--progressBar');
+      }
+    }
+  };
   gameScreen.addEventListener('click', (event) => {
     if (event.target.closest('.wordScreen__speaker')) {
       wordAudio.play();
@@ -139,28 +179,42 @@ const addGameClickHandler = (wordAudio, correctWord) => {
       if (targetWord.innerHTML.includes(correctWord.wordTranslate) && isGameActive) {
         targetWord.innerHTML = targetWord.innerHTML.slice(15);
         targetWord.classList.add('correct');
+        correctAnswersCounter += 1;
       } else if (!targetWord.innerHTML.includes(correctWord.wordTranslate) && isGameActive) {
         targetWord.classList.add('checked');
+        wrongAnswersCounter += 1;
       }
       showAnswer();
       Utils.clearBlock('.wordScreen__button');
       button.classList.add('correct');
       isGameActive = false;
+      currentWordCounter += 1;
     }
     if (event.target.closest('.wordScreen__button') && !isGameActive) {
-      generateNextWordSlide('.audition--wordScreen');
-      changeProgressBar();
+      if (currentWordCounter <= 10) {
+        generateNextWordSlide('.audition--wordScreen');
+        changeProgressBar();
+      } else {
+        generateStatistic('.audition--wordScreen');
+        Utils.removeBlock('.audition--progressBar');
+      }
     } else if (event.target.closest('.wordScreen__button') && isGameActive) {
       setClassesForWrongWords(correctWord.wordTranslate);
       showAnswer();
       Utils.clearBlock('.wordScreen__button');
       button.classList.add('correct');
       isGameActive = false;
+      currentWordCounter += 1;
+      wrongAnswersCounter += 1;
     }
   });
 };
 
 const Audition = {
+
+  settings: {
+    model: null,
+  },
 
   beforeRender() {
     this.clearHeaderAndFooter();
@@ -173,6 +227,7 @@ const Audition = {
 
   render: (model) => {
     Audition.beforeRender();
+    Audition.settings.model = model;
     const view = `
     <div class="allGames__playScreen"></div>
     <div class="audition--game allGames">
@@ -192,7 +247,7 @@ const Audition = {
     return view;
   },
 
-  afterRender: () => {
+  afterRender: async () => {
     Game.startGame(generateNextWordSlide);
     generateProgressBar();
   },
