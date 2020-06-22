@@ -1,4 +1,5 @@
 $imgPath: '../../../../img/games/english-puzzle/';
+$imgCommonPath: '../../../../img/common/backgrounds/';
 
 .englishPuzzle {
     width: 100%;
@@ -9,7 +10,8 @@ $imgPath: '../../../../img/games/english-puzzle/';
 }
 
 .englishPuzzle__background{
-    background-image: url($imgPath + 'back_game.jpg');
+    background-image: url($imgCommonPath + 'background4.jpg');
+    // background-image: url($imgPath + 'back_game.jpg');
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
@@ -418,8 +420,135 @@ $imgPath: '../../../../img/games/english-puzzle/';
     opacity: 0.5;
 }
 
-.playing {
+.sound__icon-blink {
     border: 2px solid green;
     border-radius: 7px;
     animation: blinker 1s linear infinite alternate;
+}
+
+@keyframes blinker {
+    50% {
+      opacity: 0;
+    }
+  }
+
+.englishPuzzle__results {
+  width: 100%;
+  padding-top: 300px;
+  box-sizing: border-box;
+  color: black;
+  padding: 100px;
+}
+
+.englishPuzzle__results-hidden {
+  display: none;
+}
+
+.englishPuzzle__field-hidden {
+  display: none;
+}
+
+.englishPuzzle__resultsField {
+  margin: 0 auto;
+  background-color: white;
+  border-radius: 7px;
+  padding: 30px;
+  font-size: 1.4rem;
+  box-sizing: border-box;
+}
+
+.englishPuzzle__results-fail, .englishPuzzle__results-success {
+  margin-bottom: 30px;
+}
+
+.block__title{
+  text-align: center;
+  font-size: 2.0rem;
+}
+
+.block__title span {
+  display: inline-block;
+  color: white;
+  width: 25px;
+  height: 25px;
+  border-radius: 50%;
+}
+
+span.count__idk{
+  background-color: orangered;
+}
+
+span.count__iknow{
+  background-color: green;
+}
+
+
+.block__words {
+  font-size: 1.8rem;
+  margin-top: 15px;
+}
+
+.block__word {
+  display: flex;   
+}
+
+.block__word:hover {
+  cursor: pointer;
+  border-bottom: 1px solid lightgrey;
+  box-sizing: border-box;
+}
+
+.word__soundicon{
+  background-image: url($imgPath + 'icons/sound.png');
+  width: 30px;
+  height: 30px;
+  background-size: 25px 25px;
+  background-position: center;
+  background-repeat: no-repeat;
+  box-sizing: border-box;
+}
+
+.word__soundicon:hover{
+  cursor: pointer;
+  animation: blinker 1s linear infinite alternate;
+
+}
+
+.word__text{
+  line-height: 30px;
+  margin-left: 10px;
+}
+
+.results__buttons{
+  margin-top: 20px auto;
+  display: flex;
+  justify-content: center;
+}
+
+.results__button {
+  padding: 10px 20px;
+  color: white;
+  text-align: center;
+  font-size: 1.8rem;
+  margin-left: 20px;
+}
+
+.results__button:hover{
+  cursor: pointer;
+}
+
+.results__continue{
+  background-color: mediumpurple;
+}
+
+.results__continue:hover{
+  background-color: rebeccapurple;
+}
+
+.results__global {
+  background-color: deepskyblue;
+}
+
+.results__global:hover{
+  background-color: blue;
 }

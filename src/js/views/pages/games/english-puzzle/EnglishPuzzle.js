@@ -6,18 +6,31 @@ import WordsHelper from './helpers/WordsHelper';
 const EnglishPuzzle = {
 
   settings: {
-    game: {}, /** {level, page, round } */
+    game: {}, /** { level, page, round } */
+    tips: {}, /** { autosound, translate, audio, picture } */
+    nextRoundTips: {}, /** { autosound, translate, audio, picture } */
     words: [
       /** allWords: [ {id, group, page, word, translate, textExample, textExampleTranslate ...}]  */
       /** solvedWords: [] - слова (предложения), которые пользователь уже угадал*/
       /** currentWord: {} - слово (предложение) текущего раунда */
       /** shuffledCurrentWord: [] - слова текущего предложения в случайном порядке */
     ],
+    localStat: { // статистика для хранения данных текущего раунда
+      knowWords: [],
+      idkWords: [],
+    },
   },
 
   beforeRender: async () => {
+    // localStorage.clear();
     EnglishPuzzle.clearHeaderAndFooter();
-    EnglishPuzzle.settings.game = await Model.getCurrentLevelPageRound();
+
+    const userSettings = await Model.getUserSettings();
+
+    EnglishPuzzle.settings.game = userSettings.progress;
+    EnglishPuzzle.settings.tips = userSettings.tips;
+    EnglishPuzzle.settings.nextRoundTips = userSettings.tips;
+    EnglishPuzzle.settings.localStat = userSettings.localStat;
 
     const { game: gameSettings } = EnglishPuzzle.settings;
     const words = await Model.getWordsFromBackend(gameSettings.level, gameSettings.page);
@@ -46,7 +59,7 @@ const EnglishPuzzle = {
   render: async () => {
     await EnglishPuzzle.beforeRender();
     console.log('words', EnglishPuzzle.settings.words);
-    console.log('game settings', EnglishPuzzle.settings.game);
+    console.log('all settings', EnglishPuzzle.settings);
     const view = `
     <div class="englishPuzzle">
     <div class="englishPuzzle__background"></div>
@@ -72,16 +85,16 @@ const EnglishPuzzle = {
           </div>
         </div>
         <div class="menu__tips tips">
-          <div class="tips__button tips__button-autosound tips__button-pushed" data-tip="autosound" title="Autoplay phrase"></div>
-          <div class="tips__button tips__button-translate tips__button-pushed" data-tip="translate" title="Translation for phrase"></div>
-          <div class="tips__button tips__button-audio tips__button-pushed" data-tip="audio" title="Listen pronunciation"></div>
-          <div class="tips__button tips__button-picture tips__button-pushed" data-tip="picture" title="Picture tip"></div>
+          <div class="tips__button tips__button-autosound" data-tip="autosound" title="Autoplay phrase"></div>
+          <div class="tips__button tips__button-translate" data-tip="translate" title="Translation for phrase"></div>
+          <div class="tips__button tips__button-audio" data-tip="audio" title="Listen pronunciation"></div>
+          <div class="tips__button tips__button-picture" data-tip="picture" title="Picture tip"></div>
         </div>
       </div>
       <div class="englishPuzzle__sound sound">
-        <div class="sound__icon sound__icon-disabled"></div>
+        <div class="sound__icon"></div>
       </div>
-      <div class="englishPuzzle__translation">word translate</div>
+      <div class="englishPuzzle__translation"></div>
 
       <div class="englishPuzzle__phrases phrases">
         
@@ -102,6 +115,32 @@ const EnglishPuzzle = {
         <div class="gameButtons__button gameButtons__button-res" data-button="res">Results</div>
       </div>
     </div>
+
+    <div class="englishPuzzle__results englishPuzzle__results-hidden">
+      <div class="englishPuzzle__resultsField">
+
+        <div class="englishPuzzle__results-fail">
+          <div class="block__title fail__title">
+            I don't know <span class="count__idk"></span>
+          </div>
+          <div class="block__words fail__words">
+          </div>
+        </div>
+
+        <div class="englishPuzzle__results-success">
+          <div class ="block__title success__title">
+            I know <span class="count__iknow"></span>
+          </div>
+          <div class="block__words success__words">
+          </div>
+        </div>
+
+        <div class="results__buttons">
+          <div class="results__button results__continue">Continue</div>
+        </div>
+
+      </div>
+    </div>
   </div>
       `;
     return view;
@@ -114,7 +153,13 @@ const EnglishPuzzle = {
     EnglishPuzzle.fillRoundPhrase();
     EnglishPuzzle.fillTaskPhrase();
     EnglishPuzzle.setButtons();
+    EnglishPuzzle.setTips();
+    EnglishPuzzle.setBlocksByTips();
     EnglishPuzzle.addListeners();
+
+    console.log('localStorage', JSON.parse(localStorage.getItem('EnglishPuzzleSettings')));
+    console.log('localStat: ', EnglishPuzzle.settings.localStat);
+
   },
 
   fillMenuLevels() {
@@ -158,6 +203,36 @@ const EnglishPuzzle = {
 
     const hideButtonsArr = [checkButton, contButton, resButton];
     hideButtonsArr.forEach((button) => button.classList.add('gameButtons__button-hidden'));
+  },
+
+  /** установить начальный конфиг с подсказками */
+  setTips() {
+    const tipsButtons = document.querySelectorAll('.menu__tips.tips .tips__button');
+    const { tips } = this.settings;
+
+    tipsButtons.forEach((tip) => {
+      const tipData = tip.dataset.tip;
+      if (tips[tipData]) {
+        tip.classList.add('tips__button-pushed');
+      }
+    });
+  },
+
+  /** отобразить перевод и возможность озвучивания на основании конфига подсказок */
+  setBlocksByTips() {
+    const { tips, words } = this.settings;
+    const translationContainer = document.querySelector('.englishPuzzle__translation');
+    const audioIconBlock = document.querySelector('.englishPuzzle__sound .sound__icon');
+
+    translationContainer.innerHTML = (tips.translate)
+      ? words.currentWord.textExampleTranslate :
+      '';
+
+    if (tips.audio) {
+      audioIconBlock.classList.remove('sound__icon-disabled');
+    } else {
+      audioIconBlock.classList.add('sound__icon-disabled');
+    }
   },
 
   /** наполнить поле с выполненными фразами */
@@ -234,6 +309,11 @@ const EnglishPuzzle = {
     const pageMenuItems = document.querySelector('.page__menu.dropdown__menu');
     pageMenuItems.addEventListener('click', this.changePage);
 
+    const tipsContainer = document.querySelector('.menu__tips.tips');
+    tipsContainer.addEventListener('click', this.processTipClick);
+
+    const soundIconBlock = document.querySelector('.englishPuzzle__sound .sound__icon');
+    soundIconBlock.addEventListener('click', this.processSoundClick);
   },
 
   /** удалить все слушатели событий
@@ -251,7 +331,7 @@ const EnglishPuzzle = {
     const levelMenuItems = document.querySelector('.level__menu.dropdown__menu');
     const menuPage = document.querySelector('.page__list');
     const pageMenuItems = document.querySelector('.page__menu.dropdown__menu');
-    
+
     taskWordsContainer.removeEventListener('click', this.processTaskWordClick);
     roundWordsContainer.removeEventListener('click', this.processRoundWordClick);
     idkButton.removeEventListener('click', this.processIdkClick);
@@ -264,12 +344,180 @@ const EnglishPuzzle = {
     pageMenuItems.removeEventListener('click', this.changePage);
   },
 
+  /** клик по кнопке Results */
+  processResClick: () => {
+    EnglishPuzzle.clearGameField();
+
+    const gameField = document.querySelector('.englishPuzzle__field');
+    const resField = document.querySelector('.englishPuzzle__results');
+
+    gameField.classList.add('englishPuzzle__field-hidden');
+    resField.classList.remove('englishPuzzle__results-hidden');
+
+    const { settings } = EnglishPuzzle;
+
+    const newGameSettings = EnglishPuzzle.getNewLevelPageRound(settings.game);
+    settings.game = Object.assign({}, newGameSettings);
+    Model.saveProgress(newGameSettings);
+    Model.saveTips(settings.nextRoundTips);
+
+    EnglishPuzzle.fillResults();
+  },
+
+  /** наполнить страницу результатами */
+  fillResults() {
+    const { knowWords, idkWords } = this.settings.localStat;
+
+    const failContainer = document.querySelector('.englishPuzzle__results-fail');
+    const failCount = failContainer.querySelector('.count__idk');
+    failCount.innerHTML = this.settings.localStat.idkWords.length;
+    const failWordsContainer = failContainer.querySelector('.fail__words');
+
+    idkWords.forEach((word, i) => {
+      const failWordBlock = Utils.createBlockInside('div', ['block__word', 'fail__word'], failWordsContainer, '', {}, { sound: `fail-${i}` });
+      Utils.createBlockInside('div', 'word__soundicon', failWordBlock);
+      Utils.createBlockInside('div', 'word__text', failWordBlock, word.textExample);
+    });
+
+    const successContainer = document.querySelector('.englishPuzzle__results-success');
+    const successCount = successContainer.querySelector('.count__iknow');
+    successCount.innerHTML = this.settings.localStat.knowWords.length;
+    const successWordsContainer = successContainer.querySelector('.success__words');
+
+    knowWords.forEach((word, i) => {
+      const successWordBlock = Utils.createBlockInside('div', ['block__word', 'success__word'], successWordsContainer, '', {}, { sound: `success-${i}` });
+      Utils.createBlockInside('div', 'word__soundicon', successWordBlock);
+      Utils.createBlockInside('div', 'word__text', successWordBlock, word.textExample);
+    });
+
+    this.addListenersToResults();
+  },
+
+  addListenersToResults() {
+    const wordsContainer = document.querySelector('.englishPuzzle__resultsField');
+    wordsContainer.addEventListener('click', this.processResWordClick);
+
+    const resultsButtonContainer = document.querySelector('.englishPuzzle__results .results__buttons');
+    const resultsContButon = resultsButtonContainer.querySelector('.results__continue');
+    resultsContButon.addEventListener('click', this.processResultsContClick);
+  },
+
+  /** клик по строке со словом на странице результатов (угаданной или нет) */
+  processResWordClick: ({ target }) => {
+    const wordBlock = target.closest('.block__word');
+    if (!wordBlock) {
+      return;
+    }
+    const { knowWords, idkWords } = EnglishPuzzle.settings.localStat;
+
+    const id = wordBlock.dataset.sound;
+    const idArr = id.split('-');
+    const [wordArrName, wordId] = idArr;
+    const arr = (wordArrName === 'fail') ? idkWords : knowWords;
+    
+    const audio = arr[wordId].audioExample;
+    const audioFullPath = `https://raw.githubusercontent.com/dispector/rslang-data/master/${audio}`;
+    EnglishPuzzle.playAudio(audioFullPath);
+  },
+
+  /** клик по кнопке "Continue" на странице результатов */
+  processResultsContClick: async () => {
+    EnglishPuzzle.clearResults();
+
+    const gameField = document.querySelector('.englishPuzzle__field');
+    const resField = document.querySelector('.englishPuzzle__results');
+
+    gameField.classList.remove('englishPuzzle__field-hidden');
+    resField.classList.add('englishPuzzle__results-hidden');
+
+    // const { settings } = EnglishPuzzle;
+
+    // const newGameSettings = EnglishPuzzle.getNewLevelPageRound(settings.game);
+    // settings.game = Object.assign({}, newGameSettings);
+    // Model.saveProgress(newGameSettings);
+    // Model.saveTips(settings.nextRoundTips);
+
+    EnglishPuzzle.settings.localStat = {
+      knowWords: [],
+      idkWords: [],
+    };
+    Model.saveStats(EnglishPuzzle.settings.localStat);
+    await EnglishPuzzle.render();
+
+    EnglishPuzzle.afterRender();
+
+  },
+
+  /** очистить страницу с результатами */
+  clearResults() {
+    const failContainer = document.querySelector('.englishPuzzle__results-fail');
+    const failCount = failContainer.querySelector('.count__idk');
+    const failWordsContainer = failContainer.querySelector('.fail__words');
+    failCount.innerHTML = '';
+    failWordsContainer.innerHTML = '';
+
+    const successContainer = document.querySelector('.englishPuzzle__results-success');
+    const successCount = successContainer.querySelector('.count__iknow');
+    const successWordsContainer = successContainer.querySelector('.success__words');
+    successCount.innerHTML = '';
+    successWordsContainer.innerHTML = '';
+  },
+
+  /** клик по подсказке */
+  processTipClick: ({ target }) => {
+    if (!target.classList.contains('tips__button')) {
+      return;
+    }
+    const { tips, nextRoundTips } = EnglishPuzzle.settings;
+    const dataTip = target.dataset.tip;
+
+    target.classList.toggle('tips__button-pushed');
+    nextRoundTips[dataTip] = !nextRoundTips[dataTip];
+
+    if (dataTip === 'autosound') {
+      tips.autosound = nextRoundTips.autosound;
+    }
+  },
+
+  /** клик на иконке аудио */
+  processSoundClick: () => {
+    const { tips, words } = EnglishPuzzle.settings;
+    if (!tips.audio) {
+      return;
+    }
+    EnglishPuzzle.processCurrentAudio();
+  },
+
+  /** проиграть файл, поморгать иконкой */
+  processCurrentAudio() {
+    const audio = this.settings.words.currentWord.audioExample;
+    const audioFullPath = `https://raw.githubusercontent.com/dispector/rslang-data/master/${audio}`;
+    this.playAudio(audioFullPath);
+    this.blinkAudioIcon();
+  },
+
+  /** проигрывание аудиофайла */
+  playAudio(audioPath) {
+    const audio = new Audio(audioPath);
+    audio.play();
+  },
+
+  /** моргание иконки */
+  blinkAudioIcon() {
+    const soundIcon = document.querySelector('.englishPuzzle__sound .sound__icon');
+    soundIcon.classList.add('sound__icon-blink');
+    setTimeout(() => {
+      soundIcon.classList.remove('sound__icon-blink');
+    }, 5000);
+  },
+
   /** клик по уровню в меню */
-  changeLevel: async ({target}) => {
+  changeLevel: async ({ target }) => {
     if (!target.classList.contains('menu__item')) {
       return;
     }
-    const gameSettings = EnglishPuzzle.settings.game;
+    const { settings } = EnglishPuzzle;
+    const gameSettings = settings.game;
 
     const newLevel = parseInt(target.dataset.level, 10);
     const currentLevel = gameSettings.level;
@@ -285,36 +533,53 @@ const EnglishPuzzle = {
     });
 
     EnglishPuzzle.clearGameField();
-    Model.saveNewLevelPageRound(newGameSettings); 
-    await EnglishPuzzle.render(); 
+    Model.saveProgress(newGameSettings);
+    Model.saveTips(settings.nextRoundTips);
+
+    EnglishPuzzle.settings.localStat = {
+      knowWords: [],
+      idkWords: [],
+    };
+    Model.saveStats(EnglishPuzzle.settings.localStat);
+
+    await EnglishPuzzle.render();
     EnglishPuzzle.afterRender();
   },
 
-    /** клик по странице в меню */
-    changePage: async ({target}) => {
-      if (!target.classList.contains('menu__item')) {
-        return;
-      }
-      const gameSettings = EnglishPuzzle.settings.game;
-  
-      const newPage = parseInt(target.dataset.page, 10);
-      const currentPage = gameSettings.page;
-  
-      if (newPage === currentPage) {
-        return;
-      }
-  
-      const newGameSettings = Object.assign({}, {
-        level: gameSettings.level,
-        page: newPage,
-        round: 0,
-      });
-  
-      EnglishPuzzle.clearGameField();
-      Model.saveNewLevelPageRound(newGameSettings); 
-      await EnglishPuzzle.render(); 
-      EnglishPuzzle.afterRender();
-    },
+  /** клик по странице в меню */
+  changePage: async ({ target }) => {
+    if (!target.classList.contains('menu__item')) {
+      return;
+    }
+    const { settings } = EnglishPuzzle;
+    const gameSettings = settings.game;
+
+    const newPage = parseInt(target.dataset.page, 10);
+    const currentPage = gameSettings.page;
+
+    if (newPage === currentPage) {
+      return;
+    }
+
+    const newGameSettings = Object.assign({}, {
+      level: gameSettings.level,
+      page: newPage,
+      round: 0,
+    });
+
+    EnglishPuzzle.clearGameField();
+    Model.saveProgress(newGameSettings);
+    Model.saveTips(settings.nextRoundTips);
+
+    EnglishPuzzle.settings.localStat = {
+      knowWords: [],
+      idkWords: [],
+    };
+    Model.saveStats(EnglishPuzzle.settings.localStat);
+    
+    await EnglishPuzzle.render();
+    EnglishPuzzle.afterRender();
+  },
 
   /** показать/скрыть меню с выбором уровней */
   toggleLevels: () => {
@@ -326,31 +591,6 @@ const EnglishPuzzle = {
   togglePages: () => {
     const menuContainer = document.querySelector('.page__menu.dropdown__menu');
     menuContainer.classList.toggle('dropdown__menu-hidden');
-  },
-
-  /**
-   * нажатие на кнопку "Continue":
-   * 1) задать новый раунд,
-   * 2) обновить угаданные и текущее слова на основе нового раунда
-   * 3) перерендерить всё
-   */
-  processContClick: async () => {
-    const { settings } = EnglishPuzzle;
-
-    EnglishPuzzle.clearGameField();
-
-    const newGameSettings = EnglishPuzzle.getNewLevelPageRound(settings.game);
-    settings.game = Object.assign({}, newGameSettings);
-    Model.saveNewLevelPageRound(newGameSettings);
-
-    if (settings.game.round !== 0) { // не надо загружать новые слова
-      EnglishPuzzle.updateWordsByRound(settings.game.round);
-    } else { // загрузить новые 10 слов
-      await EnglishPuzzle.render();
-    }
-
-    EnglishPuzzle.afterRender();
-
   },
 
   /** получить следующие level, page, round на основании текущих */
@@ -407,20 +647,22 @@ const EnglishPuzzle = {
     this.clearField();
   },
 
-  /** очистить игровое поле - собранные слова, поле сбора, перемеш. слова */
+  /** очистить игровое поле - собранные слова, поле сбора, перемеш. слова и т.д. */
   clearField() {
     const donePhrasesContainer = document.querySelector('.englishPuzzle__phrases-done');
     const roundPhraseContainer = document.querySelector('.englishPuzzle__phrases-round');
     const taskPhraseContainer = document.querySelector('.englishPuzzle__task .task__words');
     const menuLevelContainer = document.querySelector('.level__menu.dropdown__menu');
     const menuPageContainer = document.querySelector('.page__menu.dropdown__menu');
+    const translationContainer = document.querySelector('.englishPuzzle__translation');
 
     const containers = [
-      donePhrasesContainer, 
-      roundPhraseContainer, 
-      taskPhraseContainer, 
-      menuLevelContainer, 
-      menuPageContainer
+      donePhrasesContainer,
+      roundPhraseContainer,
+      taskPhraseContainer,
+      menuLevelContainer,
+      menuPageContainer,
+      translationContainer,
     ];
     containers.forEach((cont) => cont.innerHTML = '');
   },
@@ -430,6 +672,8 @@ const EnglishPuzzle = {
    * 2) удалить все слова из поля с перемешанными словами,
    * 3) снять слушатели кликов с поле сбора и перемешанных слов
    * 4) показать кнопку "Continue"
+   * 5) проигрывание предложения, если автопроизношение включено
+   * 6) если последний раунд, показать кнопку "Статистика"
    */
   processIdkClick: () => {
     const roundWordsContainer = document.querySelector('.englishPuzzle__phrases-round .phrase__words');
@@ -447,17 +691,31 @@ const EnglishPuzzle = {
       Utils.createBlockInside('div', ['task__word', 'empty'], taskWordsContainer)
     );
 
+    const { tips } = EnglishPuzzle.settings;
+    if (tips.autosound) {
+      EnglishPuzzle.processCurrentAudio();
+    }
+
+    const { currentWord } = EnglishPuzzle.settings.words;
+    EnglishPuzzle.settings.localStat.idkWords.push(currentWord);
+    Model.saveStats(EnglishPuzzle.settings.localStat);
+
     taskWordsContainer.removeEventListener('click', EnglishPuzzle.processTaskWordClick);
     roundWordsContainer.removeEventListener('click', EnglishPuzzle.processRoundWordClick);
 
     EnglishPuzzle.hideButton('idk');
     EnglishPuzzle.hideButton('check');
     EnglishPuzzle.showButton('cont');
+
+    const { round } = EnglishPuzzle.settings.game;
+    if (round === 9) {
+      EnglishPuzzle.showButton('res');
+    }
   },
 
   /** нажатие на кнопку "Check" 
    * 1) подсветить правильные/неправильные слова,
-   * 2) если предложение угадано верно, снять слушатели, показать/спрятать кнопки
+   * 2) если предложение угадано верно, снять слушатели, показать/спрятать кнопки, проиграть фразу
   */
   processCheckClick: () => {
     const roundWordsContainer = document
@@ -479,14 +737,60 @@ const EnglishPuzzle = {
       roundWordsElsArr[i].classList.add(cssClass);
     });
 
-    if (corrects === currentWordArr.length) {
+    if (corrects === currentWordArr.length) { // если угадано верно
+      const { tips } = EnglishPuzzle.settings;
+
+      const { currentWord } = EnglishPuzzle.settings.words;
+      EnglishPuzzle.settings.localStat.knowWords.push(currentWord);
+      Model.saveStats(EnglishPuzzle.settings.localStat);
+
+      if (tips.autosound) {
+        EnglishPuzzle.processCurrentAudio();
+      }
+
       taskWordsContainer.removeEventListener('click', EnglishPuzzle.processTaskWordClick);
       roundWordsContainer.removeEventListener('click', EnglishPuzzle.processRoundWordClick);
 
       EnglishPuzzle.hideButton('idk');
       EnglishPuzzle.hideButton('check');
       EnglishPuzzle.showButton('cont');
+
+      const { round } = EnglishPuzzle.settings.game;
+      if (round === 9) {
+        EnglishPuzzle.showButton('res');
+      }
     }
+  },
+
+  /**
+   * нажатие на кнопку "Continue":
+   * 1) задать новый раунд,
+   * 2) обновить угаданные и текущее слова на основе нового раунда
+   * 3) перерендерить всё
+   */
+  processContClick: async () => {
+    const { settings } = EnglishPuzzle;
+
+    EnglishPuzzle.clearGameField();
+
+    const newGameSettings = EnglishPuzzle.getNewLevelPageRound(settings.game);
+    settings.game = Object.assign({}, newGameSettings);
+    Model.saveProgress(newGameSettings);
+    Model.saveTips(settings.nextRoundTips);
+
+    if (settings.game.round !== 0) { // не надо загружать новые слова
+      EnglishPuzzle.updateWordsByRound(settings.game.round);
+    } else { // загрузить новые 10 слов
+      EnglishPuzzle.settings.localStat = {
+        knowWords: [],
+        idkWords: [],
+      };
+      Model.saveStats(EnglishPuzzle.settings.localStat);
+      await EnglishPuzzle.render();
+    }
+
+    EnglishPuzzle.afterRender();
+
   },
 
   /** 
@@ -614,10 +918,4 @@ const EnglishPuzzle = {
 };
 
 export default EnglishPuzzle;
-
-{/* <div class="phrase__word"
-style="width:100px;"
-data-order-task="1"
-data-order-round="1"
->test</div> */}
 

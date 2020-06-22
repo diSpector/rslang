@@ -70,7 +70,61 @@ const Model = {
   /** установить настройки level/page/round для игры */
   saveNewLevelPageRound: async (gameSettingsObj) => {
     localStorage.setItem('EnglishPuzzleSettings', JSON.stringify(gameSettingsObj));
-  }
+  },
+
+  getUserSettings: async() => {
+    let userSettings = localStorage.getItem('EnglishPuzzleSettings');
+    if (!userSettings) {
+      userSettings = {
+        progress: {
+          level: 0,
+          page: 0,
+          round: 0,
+        },
+        tips: {
+          autosound: true,
+          translate: true,
+          audio: true,
+          picture: false,
+        },
+        localStat: {
+          knowWords: [],
+          idkWords: [],
+        },
+      };
+      Model.saveUserSettings(userSettings);
+    } else {
+      userSettings = JSON.parse(userSettings);
+    }
+
+    return userSettings;
+  },
+
+  /** сохранить целиком весь объект настроек */
+  saveUserSettings: async(gameSettingsObj) => {
+    localStorage.setItem('EnglishPuzzleSettings', JSON.stringify(gameSettingsObj));
+  },
+
+  /** сохранить прогресс {level, page, round} */
+  saveProgress: async(progressObj) => {
+    let userSettings = JSON.parse(localStorage.getItem('EnglishPuzzleSettings'));
+    userSettings.progress = Object.assign({}, progressObj);
+    localStorage.setItem('EnglishPuzzleSettings', JSON.stringify(userSettings));
+  },
+
+  /** сохранить конфиг с подсказками */
+  saveTips: async(tipsObj) => {
+    let userSettings = JSON.parse(localStorage.getItem('EnglishPuzzleSettings'));
+    userSettings.tips = Object.assign({}, tipsObj);
+    localStorage.setItem('EnglishPuzzleSettings', JSON.stringify(userSettings));
+  },
+
+  /** сохранить конфиг с подсказками */
+  saveStats: async (statsObj) => {
+    let userSettings = JSON.parse(localStorage.getItem('EnglishPuzzleSettings'));
+    userSettings.localStat = Object.assign({}, statsObj);
+    localStorage.setItem('EnglishPuzzleSettings', JSON.stringify(userSettings));
+  },
 };
 
 export default Model;
