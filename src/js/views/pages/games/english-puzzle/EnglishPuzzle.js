@@ -2,6 +2,8 @@ import '../../../../../css/pages/games/english-puzzle/english-puzzle.scss';
 import Utils from '../../../../services/Utils';
 import Model from './helpers/Model';
 import WordsHelper from './helpers/WordsHelper';
+import HtmlHelper from './helpers/HtmlHelper';
+import Config from './settings/gameConfig';
 
 const EnglishPuzzle = {
 
@@ -29,7 +31,7 @@ const EnglishPuzzle = {
 
     EnglishPuzzle.settings.game = userSettings.progress;
     EnglishPuzzle.settings.tips = userSettings.tips;
-    EnglishPuzzle.settings.nextRoundTips = userSettings.tips;
+    EnglishPuzzle.settings.nextRoundTips = Object.assign({}, userSettings.tips);
     EnglishPuzzle.settings.localStat = userSettings.localStat;
 
     const { game: gameSettings } = EnglishPuzzle.settings;
@@ -52,8 +54,8 @@ const EnglishPuzzle = {
   },
 
   clearHeaderAndFooter: () => {
-    Utils.clearBlock('.header');
-    Utils.clearBlock('.footer');
+    Utils.clearBlock(Config.containers.header);
+    Utils.clearBlock(Config.containers.footer);
   },
 
   render: async () => {
@@ -70,7 +72,7 @@ const EnglishPuzzle = {
             <div class="level__title">Level:</div>
             <div class="level__list">
               <div class="level__current">1</div>
-              <div class="level__menu dropdown__menu dropdown__menu-hidden">
+              <div class="level__menu dropdown__menu englishPuzzle__block-hidden">
               </div>
             </div>
           </div>
@@ -79,7 +81,7 @@ const EnglishPuzzle = {
             <div class="page__title">Page:</div>
             <div class="page__list">
               <div class="page__current">1</div>
-              <div class="page__menu dropdown__menu dropdown__menu-hidden">
+              <div class="page__menu dropdown__menu englishPuzzle__block-hidden">
               </div>
             </div>
           </div>
@@ -116,7 +118,7 @@ const EnglishPuzzle = {
       </div>
     </div>
 
-    <div class="englishPuzzle__results englishPuzzle__results-hidden">
+    <div class="englishPuzzle__results englishPuzzle__block-hidden">
       <div class="englishPuzzle__resultsField">
 
         <div class="englishPuzzle__results-fail">
@@ -147,6 +149,7 @@ const EnglishPuzzle = {
   },
 
   afterRender: () => {
+    EnglishPuzzle.hideMenus();
     EnglishPuzzle.fillMenuLevels();
     EnglishPuzzle.fillMenuPages();
     EnglishPuzzle.fillDonePhrases();
@@ -159,29 +162,38 @@ const EnglishPuzzle = {
 
     console.log('localStorage', JSON.parse(localStorage.getItem('EnglishPuzzleSettings')));
     console.log('localStat: ', EnglishPuzzle.settings.localStat);
-
+//
   },
 
+  hideMenus() {
+    const levelMenu = document.querySelector(Config.containers.levelDropDownMenu);
+    const pageMenu = document.querySelector(Config.containers.pageDropDownMenu);
+
+    HtmlHelper.hideContainers([levelMenu, pageMenu]);
+  },
+
+  /** заполнить меню выбора уровней цифрами (1-6) */
   fillMenuLevels() {
-    const currentLevContainer = document.querySelector('.menu__level .level__current');
+    const currentLevContainer = document.querySelector(Config.containers.currentLevel);
     const currentLevel = this.settings.game.level + 1;
     currentLevContainer.innerHTML = currentLevel;
 
-    const menuLevel = document.querySelector('.level__menu.dropdown__menu');
-    const levels = [...Array(6)];
+    const menuLevel = document.querySelector(Config.containers.levelDropDownMenu);
+    const levels = [...Array(Config.general.maxLevels)];
     levels.forEach((level, i) => {
       const cssStyles = (i === (currentLevel - 1)) ? ['menu__item', 'active'] : 'menu__item';
       Utils.createBlockInside('div', cssStyles, menuLevel, i + 1, {}, { level: i });
     })
   },
 
+  /** заполнить меню выбора страниц цифрами (1-20) */
   fillMenuPages() {
-    const currentPageContainer = document.querySelector('.menu__page .page__current');
+    const currentPageContainer = document.querySelector(Config.containers.currentPage);
     const currentPage = this.settings.game.page + 1;
     currentPageContainer.innerHTML = currentPage;
 
-    const menuPage = document.querySelector('.page__menu.dropdown__menu');
-    const levels = [...Array(20)];
+    const menuPage = document.querySelector(Config.containers.pageDropDownMenu);
+    const levels = [...Array(Config.general.maxPages)];
     levels.forEach((level, i) => {
       const cssStyles = (i === (currentPage - 1)) ? ['menu__item', 'active'] : 'menu__item';
       Utils.createBlockInside('div', cssStyles, menuPage, i + 1, {}, { page: i });
@@ -190,30 +202,30 @@ const EnglishPuzzle = {
 
   /** установить начальную конфигурацию кнопок */
   setButtons() {
-    const buttonsContainer = document.querySelector('.englishPuzzle__buttons.gameButtons')
-    const idkButton = buttonsContainer.querySelector('.gameButtons__button-idk');
-    const checkButton = buttonsContainer.querySelector('.gameButtons__button-check');
-    const contButton = buttonsContainer.querySelector('.gameButtons__button-cont');
-    const resButton = buttonsContainer.querySelector('.gameButtons__button-res');
+    const buttonsContainer = document.querySelector(Config.containers.gameButtons); 
+    const idkButton = buttonsContainer.querySelector(Config.buttons.idkButton);
+    const checkButton = buttonsContainer.querySelector(Config.buttons.checkButton);
+    const contButton = buttonsContainer.querySelector(Config.buttons.contButton);
+    const resButton = buttonsContainer.querySelector(Config.buttons.resButton); 
 
     // кнопка "I dont know" на старте должна быть видна всегда
-    if (idkButton.classList.contains('gameButtons__button-hidden')) {
-      idkButton.classList.remove('gameButtons__button-hidden');
+    if (idkButton.classList.contains(Config.cssStyles.hidden)) {
+      idkButton.classList.remove(Config.cssStyles.hidden);
     }
 
     const hideButtonsArr = [checkButton, contButton, resButton];
-    hideButtonsArr.forEach((button) => button.classList.add('gameButtons__button-hidden'));
+    hideButtonsArr.forEach((button) => button.classList.add(Config.cssStyles.hidden));
   },
 
   /** установить начальный конфиг с подсказками */
   setTips() {
-    const tipsButtons = document.querySelectorAll('.menu__tips.tips .tips__button');
+    const tipsButtons = document.querySelectorAll(Config.containers.tipsAll);
     const { tips } = this.settings;
 
     tipsButtons.forEach((tip) => {
       const tipData = tip.dataset.tip;
       if (tips[tipData]) {
-        tip.classList.add('tips__button-pushed');
+        tip.classList.add(Config.cssStyles.tipPushed);
       }
     });
   },
@@ -221,23 +233,23 @@ const EnglishPuzzle = {
   /** отобразить перевод и возможность озвучивания на основании конфига подсказок */
   setBlocksByTips() {
     const { tips, words } = this.settings;
-    const translationContainer = document.querySelector('.englishPuzzle__translation');
-    const audioIconBlock = document.querySelector('.englishPuzzle__sound .sound__icon');
+    const translationContainer = document.querySelector(Config.containers.translation);
+    const audioIconBlock = document.querySelector(Config.containers.audioIcon);
 
     translationContainer.innerHTML = (tips.translate)
       ? words.currentWord.textExampleTranslate :
       '';
 
     if (tips.audio) {
-      audioIconBlock.classList.remove('sound__icon-disabled');
+      audioIconBlock.classList.remove(Config.cssStyles.soundIconDisabled); 
     } else {
-      audioIconBlock.classList.add('sound__icon-disabled');
+      audioIconBlock.classList.add(Config.cssStyles.soundIconDisabled);
     }
   },
 
   /** наполнить поле с выполненными фразами */
   fillDonePhrases() {
-    const donePhrasesContainer = document.querySelector('.englishPuzzle__phrases-done');
+    const donePhrasesContainer = document.querySelector(Config.containers.donePhrases);
     const donePhrases = this.settings.words.solvedWords;
 
     donePhrases.forEach((phrase, i) => {
@@ -258,7 +270,7 @@ const EnglishPuzzle = {
     const doneRounds = this.settings.words.solvedWords.length;
     const roundPhrases = [...Array(wordsInRound)];
 
-    const roundPhraseContainer = document.querySelector('.englishPuzzle__phrases-round');
+    const roundPhraseContainer = document.querySelector(Config.containers.roundPhrase);
     const roundPhraseInnerContainer = Utils.createBlockInside('div', 'englishPuzzle__phrase', roundPhraseContainer);
     Utils.createBlockInside('div', ['phrase__number', 'phrase__number-current'], roundPhraseInnerContainer, doneRounds + 1);
     const currentPhraseContainer = Utils.createBlockInside('div', 'phrase__words', roundPhraseInnerContainer);
@@ -271,91 +283,284 @@ const EnglishPuzzle = {
   /** наполнить поле с заданием (для перемешанных слов) */
   fillTaskPhrase() {
     const shuffledCurrentWord = this.settings.words.shuffledCurrentWord;
-    const taskPhraseContainer = document.querySelector('.englishPuzzle__task .task__words');
+    const taskPhraseContainer = document.querySelector(Config.containers.taskPhrase);
     shuffledCurrentWord.forEach((word) => {
       Utils
-        .createBlockInside('div', 'task__word', taskPhraseContainer, word.text, {}, { orderTask: word.order + 1 });
+        .createBlockInside('div', 'task__word', taskPhraseContainer, word.text, {draggable: true}, { orderTask: word.order + 1 });
     });
   },
 
   /** повесить слушатели событий */
   addListeners() {
-    const taskWordsContainer = document.querySelector('.task__words');
+    const taskWordsContainer = document.querySelector(Config.containers.taskPhrase);
+    // drag and drop
+    taskWordsContainer.addEventListener('dragover', this.processDragOverTask);
+    taskWordsContainer.addEventListener('dragenter', this.processDragEnterTask);
+
+    taskWordsContainer.addEventListener('dragstart', this.processDragStartTaskWord);
+    taskWordsContainer.addEventListener('dragend', this.processDragEndTaskWord);
+    taskWordsContainer.addEventListener('drop', this.processDropToTask);
+
+    // click
     taskWordsContainer.addEventListener('click', this.processTaskWordClick);
 
-    const roundWordsContainer = document.querySelector('.englishPuzzle__phrases-round .phrase__words');
+    const roundWordsContainer = document.querySelector(Config.containers.roundPhraseWords);
+    // drag and drop
+    roundWordsContainer.addEventListener('dragover', this.processDragOverRound);
+    roundWordsContainer.addEventListener('dragenter', this.processDragEnterRound);
+    
+    roundWordsContainer.addEventListener('dragstart', this.processDragStartRoundWord);    
+    roundWordsContainer.addEventListener('dragend', this.processDragEndRoundWord);    
+    roundWordsContainer.addEventListener('drop', this.processDropToRound);
+    // click
     roundWordsContainer.addEventListener('click', this.processRoundWordClick);
 
-    const buttonsContainer = document.querySelector('.englishPuzzle__buttons.gameButtons')
-    const idkButton = buttonsContainer.querySelector('.gameButtons__button-idk');
-    const checkButton = buttonsContainer.querySelector('.gameButtons__button-check');
-    const contButton = buttonsContainer.querySelector('.gameButtons__button-cont');
-    const resButton = buttonsContainer.querySelector('.gameButtons__button-res');
+    const buttonsContainer = document.querySelector(Config.containers.gameButtons)
+    const idkButton = buttonsContainer.querySelector(Config.buttons.idkButton);
+    const checkButton = buttonsContainer.querySelector(Config.buttons.checkButton);
+    const contButton = buttonsContainer.querySelector(Config.buttons.contButton);
+    const resButton = buttonsContainer.querySelector(Config.buttons.resButton);
 
     idkButton.addEventListener('click', this.processIdkClick);
     checkButton.addEventListener('click', this.processCheckClick);
     contButton.addEventListener('click', this.processContClick);
     resButton.addEventListener('click', this.processResClick);
 
-    const menuLevel = document.querySelector('.level__list');
+    const menuLevel = document.querySelector(Config.containers.levelMenuTitle);
     menuLevel.addEventListener('click', this.toggleLevels);
 
-    const levelMenuItems = document.querySelector('.level__menu.dropdown__menu');
+    const levelMenuItems = document.querySelector(Config.containers.levelDropDownMenu);
     levelMenuItems.addEventListener('click', this.changeLevel);
 
-    const menuPage = document.querySelector('.page__list');
+    const menuPage = document.querySelector(Config.containers.pageMenuTitle);
     menuPage.addEventListener('click', this.togglePages);
 
-    const pageMenuItems = document.querySelector('.page__menu.dropdown__menu');
+    const pageMenuItems = document.querySelector(Config.containers.pageDropDownMenu);
     pageMenuItems.addEventListener('click', this.changePage);
 
-    const tipsContainer = document.querySelector('.menu__tips.tips');
+    const tipsContainer = document.querySelector(Config.containers.tips);
     tipsContainer.addEventListener('click', this.processTipClick);
 
-    const soundIconBlock = document.querySelector('.englishPuzzle__sound .sound__icon');
+    const soundIconBlock = document.querySelector(Config.containers.audioIcon);
     soundIconBlock.addEventListener('click', this.processSoundClick);
+
   },
 
   /** удалить все слушатели событий
    * листенеры автоматически удаляются при удалении эл-та и отсутствии ссылок, но...
   */
   removeListeners() {
-    const taskWordsContainer = document.querySelector('.task__words');
-    const roundWordsContainer = document.querySelector('.englishPuzzle__phrases-round .phrase__words');
-    const buttonsContainer = document.querySelector('.englishPuzzle__buttons.gameButtons')
-    const idkButton = buttonsContainer.querySelector('.gameButtons__button-idk');
-    const checkButton = buttonsContainer.querySelector('.gameButtons__button-check');
-    const contButton = buttonsContainer.querySelector('.gameButtons__button-cont');
-    const resButton = buttonsContainer.querySelector('.gameButtons__button-res');
-    const menuLevel = document.querySelector('.level__list');
-    const levelMenuItems = document.querySelector('.level__menu.dropdown__menu');
-    const menuPage = document.querySelector('.page__list');
-    const pageMenuItems = document.querySelector('.page__menu.dropdown__menu');
-
+    const taskWordsContainer = document.querySelector(Config.containers.taskPhrase);
     taskWordsContainer.removeEventListener('click', this.processTaskWordClick);
+
+    const roundWordsContainer = document.querySelector(Config.containers.roundPhraseWords);
     roundWordsContainer.removeEventListener('click', this.processRoundWordClick);
+
+    const buttonsContainer = document.querySelector(Config.containers.gameButtons)
+    const idkButton = buttonsContainer.querySelector(Config.buttons.idkButton);
+    const checkButton = buttonsContainer.querySelector(Config.buttons.checkButton);
+    const contButton = buttonsContainer.querySelector(Config.buttons.contButton);
+    const resButton = buttonsContainer.querySelector(Config.buttons.resButton);
+
     idkButton.removeEventListener('click', this.processIdkClick);
     checkButton.removeEventListener('click', this.processCheckClick);
     contButton.removeEventListener('click', this.processContClick);
     resButton.removeEventListener('click', this.processResClick);
+
+    const menuLevel = document.querySelector(Config.containers.levelMenuTitle);
     menuLevel.removeEventListener('click', this.toggleLevels);
+
+    const levelMenuItems = document.querySelector(Config.containers.levelDropDownMenu);
     levelMenuItems.removeEventListener('click', this.changeLevel);
+
+    const menuPage = document.querySelector(Config.containers.pageMenuTitle);
     menuPage.removeEventListener('click', this.togglePages);
+
+    const pageMenuItems = document.querySelector(Config.containers.pageDropDownMenu);
     pageMenuItems.removeEventListener('click', this.changePage);
+
+    const tipsContainer = document.querySelector(Config.containers.tips);
+    tipsContainer.removeEventListener('click', this.processTipClick);
+
+    const soundIconBlock = document.querySelector(Config.containers.audioIcon);
+    soundIconBlock.removeEventListener('click', this.processSoundClick);
+  },
+
+  /** drop в контейнер раунда */
+  processDropToRound: (event) => {
+    EnglishPuzzle.deleteHighlightAreas();   
+    console.log('dropped Data: ', event.dataTransfer.getData('text'));
+    console.log('dropped event target: ', event.target);
+    const underElement = event.target;
+    const order = event.dataTransfer.getData('text');
+    const draggedEl = document.querySelector(`${Config.containers.taskPhrase} .task__word[data-order-task="${order}"]`);
+    console.log('draggedEl', draggedEl);
+    if (!draggedEl) {
+      return;
+    }
+    // EnglishPuzzle.processTaskWordClick({target: draggedEl});
+    EnglishPuzzle.dropToSpecElement(draggedEl, underElement);
+    // const roundWordsContainer = document.querySelector(Config.containers.roundPhraseWords);
+  },
+
+  /** drop элемента внутрь другого */
+  dropToSpecElement(dragEl, dropEl) {
+    const roundArr = this.getRoundArr();
+    const dropPosition = this.getDropPosition(dropEl);
+    console.log('roundArr', roundArr);
+    console.log('dropPosition', dropPosition);
+
+    /** draggedParams: { width, order, text } */
+    const draggedParams = EnglishPuzzle.getClickedElParams(dragEl);
+    roundArr[dropPosition] = draggedParams;
+
+    /** поместить пустой элемент на месте, с которого забрали слово */
+    dragEl.classList.add(Config.cssStyles.emptyWord);
+    dragEl.innerHTML = '';
+    dragEl.style.width = `${draggedParams.width}px`;
+    dragEl.style.flexGrow = '0';
+    dragEl.draggable = false;
+
+    /** отрендерить слова в раунде на основании массива */
+    EnglishPuzzle.renderRoundWordsFromArr(roundArr);
+
+    if (EnglishPuzzle.checkRoundWordFilled()) {
+      EnglishPuzzle.showButton('check');
+    }
+  },
+
+  /** рендер слов в раунде на основании массива */
+  renderRoundWordsFromArr(configArr) {
+    const roundWordsContainer = document.querySelector(Config.containers.roundPhraseWords);
+    HtmlHelper.clearContainers([roundWordsContainer]);
+    configArr.forEach((elem) => { /** elem: { width, order, text } */
+      if (!elem) {
+        Utils.createBlockInside('div', ['phrase__word', 'empty'], roundWordsContainer);
+      } else {
+        const word = Utils.createBlockInside('div', ['phrase__word'], roundWordsContainer, elem.text);
+        word.style.width = `${elem.width}px`;
+        word.style.flexGrow = '0';
+        word.dataset.orderTask = elem.order;
+        word.draggable = true;
+      }
+    });
+  },
+
+  /** получить позицию, на которую сбрасывается элемент */
+  getDropPosition(dropEl) {
+    const index = [...dropEl.parentElement.children].indexOf(dropEl);
+    return index;
+  },
+
+  /** получить элементы в блоке раунда в виде массива */
+  getRoundArr() {
+    const roundWords = Array.from(document.querySelectorAll(`
+      ${Config.containers.roundPhraseWords}
+      ${Config.containers.roundWordsAll}
+    `));
+
+    const roundArr = roundWords.map((block) => {
+      return (block.classList.contains('empty'))
+        ? null
+        : EnglishPuzzle.getClickedElParams(block);
+    });
+    return roundArr;
+  },
+
+  /** drop в контейнер для перемешанных слов */
+  processDropToTask: (event) => {
+    EnglishPuzzle.deleteHighlightAreas();
+    const order = event.dataTransfer.getData('text');
+    const draggedEl = document.querySelector(`${Config.containers.roundPhrase} .phrase__word[data-order-task="${order}"]`);
+    if (!draggedEl) {
+      return;
+    }
+    EnglishPuzzle.processRoundWordClick({target: draggedEl});
+    
+  },
+
+  /** установить передаваемые данные, подсветить поле для drop */
+  processDragStartTaskWord: (event) => {
+    event.stopPropagation();
+    if (event.target.classList.contains(Config.cssStyles.emptyWord)) {
+      return;
+    }
+    if (event.target.classList.contains(Config.cssStyles.roundWord)) {
+      return;
+    }
+    event.dataTransfer.setData('text', event.target.dataset.orderTask);
+    const roundWordsContainer = document.querySelector(Config.containers.roundPhraseWords);
+    roundWordsContainer.classList.add(Config.cssStyles.areaUnderDragged);
+  },
+
+  /** установить передаваемые данные, подсветить поле для drop */
+  processDragStartRoundWord: (event) => {
+    event.stopPropagation();
+    if (event.target.classList.contains(Config.cssStyles.emptyWord)) {
+      return;
+    }
+    if (event.target.classList.contains(Config.cssStyles.taskWord)) {
+      return;
+    }
+
+    event.dataTransfer.setData('text', event.target.dataset.orderTask);
+    const taskWordsContainer = document.querySelector(Config.containers.taskPhrase);
+    taskWordsContainer.classList.add(Config.cssStyles.areaUnderDragged);
+  },
+
+  /** разрешить drop на поле round */
+  processDragOverRound: (event) => {
+    event.preventDefault();
+  },
+
+  /** разрешить drop на поле round */
+  processDragEnterRound: (event) => {
+    event.preventDefault();
+  },
+
+  /** разрешить drop на поле task */
+  processDragOverTask: (event) => {
+    event.preventDefault();
+  },
+
+  /** разрешить drop на поле task */
+  processDragEnterTask: (event) => {
+    event.preventDefault();
+  },
+
+  processDragEndRoundWord: () => {
+    EnglishPuzzle.deleteHighlightAreas();
+  },
+
+  processDragEndTaskWord: () => {
+    EnglishPuzzle.deleteHighlightAreas();
+  },
+
+  /** удалить зеленую подсветку с обоих полей после сбрасывания элемента */
+  deleteHighlightAreas() {
+    const roundWordsContainer = document.querySelector(Config.containers.roundPhraseWords);
+    if (roundWordsContainer.classList.contains(Config.cssStyles.areaUnderDragged)) {
+      roundWordsContainer.classList.remove(Config.cssStyles.areaUnderDragged);
+    }
+    const taskWordsContainer = document.querySelector(Config.containers.taskPhrase);
+    if (taskWordsContainer.classList.contains(Config.cssStyles.areaUnderDragged)) {
+      taskWordsContainer.classList.remove(Config.cssStyles.areaUnderDragged);
+    }
+  },
+
+
+  /** отобразить нужную страницу, скрыть остальные */
+  loadPage(pageName) {
+    HtmlHelper.clearAndHideAll();
+    HtmlHelper.showPage(Config.containers[Config.pages[pageName]]);
+    // this.removeListeners();
   },
 
   /** клик по кнопке Results */
   processResClick: () => {
-    EnglishPuzzle.clearGameField();
-
-    const gameField = document.querySelector('.englishPuzzle__field');
-    const resField = document.querySelector('.englishPuzzle__results');
-
-    gameField.classList.add('englishPuzzle__field-hidden');
-    resField.classList.remove('englishPuzzle__results-hidden');
+    EnglishPuzzle.loadPage('results');
 
     const { settings } = EnglishPuzzle;
-
     const newGameSettings = EnglishPuzzle.getNewLevelPageRound(settings.game);
     settings.game = Object.assign({}, newGameSettings);
     Model.saveProgress(newGameSettings);
@@ -368,22 +573,22 @@ const EnglishPuzzle = {
   fillResults() {
     const { knowWords, idkWords } = this.settings.localStat;
 
-    const failContainer = document.querySelector('.englishPuzzle__results-fail');
-    const failCount = failContainer.querySelector('.count__idk');
-    failCount.innerHTML = this.settings.localStat.idkWords.length;
-    const failWordsContainer = failContainer.querySelector('.fail__words');
+    const failContainer = document.querySelector(Config.containers.resultsFail);
+    const failCount = failContainer.querySelector(Config.containers.failCount);
+    const failWordsContainer = failContainer.querySelector(Config.containers.failWords);
 
+    failCount.innerHTML = this.settings.localStat.idkWords.length;
     idkWords.forEach((word, i) => {
       const failWordBlock = Utils.createBlockInside('div', ['block__word', 'fail__word'], failWordsContainer, '', {}, { sound: `fail-${i}` });
       Utils.createBlockInside('div', 'word__soundicon', failWordBlock);
       Utils.createBlockInside('div', 'word__text', failWordBlock, word.textExample);
     });
 
-    const successContainer = document.querySelector('.englishPuzzle__results-success');
-    const successCount = successContainer.querySelector('.count__iknow');
+    const successContainer = document.querySelector(Config.containers.resultsSuccess);
+    const successCount = successContainer.querySelector(Config.containers.successCount);
+    const successWordsContainer = successContainer.querySelector(Config.containers.successWords);
+    
     successCount.innerHTML = this.settings.localStat.knowWords.length;
-    const successWordsContainer = successContainer.querySelector('.success__words');
-
     knowWords.forEach((word, i) => {
       const successWordBlock = Utils.createBlockInside('div', ['block__word', 'success__word'], successWordsContainer, '', {}, { sound: `success-${i}` });
       Utils.createBlockInside('div', 'word__soundicon', successWordBlock);
@@ -394,17 +599,17 @@ const EnglishPuzzle = {
   },
 
   addListenersToResults() {
-    const wordsContainer = document.querySelector('.englishPuzzle__resultsField');
+    const wordsContainer = document.querySelector(Config.containers.wholeResultsField);
     wordsContainer.addEventListener('click', this.processResWordClick);
 
-    const resultsButtonContainer = document.querySelector('.englishPuzzle__results .results__buttons');
-    const resultsContButon = resultsButtonContainer.querySelector('.results__continue');
+    const resultsButtonContainer = document.querySelector(Config.containers.resultsButtons);
+    const resultsContButon = resultsButtonContainer.querySelector(Config.resultsButtons.continue);
     resultsContButon.addEventListener('click', this.processResultsContClick);
   },
 
   /** клик по строке со словом на странице результатов (угаданной или нет) */
   processResWordClick: ({ target }) => {
-    const wordBlock = target.closest('.block__word');
+    const wordBlock = target.closest(Config.containers.resultsWord);
     if (!wordBlock) {
       return;
     }
@@ -416,27 +621,13 @@ const EnglishPuzzle = {
     const arr = (wordArrName === 'fail') ? idkWords : knowWords;
     
     const audio = arr[wordId].audioExample;
-    const audioFullPath = `https://raw.githubusercontent.com/dispector/rslang-data/master/${audio}`;
+    const audioFullPath = `${Config.api.githubRawData}${audio}`;
     EnglishPuzzle.playAudio(audioFullPath);
   },
 
   /** клик по кнопке "Continue" на странице результатов */
   processResultsContClick: async () => {
-    EnglishPuzzle.clearResults();
-
-    const gameField = document.querySelector('.englishPuzzle__field');
-    const resField = document.querySelector('.englishPuzzle__results');
-
-    gameField.classList.remove('englishPuzzle__field-hidden');
-    resField.classList.add('englishPuzzle__results-hidden');
-
-    // const { settings } = EnglishPuzzle;
-
-    // const newGameSettings = EnglishPuzzle.getNewLevelPageRound(settings.game);
-    // settings.game = Object.assign({}, newGameSettings);
-    // Model.saveProgress(newGameSettings);
-    // Model.saveTips(settings.nextRoundTips);
-
+    EnglishPuzzle.loadPage('game');    
     EnglishPuzzle.settings.localStat = {
       knowWords: [],
       idkWords: [],
@@ -448,30 +639,14 @@ const EnglishPuzzle = {
 
   },
 
-  /** очистить страницу с результатами */
-  clearResults() {
-    const failContainer = document.querySelector('.englishPuzzle__results-fail');
-    const failCount = failContainer.querySelector('.count__idk');
-    const failWordsContainer = failContainer.querySelector('.fail__words');
-    failCount.innerHTML = '';
-    failWordsContainer.innerHTML = '';
-
-    const successContainer = document.querySelector('.englishPuzzle__results-success');
-    const successCount = successContainer.querySelector('.count__iknow');
-    const successWordsContainer = successContainer.querySelector('.success__words');
-    successCount.innerHTML = '';
-    successWordsContainer.innerHTML = '';
-  },
-
   /** клик по подсказке */
   processTipClick: ({ target }) => {
-    if (!target.classList.contains('tips__button')) {
+    if (!target.classList.contains(Config.cssStyles.tipButton)) {
       return;
     }
     const { tips, nextRoundTips } = EnglishPuzzle.settings;
     const dataTip = target.dataset.tip;
-
-    target.classList.toggle('tips__button-pushed');
+    target.classList.toggle(Config.cssStyles.tipPushed);
     nextRoundTips[dataTip] = !nextRoundTips[dataTip];
 
     if (dataTip === 'autosound') {
@@ -491,7 +666,7 @@ const EnglishPuzzle = {
   /** проиграть файл, поморгать иконкой */
   processCurrentAudio() {
     const audio = this.settings.words.currentWord.audioExample;
-    const audioFullPath = `https://raw.githubusercontent.com/dispector/rslang-data/master/${audio}`;
+    const audioFullPath = `${Config.api.githubRawData}${audio}`;
     this.playAudio(audioFullPath);
     this.blinkAudioIcon();
   },
@@ -504,16 +679,16 @@ const EnglishPuzzle = {
 
   /** моргание иконки */
   blinkAudioIcon() {
-    const soundIcon = document.querySelector('.englishPuzzle__sound .sound__icon');
-    soundIcon.classList.add('sound__icon-blink');
+    const soundIcon = document.querySelector(Config.containers.audioIcon);
+    soundIcon.classList.add(Config.cssStyles.soundIconBlink);
     setTimeout(() => {
-      soundIcon.classList.remove('sound__icon-blink');
+      soundIcon.classList.remove(Config.cssStyles.soundIconBlink);
     }, 5000);
   },
 
   /** клик по уровню в меню */
   changeLevel: async ({ target }) => {
-    if (!target.classList.contains('menu__item')) {
+    if (!target.classList.contains(Config.cssStyles.menuItem)) {
       return;
     }
     const { settings } = EnglishPuzzle;
@@ -521,11 +696,12 @@ const EnglishPuzzle = {
 
     const newLevel = parseInt(target.dataset.level, 10);
     const currentLevel = gameSettings.level;
-
+    
     if (newLevel === currentLevel) {
       return;
     }
 
+    // установить новый уровень, и начальные страницу и раунд
     const newGameSettings = Object.assign({}, {
       level: newLevel,
       page: 0,
@@ -536,6 +712,7 @@ const EnglishPuzzle = {
     Model.saveProgress(newGameSettings);
     Model.saveTips(settings.nextRoundTips);
 
+    // так как уровень новый, стереть всю статистику
     EnglishPuzzle.settings.localStat = {
       knowWords: [],
       idkWords: [],
@@ -548,7 +725,7 @@ const EnglishPuzzle = {
 
   /** клик по странице в меню */
   changePage: async ({ target }) => {
-    if (!target.classList.contains('menu__item')) {
+    if (!target.classList.contains(Config.cssStyles.menuItem)) {
       return;
     }
     const { settings } = EnglishPuzzle;
@@ -560,7 +737,7 @@ const EnglishPuzzle = {
     if (newPage === currentPage) {
       return;
     }
-
+    // установить новую начальную страницу и раунд, уровень оставить без изменения
     const newGameSettings = Object.assign({}, {
       level: gameSettings.level,
       page: newPage,
@@ -571,6 +748,7 @@ const EnglishPuzzle = {
     Model.saveProgress(newGameSettings);
     Model.saveTips(settings.nextRoundTips);
 
+    // так как страница новая, стереть всю статистику
     EnglishPuzzle.settings.localStat = {
       knowWords: [],
       idkWords: [],
@@ -583,14 +761,14 @@ const EnglishPuzzle = {
 
   /** показать/скрыть меню с выбором уровней */
   toggleLevels: () => {
-    const menuContainer = document.querySelector('.level__menu.dropdown__menu');
-    menuContainer.classList.toggle('dropdown__menu-hidden');
+    const menuContainer = document.querySelector(Config.containers.levelDropDownMenu);
+    menuContainer.classList.toggle(Config.cssStyles.hidden);
   },
 
   /** показать/скрыть меню с выбором страниц */
   togglePages: () => {
-    const menuContainer = document.querySelector('.page__menu.dropdown__menu');
-    menuContainer.classList.toggle('dropdown__menu-hidden');
+    const menuContainer = document.querySelector(Config.containers.pageDropDownMenu);
+    menuContainer.classList.toggle(Config.cssStyles.hidden);
   },
 
   /** получить следующие level, page, round на основании текущих */
@@ -644,27 +822,7 @@ const EnglishPuzzle = {
   /** перезагрузить поле - очистить и снять слушатели событий */
   clearGameField() {
     this.removeListeners();
-    this.clearField();
-  },
-
-  /** очистить игровое поле - собранные слова, поле сбора, перемеш. слова и т.д. */
-  clearField() {
-    const donePhrasesContainer = document.querySelector('.englishPuzzle__phrases-done');
-    const roundPhraseContainer = document.querySelector('.englishPuzzle__phrases-round');
-    const taskPhraseContainer = document.querySelector('.englishPuzzle__task .task__words');
-    const menuLevelContainer = document.querySelector('.level__menu.dropdown__menu');
-    const menuPageContainer = document.querySelector('.page__menu.dropdown__menu');
-    const translationContainer = document.querySelector('.englishPuzzle__translation');
-
-    const containers = [
-      donePhrasesContainer,
-      roundPhraseContainer,
-      taskPhraseContainer,
-      menuLevelContainer,
-      menuPageContainer,
-      translationContainer,
-    ];
-    containers.forEach((cont) => cont.innerHTML = '');
+    HtmlHelper.clearGameField();
   },
 
   /** нажатие на кнопку "I don't know":
@@ -676,16 +834,16 @@ const EnglishPuzzle = {
    * 6) если последний раунд, показать кнопку "Статистика"
    */
   processIdkClick: () => {
-    const roundWordsContainer = document.querySelector('.englishPuzzle__phrases-round .phrase__words');
-    roundWordsContainer.innerHTML = '';
+    const roundWordsContainer = document.querySelector(Config.containers.roundPhraseWords);
+    HtmlHelper.clearContainers([roundWordsContainer]);
 
     const currentWordArr = EnglishPuzzle.settings.words.currentWord.textExample.split(' ');
     currentWordArr.forEach((word) =>
       Utils.createBlockInside('div', 'phrase__word', roundWordsContainer, word)
     );
 
-    const taskWordsContainer = document.querySelector('.task__words');
-    taskWordsContainer.innerHTML = '';
+    const taskWordsContainer = document.querySelector(Config.containers.taskPhrase);
+    HtmlHelper.clearContainers([taskWordsContainer]);
 
     currentWordArr.forEach(() =>
       Utils.createBlockInside('div', ['task__word', 'empty'], taskWordsContainer)
@@ -718,11 +876,10 @@ const EnglishPuzzle = {
    * 2) если предложение угадано верно, снять слушатели, показать/спрятать кнопки, проиграть фразу
   */
   processCheckClick: () => {
-    const roundWordsContainer = document
-      .querySelector('.englishPuzzle__phrases-round .phrase__words');
-    const taskWordsContainer = document.querySelector('.task__words');
+    const roundWordsContainer = document.querySelector(Config.containers.roundPhraseWords);
+    const taskWordsContainer = document.querySelector(Config.containers.taskPhrase);
 
-    const roundWordsElsArr = Array.from(roundWordsContainer.querySelectorAll('.phrase__word'));
+    const roundWordsElsArr = Array.from(roundWordsContainer.querySelectorAll(Config.containers.roundWordsAll));
     const roundWordsArr = roundWordsElsArr.map((element) => element.innerHTML);
     const currentWordArr = EnglishPuzzle.settings.words.currentWord.textExample.split(' ');
 
@@ -731,8 +888,8 @@ const EnglishPuzzle = {
       const cond = (word === currentWordArr[i]);
       corrects = (cond) ? (corrects + 1) : corrects;
       const cssClass = (cond)
-        ? 'phrase__word-correct'
-        : 'phrase__word-incorrect';
+        ? Config.cssStyles.roundWordCorrect
+        : Config.cssStyles.roundWordIncorrect;
 
       roundWordsElsArr[i].classList.add(cssClass);
     });
@@ -780,6 +937,7 @@ const EnglishPuzzle = {
 
     if (settings.game.round !== 0) { // не надо загружать новые слова
       EnglishPuzzle.updateWordsByRound(settings.game.round);
+      EnglishPuzzle.updateTipsByRound(settings.nextRoundTips);
     } else { // загрузить новые 10 слов
       EnglishPuzzle.settings.localStat = {
         knowWords: [],
@@ -793,26 +951,32 @@ const EnglishPuzzle = {
 
   },
 
+  /** обновить конфигурацию подсказок */
+  updateTipsByRound(tipsObject) {
+    EnglishPuzzle.settings.tips = Object.assign({}, tipsObject);
+  },
+
   /** 
    * клик по слову в блоке с перемешанными словами:
    * 1) сделать кликнутое слово пустым с сохранением ширины,
    * 2) добавить копию слова в ПЕРВУЮ ПУСТУЮ ячейку блока сбора
    * */
   processTaskWordClick: ({ target }) => {
-    if (!target.classList.contains('task__word')) {
+    if (!target.classList.contains(Config.cssStyles.taskWord)) {
       return;
     }
 
-    if (target.classList.contains('empty')) {
+    if (target.classList.contains(Config.cssStyles.emptyWord)) {
       return;
     }
 
     const { width, text, order } = EnglishPuzzle.getClickedElParams(target);
 
-    target.classList.add('empty');
+    target.classList.add(Config.cssStyles.emptyWord);
     target.innerHTML = '';
     target.style.width = `${width}px`;
     target.style.flexGrow = '0';
+    target.draggable = false;
 
     const firstEmptyWord = document.querySelectorAll('.phrase__word.empty')[0];
     EnglishPuzzle.updateElement(firstEmptyWord, text, width, order);
@@ -824,19 +988,19 @@ const EnglishPuzzle = {
 
   /** показать кнопку с переданным именем */
   showButton(buttonName) {
-    const buttonsContainer = document.querySelector('.englishPuzzle__buttons.gameButtons');
-    const button = buttonsContainer.querySelector(`.gameButtons__button-${buttonName}`);
-    if (button.classList.contains('gameButtons__button-hidden')) {
-      button.classList.remove('gameButtons__button-hidden');
+    const buttonsContainer = document.querySelector(Config.containers.gameButtons);
+    const button = buttonsContainer.querySelector(`${Config.buttons.prefix}${buttonName}`);
+    if (button.classList.contains(Config.cssStyles.hidden)) {
+      button.classList.remove(Config.cssStyles.hidden);
     }
   },
 
   /** спрятать кнопку с переданным именем */
   hideButton(buttonName) {
-    const buttonsContainer = document.querySelector('.englishPuzzle__buttons.gameButtons');
-    const button = buttonsContainer.querySelector(`.gameButtons__button-${buttonName}`);
-    if (!button.classList.contains('gameButtons__button-hidden')) {
-      button.classList.add('gameButtons__button-hidden');
+    const buttonsContainer = document.querySelector(Config.containers.gameButtons);
+    const button = buttonsContainer.querySelector(`${Config.buttons.prefix}${buttonName}`);
+    if (!button.classList.contains(Config.cssStyles.hidden)) {
+      button.classList.add(Config.cssStyles.hidden);
     }
   },
 
@@ -848,14 +1012,14 @@ const EnglishPuzzle = {
    * 4) удалить стили проверенных слов (красный/зеленый цвет)
    * */
   processRoundWordClick: ({ target }) => {
-    if (!target.classList.contains('phrase__word')) {
+    if (!target.classList.contains(Config.cssStyles.roundWord)) {
       return;
     }
 
-    if (target.classList.contains('empty')) {
+    if (target.classList.contains(Config.cssStyles.emptyWord)) {
       return;
     }
-    const phraseContainer = document.querySelector('.englishPuzzle__phrases-round .phrase__words');
+    const phraseContainer = document.querySelector(Config.containers.roundPhraseWords);
     const { width, text, order } = EnglishPuzzle.getClickedElParams(target);
 
     // удалить эл-т, по которому кликнули, вставить пустой элемент в конец
@@ -874,14 +1038,15 @@ const EnglishPuzzle = {
 
   /** удалить цвета фонов, которые остались после проверки */
   deleteCheckingStyles() {
-    const roundWordsContainer = document.querySelector('.englishPuzzle__phrases-round .phrase__words');
-    const roundWordsElsArr = Array.from(roundWordsContainer.querySelectorAll('.phrase__word'));
+    const roundWordsContainer = document.querySelector(Config.containers.roundPhraseWords);
+    const roundWordsElsArr = Array
+      .from(roundWordsContainer.querySelectorAll(Config.containers.roundWordsAll));
     roundWordsElsArr.forEach((el) => {
-      if (el.classList.contains('phrase__word-incorrect')) {
-        el.classList.remove('phrase__word-incorrect');
+      if (el.classList.contains(Config.cssStyles.roundWordIncorrect)) {
+        el.classList.remove(Config.cssStyles.roundWordIncorrect);
       }
-      if (el.classList.contains('phrase__word-correct')) {
-        el.classList.remove('phrase__word-correct');
+      if (el.classList.contains(Config.cssStyles.roundWordCorrect)) {
+        el.classList.remove(Config.cssStyles.roundWordCorrect);
       }
     });
 
@@ -914,6 +1079,7 @@ const EnglishPuzzle = {
     element.style.width = `${newWidth}px`;
     element.style.flexGrow = '0';
     element.dataset.orderTask = newOrder;
+    element.draggable = true;
   }
 };
 

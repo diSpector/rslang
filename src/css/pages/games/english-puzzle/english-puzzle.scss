@@ -372,6 +372,22 @@ $imgCommonPath: '../../../../img/common/backgrounds/';
     border: 1px solid darkgrey;
 }
 
+.task__word:active {
+  // opacity: 1;
+  // border: 1px solid green;
+  cursor: pointer;
+}
+.task__word-dragged {
+  // opacity: 1;
+  // border: 1px solid green;
+  cursor: pointer;
+}
+
+.englishPuzzle__area-underDrag {
+  // border: 1px solid red;
+  box-shadow: 0px 0px 4px 1px green;  
+}
+
 .englishPuzzle__buttons {
     margin: 30px auto;
     display: flex;
@@ -438,6 +454,14 @@ $imgCommonPath: '../../../../img/common/backgrounds/';
   box-sizing: border-box;
   color: black;
   padding: 100px;
+}
+
+.englishPuzzle__block-hidden {
+  display: none;
+}
+
+.englishPuzzle__page-hidden {
+  display: none;
 }
 
 .englishPuzzle__results-hidden {
