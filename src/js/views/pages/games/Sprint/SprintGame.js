@@ -1,3 +1,5 @@
+import Sprint from './Sprint';
+
 let countCorrect = 0;
 const data = JSON.parse(localStorage.getItem('data'));
 
@@ -18,7 +20,6 @@ const generate = (words) => {
 };
 
 const check = (count) => {
-  console.log('check', count);
   if (count % 2 === 0) {
     countCorrect += 1;
     const k = Number(document.querySelector('.sprint--game__result').innerText);
@@ -63,29 +64,31 @@ const timerw = () => {
 };
 
 const game = () => {
-  let count = generate(['word', 'слово', 'не слово']);
-  document.querySelector('.sprint--button__correct').onclick = () => {
-    count += 1;
-    check(count);
-    game();
-  };
-  document.querySelector('.sprint--button__error').onclick = () => {
-    count += 0;
-    check(count);
-    game();
-  };
-  document.onkeyup = (event) => {
-    if (event.code === 'ArrowLeft') {
+  Sprint.settings.model.getTwoPossibleTranslations().then((data) => {
+    let count = generate([data.correct.word, data.correct.wordTranslate, data.incorrect]);
+    document.querySelector('.sprint--button__correct').onclick = () => {
       count += 1;
       check(count);
       game();
-    }
-    if (event.code === 'ArrowRight') {
+    };
+    document.querySelector('.sprint--button__error').onclick = () => {
       count += 0;
       check(count);
       game();
-    }
-  };
+    };
+    document.onkeyup = (event) => {
+      if (event.code === 'ArrowLeft') {
+        count += 1;
+        check(count);
+        game();
+      }
+      if (event.code === 'ArrowRight') {
+        count += 0;
+        check(count);
+        game();
+      }
+    };
+  });
 };
 
 export { game, timerw };
