@@ -42,6 +42,7 @@
   }
   font-size: 2.5rem;
   display: flex;
+  flex-wrap: wrap;
   width: 600px;
   padding-left: calc(50vw - 300px);
   padding-top: calc(50vh - 150px);
@@ -137,14 +138,14 @@
 }
 .sprint--game__result {
   font-size: 5rem;
-  width: 150px;
+  width: 100px;
   @include media-tablet {
     position: absolute;
     top: 40px;
   }
 }
 .sprint--game__time{
-  width: 100px;
+  width: 46px;
   padding-left: 54px;
   font-size: 5rem;
   @include media-tablet {
@@ -221,4 +222,25 @@
 .sprint__result{
     color: #23ad00;
     font-size: 2.5rem;
+}
+.sprint--game__arrow{
+  display: flex;
+  text-align: center;
+  margin: 10px auto;
+}
+.sprint--game__arrow_left{
+  background-image: url(../../../../img/games/sprint/right-arrow.png);
+  transform: rotate(180deg);
+  background-size: cover;
+  width: 40px;
+  height: 40px;
+  margin: 0 40px;
+}
+.sprint--game__arrow_right{
+  background-image: url(../../../../img/games/sprint/right-arrow.png);
+  background-size: cover;
+  width: 40px;
+  height: 40px;
+  margin: 0 40px;
+
 }

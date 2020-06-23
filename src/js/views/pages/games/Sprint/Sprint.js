@@ -37,9 +37,13 @@ const Sprint = {
             <button class="sprint--button__error">Неверно</button>
           </div>
         </div>
-        <div class="sprint--game__arrow"></div>
         <div class="sprint--game__time">60</div>
+        <div class="sprint--game__arrow">
+          <div class="sprint--game__arrow_left"></div>          
+          <div class="sprint--game__arrow_right"></div>          
+        </div> 
       </section>
+
       <section class="sprint--end hidden">
         <h2 class=sprint--end__title>Результаты тренировки</h2>
         <div class="sprint--end__message">

@@ -74,8 +74,7 @@ const game = () => {
     check(count);
     game();
   };
-  document.addEventListener('keyup', (event) => {
-    console.log(event);
+  document.onkeyup = (event) => {
     if (event.code === 'ArrowLeft') {
       count += 1;
       check(count);
@@ -86,7 +85,7 @@ const game = () => {
       check(count);
       game();
     }
-  });
+  };
 };
 
 export { game, timerw };
