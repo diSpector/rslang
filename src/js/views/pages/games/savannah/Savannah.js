@@ -50,6 +50,52 @@ const rounds = [
       translation: 'незначительный',
     },
   ],
+
+  [
+    {
+      word: 'elegant',
+      translation: 'элегантный',
+    },
+    {
+      translation: 'слякотный',
+    },
+    {
+      translation: 'внезапный',
+    },
+    {
+      translation: 'собранный',
+    },
+  ],
+  [
+    {
+      word: 'composition',
+      translation: 'композиция',
+    },
+    {
+      translation: 'аннотация',
+    },
+    {
+      translation: 'репетиция',
+    },
+    {
+      translation: 'рукопожатие',
+    },
+  ],
+  [
+    {
+      word: 'devastating',
+      translation: 'разрушительный',
+    },
+    {
+      translation: 'законодательный',
+    },
+    {
+      translation: 'замечательный',
+    },
+    {
+      translation: 'незначительный',
+    },
+  ],
 ];
 
 function shuffle(array) {
@@ -74,6 +120,9 @@ function shuffle(array) {
 }
 
 const Savannah = {
+  mistakesCount: 0,
+  maxMistakesCount: 5,
+  correctAnswersCount: 0,
 
   beforeRender() {
     this.clearHeaderAndFooter();
@@ -153,19 +202,26 @@ const Savannah = {
   checkAnswer(roundIndex) {
     const question = document.querySelector('.savannah--game__question');
     const answersList = document.querySelector('.savannah--game__answersList');
+    const stars = document.querySelectorAll('.savannah--stars__item');
+
+    console.log(this.mistakesCount);
 
     // при отсутствии ответа
     // показываем правильный перевод, когда кончится анимация (5,5 секунд)
     const timerShowCorrectTranslation = setTimeout(() => {
+      console.log(stars);
+      stars[this.mistakesCount].classList.add('savannah--stars__item-lost');
+      this.mistakesCount += 1;
+
       const correct = document.querySelector('.correct');
       correct.classList.add('savannah--game__answer-correct');
 
       question.classList.add('savannah--game__question-explode');
     }, 5500);
 
-    // смена раунда или конец игры
+    // смена раунда или конец игры еще через секунду
     const timerChangeRound = setTimeout(() => {
-      if (roundIndex <= 1) {
+      if (roundIndex <= 4 && this.mistakesCount < this.maxMistakesCount) {
         this.play(roundIndex + 1);
       } else {
         Utils.clearBlock('.savannah--game__question');
@@ -178,6 +234,10 @@ const Savannah = {
     answersList.addEventListener('click', (e) => {
       // клик по переводу
       if (e.target.classList.contains('savannah--game__answer')) {
+        // удаляем таймеры, которые используются при отсутвии ответа
+        clearInterval(timerShowCorrectTranslation);
+        clearInterval(timerChangeRound);
+
         if (e.target.classList.contains('correct')) {
           // если правильно
           e.target.classList.add('savannah--game__answer-correct');
@@ -185,9 +245,6 @@ const Savannah = {
           // Utils.clearBlock('.savannah--game__question');
           // question.setAttribute('style', 'animation-name: none');
           // question.setAttribute('style', 'animation-play-state: paused');
-
-          clearInterval(timerShowCorrectTranslation);
-          clearInterval(timerChangeRound);
         } else {
           // неправильно
           e.target.classList.add('savannah--game__answer-wrong');
@@ -195,13 +252,14 @@ const Savannah = {
 
           const correct = document.querySelector('.correct');
           correct.classList.add('savannah--game__answer-correct');
-          clearInterval(timerShowCorrectTranslation);
-          clearInterval(timerChangeRound);
+
+          stars[this.mistakesCount].classList.add('savannah--stars__item-lost');
+          this.mistakesCount += 1;
         }
 
         // смена раунда или конец игры
         setTimeout(() => {
-          if (roundIndex <= 1) {
+          if (roundIndex <= 4 && this.mistakesCount < this.maxMistakesCount) {
             this.play(roundIndex + 1);
           } else {
             Utils.clearBlock('.savannah--game__question');
