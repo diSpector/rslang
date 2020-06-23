@@ -77,6 +77,7 @@ const SpeakIt = {
                 <div class="button button__restart">Заново</div>
                 <div class="button button__speak">Говорить</div>
                 <div class="button button__results">Результат</div>
+                <div class="button button__startScreen">К старту</div>
             </div>
 
         </div>
@@ -99,6 +100,7 @@ const SpeakIt = {
                 <div class="button button__restart">Повторить</div>
                 <div class="button button__global">Глобальная статистика</div>
                 <div class="button button__next">Продолжить</div>
+                <div class="button button__startScreen">К старту</div>
             </div>
         </div>
         <div class="global">
@@ -309,6 +311,10 @@ const SpeakIt = {
       // нажатие на "Старт"
       const startButton = document.querySelector('.start__button');
       startButton.addEventListener('click', startButtonClick);
+
+
+      const startScreenButton = document.querySelector('.button__startScreen');
+      startScreenButton.addEventListener('click', start());
 
       const levelStartButton = document.querySelector('.level__start__button');
       levelStartButton.addEventListener('click', LevelStartButtonClick);
