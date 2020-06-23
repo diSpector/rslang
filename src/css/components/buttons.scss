@@ -1,0 +1,27 @@
+button{
+  width: 90px;
+  height: 35px;
+  //color: white; 
+  border: 0;
+  outline: none;
+  border-radius: 3px;
+  transition: 0.1s;
+}
+//примеры цветов для кнопок
+.button__correct{
+  background: rgb(64,199,129);
+  box-shadow: -3px -3px rgb(53,167,110) inset;
+  &:active{
+    background: rgb(33,147,90);
+    box-shadow: 3px 3px #17653e inset;
+  }
+}
+
+.button__error{
+  background: #ef5f5f;
+  box-shadow: -3px -3px #c34040 inset;
+  &:active{
+    background: #9e2a2a;
+    box-shadow: 3px 3px #7d1a1a inset;
+  }
+}
