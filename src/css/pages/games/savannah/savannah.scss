@@ -28,6 +28,7 @@
     width: 26px;
     height: 26px;
     opacity: 0.8;
+    z-index: 1;
 
     &-off {
         background-image: url('../../../../img/games/savannah/no-audio.png');
@@ -42,7 +43,7 @@
     margin: 0 3px;
     width: 26px;
     height: 26px;
-    background-image: url('../../../../img/games/savannah//star-filled.png');
+    background-image: url('../../../../img/games/savannah/star-filled.png');
     opacity: 0.8;
 
     &-lost {

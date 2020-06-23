@@ -171,6 +171,7 @@ const Savannah = {
                 </div>
             </div>
         </section>
+        <audio id="savannah-audio"></audio>
     </div>
     `;
 
@@ -199,6 +200,28 @@ const Savannah = {
     });
   },
 
+  isSoundOn() {
+    const soundBtn = document.querySelector('.savannah--sound');
+    return !(soundBtn.classList.contains('savannah--sound-off'));
+  },
+
+  playAudio(file) {
+    const audio = document.querySelector('#savannah-audio');
+
+    if (this.isSoundOn()) {
+      audio.setAttribute('src', `src/audio/${file}.mp3`);
+      audio.play();
+    }
+  },
+
+  toggleSound() {
+    const soundBtn = document.querySelector('.savannah--sound');
+
+    soundBtn.addEventListener('click', () => {
+      soundBtn.classList.toggle('savannah--sound-off');
+    });
+  },
+
   checkAnswer(roundIndex) {
     const question = document.querySelector('.savannah--game__question');
     const answersList = document.querySelector('.savannah--game__answersList');
@@ -209,9 +232,10 @@ const Savannah = {
     // при отсутствии ответа
     // показываем правильный перевод, когда кончится анимация (5,5 секунд)
     const timerShowCorrectTranslation = setTimeout(() => {
-      console.log(stars);
       stars[this.mistakesCount].classList.add('savannah--stars__item-lost');
       this.mistakesCount += 1;
+
+      this.playAudio('error');
 
       const correct = document.querySelector('.correct');
       correct.classList.add('savannah--game__answer-correct');
@@ -235,16 +259,15 @@ const Savannah = {
       // клик по переводу
       if (e.target.classList.contains('savannah--game__answer')) {
         // удаляем таймеры, которые используются при отсутвии ответа
-        clearInterval(timerShowCorrectTranslation);
-        clearInterval(timerChangeRound);
+        clearTimeout(timerShowCorrectTranslation);
+        clearTimeout(timerChangeRound);
 
         if (e.target.classList.contains('correct')) {
           // если правильно
           e.target.classList.add('savannah--game__answer-correct');
           question.classList.remove('savannah--game__question-fall');
-          // Utils.clearBlock('.savannah--game__question');
-          // question.setAttribute('style', 'animation-name: none');
-          // question.setAttribute('style', 'animation-play-state: paused');
+
+          this.playAudio('correct');
         } else {
           // неправильно
           e.target.classList.add('savannah--game__answer-wrong');
@@ -255,6 +278,8 @@ const Savannah = {
 
           stars[this.mistakesCount].classList.add('savannah--stars__item-lost');
           this.mistakesCount += 1;
+
+          this.playAudio('error');
         }
 
         // смена раунда или конец игры
@@ -279,6 +304,7 @@ const Savannah = {
 
   afterRender: async () => {
     const roundIndex = 0;
+    Savannah.toggleSound();
     Game.startGame(() => Savannah.play(roundIndex));
   },
 };
