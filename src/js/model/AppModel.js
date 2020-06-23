@@ -57,13 +57,15 @@ export default class AppModel {
   }
 
   // get a single random word with set difficulty
-  async getRandomWordByDifficulty(difficulty) {
+  async getRandomWordByDifficulty(difficulty, round, roundLength) {
     if (difficulty > 5 || difficulty < 0) {
       return null;
     }
-    const startOfGroup = Math.floor(difficulty * 600); // index of first element in our group
-    const index = startOfGroup + Math.floor(Math.random() * 600);
+    const startOfDifficultyGroup = Math.floor(difficulty * 600);
+    const startOfRound = startOfDifficultyGroup + Math.floor((600 / roundLength) * round);
+    const index = startOfRound + Math.floor(Math.random() * roundLength);
     const result = await this.getWordDataByIndex(index);
+    console.log(startOfDifficultyGroup, startOfRound, index, result);
     return result;
   }
 
@@ -93,7 +95,7 @@ export default class AppModel {
 
   // save current user data in local storage(on document.unload)
   saveUserData() {
-    localStorage.setItem(this.userName, {
+    localStorage.setItem('defaultUser', {
       wordsCounter: this.wordsCounter,
       difficultWords: this.difficultWords,
       deletedWords: this.deletedWords,
@@ -102,12 +104,13 @@ export default class AppModel {
   }
 
   // load user data from local storage(currently happens on document.load)
-  loadUserData(username) {
-    const UserData = localStorage.getItem(username);
+  loadUserData() {
+    const UserData = localStorage.getItem('defaultUser');
     // console.log(UserData);
     if (!UserData) {
       this.setDefaultUserData();
     } else {
+      console.log(UserData.wordsCounter, this.userName);
       this.wordsCounter = UserData.wordsCounter ? UserData.wordsCounter : 100;
       this.difficultWords = UserData.difficultWords ? UserData.difficultWords : []; // ?? check this
       this.deletedWords = UserData.deletedWords ? UserData.deletedWords : [];
