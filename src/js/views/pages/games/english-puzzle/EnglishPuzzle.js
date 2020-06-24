@@ -388,45 +388,137 @@ const EnglishPuzzle = {
 
   /** drop в контейнер раунда */
   processDropToRound: (event) => {
+    // EnglishPuzzle.deleteHighlightAreas();   
+    // console.log('dropped Data: ', event.dataTransfer.getData('text'));
+    // console.log('dropped event target: ', event.target);
+    // const underElement = event.target;
+    // const order = event.dataTransfer.getData('text');
+    // const draggedEl = document.querySelector(`${Config.containers.taskPhrase} .task__word[data-order-task="${order}"]`);
+    // console.log('draggedEl', draggedEl);
+    // if (!draggedEl) {
+    //   return;
+    // }
+    // EnglishPuzzle.dropToSpecElement(draggedEl, underElement);
     EnglishPuzzle.deleteHighlightAreas();   
     console.log('dropped Data: ', event.dataTransfer.getData('text'));
     console.log('dropped event target: ', event.target);
     const underElement = event.target;
-    const order = event.dataTransfer.getData('text');
-    const draggedEl = document.querySelector(`${Config.containers.taskPhrase} .task__word[data-order-task="${order}"]`);
-    console.log('draggedEl', draggedEl);
-    if (!draggedEl) {
-      return;
+    
+    let order = 0;
+    let draggedEl = null;
+    const textParam = event.dataTransfer.getData('text');
+    if (textParam.includes('@@')) {
+      const textParamArr = textParam.split('@@');
+      order = textParamArr[0];
+      const text = textParamArr[1];
+      draggedEl = document.querySelector(`${Config.containers.roundPhraseWords} .phrase__word[data-order-task="${order}"]`);
+      if (!draggedEl) {
+        return;
+      }
+      EnglishPuzzle.dropToSpecElement(draggedEl, underElement, true);
+    } else {
+      order = textParam;
+      draggedEl = document.querySelector(`${Config.containers.taskPhrase} .task__word[data-order-task="${order}"]`);
+      if (!draggedEl) {
+        return;
+      }
+      EnglishPuzzle.dropToSpecElement(draggedEl, underElement);
     }
-    // EnglishPuzzle.processTaskWordClick({target: draggedEl});
-    EnglishPuzzle.dropToSpecElement(draggedEl, underElement);
-    // const roundWordsContainer = document.querySelector(Config.containers.roundPhraseWords);
   },
 
   /** drop элемента внутрь другого */
-  dropToSpecElement(dragEl, dropEl) {
-    const roundArr = this.getRoundArr();
-    const dropPosition = this.getDropPosition(dropEl);
-    console.log('roundArr', roundArr);
-    console.log('dropPosition', dropPosition);
+  dropToSpecElement(dragEl, dropEl, isNeedUpdate = false) {
+    let roundArr = EnglishPuzzle.getRoundArr();
+    const dropPosition = EnglishPuzzle.getDropPosition(dropEl);
+
+    let newRoundArr = [];
 
     /** draggedParams: { width, order, text } */
     const draggedParams = EnglishPuzzle.getClickedElParams(dragEl);
-    roundArr[dropPosition] = draggedParams;
 
     /** поместить пустой элемент на месте, с которого забрали слово */
-    dragEl.classList.add(Config.cssStyles.emptyWord);
-    dragEl.innerHTML = '';
-    dragEl.style.width = `${draggedParams.width}px`;
-    dragEl.style.flexGrow = '0';
-    dragEl.draggable = false;
+    EnglishPuzzle.makeElementEmpty(dragEl, draggedParams.width); 
+
+    if (isNeedUpdate) { // флаг, что перенос внутри раунда
+      roundArr = EnglishPuzzle.getRoundArr();
+    }
+
+    if (!roundArr[dropPosition]) { // если на места сброса нет элемента, просто вставляем новый
+      newRoundArr = roundArr.slice(0);
+      newRoundArr[dropPosition] = draggedParams;
+    } else { // если на месте сброса есть элемент, двигаем массив по-умному
+      newRoundArr = EnglishPuzzle.getShiftedArray(roundArr.slice(0), dropPosition);
+      newRoundArr[dropPosition] = draggedParams;
+    }
 
     /** отрендерить слова в раунде на основании массива */
-    EnglishPuzzle.renderRoundWordsFromArr(roundArr);
+    EnglishPuzzle.renderRoundWordsFromArr(newRoundArr);
 
     if (EnglishPuzzle.checkRoundWordFilled()) {
       EnglishPuzzle.showButton('check');
     }
+  },
+
+  /** сделать элемент пустым - серый цвет, фикс ширина, flex-grow = 0; */
+  makeElementEmpty(elem, width) {
+    elem.classList.add(Config.cssStyles.emptyWord);
+    elem.innerHTML = '';
+    elem.style.width = `${width}px`;
+    elem.style.flexGrow = '0';
+    elem.draggable = false;
+  },
+
+  /** получить новый массив с учетом сдвига от нового элемента */
+  getShiftedArray(arr, pos) {
+    const newArr = arr.slice(0);
+    let beforeArr = [];
+    let middleArr = [];
+    let afterArr = [];
+    let resArr = [];
+
+    const nullIndPos = this.getNullIndexPos(newArr, pos);
+    if (nullIndPos.dir === 'r') {
+      const nullPosToRight = nullIndPos.ind;
+      beforeArr = newArr.slice(0, pos);
+      middleArr = newArr.slice(pos, pos + nullPosToRight);
+      afterArr = newArr.slice(pos + nullPosToRight + 1);
+      resArr = [].concat(beforeArr, null, middleArr, afterArr);
+    } else {
+      const nullPosToLeft = nullIndPos.ind;
+      beforeArr = newArr.slice(0, pos - nullPosToLeft);
+      middleArr = newArr.slice(pos - nullPosToLeft + 1, pos + 1);
+      afterArr = newArr.slice(pos + 1);
+      resArr = [].concat(beforeArr, middleArr, null, afterArr);
+    }
+    return resArr;
+  },
+
+  /** найти через сколько элементов будет пустой элемент */
+  getNullIndexPos(arr, pos) {
+    let resObj = {};
+
+    const arrToRight = arr.slice(pos);
+    const arrToLeft = arr.slice(0, pos + 1).reverse();
+
+    const nullIndex = arrToRight.findIndex((element) => (element === null));
+
+    if (nullIndex > -1) { // если пустой элемент справа, он уже найден
+      resObj = {
+        dir: 'r',
+        ind: nullIndex,
+      };
+    } else { // если пустой элемент слева, найти его индекс
+      resObj = {
+        dir: 'l',
+        ind: arrToLeft.findIndex((element) => (element === null)),
+      };
+    }
+    return resObj;
+  },
+
+  /** найти индекс первого null-элемента */
+  getFirstNullInd(arr) {
+    return arr.findIndex((elem) => elem === null);
   },
 
   /** рендер слов в раунде на основании массива */
@@ -470,13 +562,13 @@ const EnglishPuzzle = {
   /** drop в контейнер для перемешанных слов */
   processDropToTask: (event) => {
     EnglishPuzzle.deleteHighlightAreas();
-    const order = event.dataTransfer.getData('text');
+    const order = event.dataTransfer.getData('text').split('@@')[0];
+    // const order = event.dataTransfer.getData('text');
     const draggedEl = document.querySelector(`${Config.containers.roundPhrase} .phrase__word[data-order-task="${order}"]`);
     if (!draggedEl) {
       return;
     }
     EnglishPuzzle.processRoundWordClick({target: draggedEl});
-    
   },
 
   /** установить передаваемые данные, подсветить поле для drop */
@@ -502,8 +594,9 @@ const EnglishPuzzle = {
     if (event.target.classList.contains(Config.cssStyles.taskWord)) {
       return;
     }
+    // event.dataTransfer.setData('text', event.target.dataset.orderTask);
+    event.dataTransfer.setData('text', `${event.target.dataset.orderTask}@@${event.target.innerHTML}`);
 
-    event.dataTransfer.setData('text', event.target.dataset.orderTask);
     const taskWordsContainer = document.querySelector(Config.containers.taskPhrase);
     taskWordsContainer.classList.add(Config.cssStyles.areaUnderDragged);
   },
@@ -970,16 +1063,20 @@ const EnglishPuzzle = {
       return;
     }
 
-    const { width, text, order } = EnglishPuzzle.getClickedElParams(target);
+    const roundArr = EnglishPuzzle.getRoundArr();
+    const firstNullInd = EnglishPuzzle.getFirstNullInd(roundArr);
+    
+    /** clickedParams: { width, order, text } */
+    const clickedParams = EnglishPuzzle.getClickedElParams(target);
 
-    target.classList.add(Config.cssStyles.emptyWord);
-    target.innerHTML = '';
-    target.style.width = `${width}px`;
-    target.style.flexGrow = '0';
-    target.draggable = false;
+    /** поместить пустой элемент на месте, по которому кликнули */
+    EnglishPuzzle.makeElementEmpty(target, clickedParams.width);
+    
+    /** поместить элемент, по которому кликнули на первом свободное место */
+    roundArr[firstNullInd] = clickedParams;
 
-    const firstEmptyWord = document.querySelectorAll('.phrase__word.empty')[0];
-    EnglishPuzzle.updateElement(firstEmptyWord, text, width, order);
+    /** отрендерить слова в раунде на основании массива */
+    EnglishPuzzle.renderRoundWordsFromArr(roundArr);
 
     if (EnglishPuzzle.checkRoundWordFilled()) {
       EnglishPuzzle.showButton('check');
@@ -1006,10 +1103,9 @@ const EnglishPuzzle = {
 
   /** 
    * клик по слову в поле для сбора слова:
-   * 1) удалить кликнутое слово,
-   * 2) вставить пустое (empty) слово в конец,
-   * 3) вернуть кликнутое слово на свое место в блоке с перемешанными словами,
-   * 4) удалить стили проверенных слов (красный/зеленый цвет)
+   * 1) удалить кликнутое слово из поля сбора
+   * 2) вернуть кликнутое слово на свое место в блоке с перемешанными словами,
+   * 3) удалить стили проверенных слов (красный/зеленый цвет)
    * */
   processRoundWordClick: ({ target }) => {
     if (!target.classList.contains(Config.cssStyles.roundWord)) {
@@ -1019,12 +1115,10 @@ const EnglishPuzzle = {
     if (target.classList.contains(Config.cssStyles.emptyWord)) {
       return;
     }
-    const phraseContainer = document.querySelector(Config.containers.roundPhraseWords);
     const { width, text, order } = EnglishPuzzle.getClickedElParams(target);
 
-    // удалить эл-т, по которому кликнули, вставить пустой элемент в конец
-    target.remove();
-    Utils.createBlockInside('div', ['phrase__word', 'empty'], phraseContainer);
+    // сделать пустым элемент, по которому кликнули
+    EnglishPuzzle.makeElementEmpty(target, width);
 
     const taskEmptyWord = document.querySelectorAll('.task__words .task__word')[order - 1];
     EnglishPuzzle.updateElement(taskEmptyWord, text, width, order);
