@@ -15,7 +15,7 @@ const Dictionary = {
     </section>
           `;
 
-    await model.getRandomWordByDifficulty(0, 10, 30);
+    // console.log(await model.getSetOfWordsByDifficulty(4, 15, 30));
     return view;
   },
   afterRender: async () => {

@@ -56,7 +56,7 @@ export default class AppModel {
     return this.getWordDataByIndex(this.wordsCounter);
   }
 
-  // get a single random word with set difficulty
+  // get a single random word with set difficulty and round
   async getRandomWordByDifficulty(difficulty, round, roundLength) {
     if (difficulty > 5 || difficulty < 0) {
       return null;
@@ -65,7 +65,7 @@ export default class AppModel {
     const startOfRound = startOfDifficultyGroup + Math.floor((600 / roundLength) * round);
     const index = startOfRound + Math.floor(Math.random() * roundLength);
     const result = await this.getWordDataByIndex(index);
-    console.log(startOfDifficultyGroup, startOfRound, index, result);
+    // console.log(startOfDifficultyGroup, startOfRound, index, result);
     return result;
   }
 
@@ -110,7 +110,6 @@ export default class AppModel {
     if (!UserData) {
       this.setDefaultUserData();
     } else {
-      console.log(UserData.wordsCounter, this.userName);
       this.wordsCounter = UserData.wordsCounter ? UserData.wordsCounter : 100;
       this.difficultWords = UserData.difficultWords ? UserData.difficultWords : []; // ?? check this
       this.deletedWords = UserData.deletedWords ? UserData.deletedWords : [];
@@ -205,5 +204,49 @@ export default class AppModel {
       correct: correctWordData,
       incorrect: incorrectTranslation.wordTranslate,
     };
+  }
+
+  async getSetOfWords(group, page) {
+    const url = `https://afternoon-falls-25894.herokuapp.com/words?group=${group}&page=${page}`;
+    const responce = await fetch(url);
+    const data = await responce.json();
+    const result = data.map((x) => this.reformatWordData(x));
+    return result;
+  }
+
+  async getSetOfWordsByDifficulty(difficulty, round, roundLength) {
+    let resultArr = [];
+    let firstPage = [];
+    let secondPage = [];
+    let transformedRound;
+    switch (roundLength) {
+      case 10:
+        firstPage = await this.getSetOfWords(difficulty, Math.floor(round / 2));
+        if (round % 2 === 0) {
+          resultArr = firstPage.slice(0, 10);
+        } else {
+          resultArr = firstPage.slice(10);
+        }
+        break;
+      case 20:
+        resultArr = await this.getSetOfWords(difficulty, round);
+        break;
+      case 30:
+        transformedRound = round * 1.5;
+        if (round % 2 === 0) {
+          firstPage = await this.getSetOfWords(difficulty, transformedRound);
+          secondPage = await this.getSetOfWords(difficulty, transformedRound + 1);
+          resultArr = firstPage.concat(secondPage.slice(0, 10));
+        } else {
+          transformedRound = Math.floor(transformedRound);
+          firstPage = await this.getSetOfWords(difficulty, transformedRound);
+          secondPage = await this.getSetOfWords(difficulty, transformedRound + 1);
+          resultArr = firstPage.slice(10).concat(secondPage);
+        }
+        break;
+      default:
+        return null;
+    }
+    return resultArr;
   }
 }
