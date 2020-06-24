@@ -1,5 +1,5 @@
 const Game = {
-  startGame: () => {
+  startGame: (cb) => {
     const startScreen = document.querySelector('.allGames__startScreen');
     const timerScreen = document.querySelector('.allGames__timerScreen');
     const playScreen = document.querySelector('.allGames__playScreen');
@@ -24,6 +24,7 @@ const Game = {
       setTimeout(() => {
         timerScreen.classList.add('allGames__timerScreen-hidden');
         playScreen.classList.remove('allGames__playScreen-hidden');
+        if (cb) cb();
       }, 3000);
     });
   },

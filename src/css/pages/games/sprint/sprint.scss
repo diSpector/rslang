@@ -1,9 +1,15 @@
 @import '../../../abstract/constants.scss';
 @import '../../../abstract/mixins.scss';
 
- 
+ .sprint {
+   &.allGames{
+     color: black;
+   }
+ }
 .sprint--card__button{
   button{
+    cursor: pointer;
+
     width: 90px;
     margin: 10px;
     height: 35px;
@@ -34,9 +40,28 @@
     box-shadow: 3px 3px #7d1a1a inset;
   }
 }
+.allGames__startBtn{
+  cursor: pointer;
+  width: 90px;
+  margin: 10px;
+  height: 35px;
+  border: 0;
+  outline: none;
+  border-radius: 3px;
+  transition: 0.1s;
+  font-size: 2rem;
+  font-family: 'Neucha', cursive;
+  background: #fde28e;
+  box-shadow: -3px -3px #e2c774 inset;
+  &:active{
+    background: #efc74d;
+    box-shadow: 3px 3px #caa433 inset;
+  }
+}
 
 
 .sprint--game{
+  color: black;
   &.hidden{
     display: none;
   }
@@ -84,7 +109,7 @@
   height: 104px;
   position: absolute;
   margin-top: -107px;
-  margin-left: 120px;
+  margin-left: 155px;
 }
 .sprint--card__title{
   display: flex;
@@ -161,7 +186,7 @@
 
 .sprint{
   font-family: 'Neucha', cursive;
-    height: 100vh;
+  height: 100vh;
   background-image: url(../../../../img/common/backgrounds/background2.jpg);
   background-size: 100vw 100vh;
   @include media-tablet {
@@ -242,5 +267,8 @@
   width: 40px;
   height: 40px;
   margin: 0 40px;
-
+}
+.sprint__arrow_about{
+  font-size: 1.5rem;
+  margin: auto;
 }

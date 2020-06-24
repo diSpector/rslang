@@ -1,4 +1,5 @@
 import '../../../../../css/pages/games/Sprint/Sprint.scss';
+import '../../../../../css/pages/games/allGames.scss';
 import Utils from '../../../../services/Utils';
 import { game, timerw } from './SprintGame';
 import Game from '../game';
@@ -23,15 +24,15 @@ const Sprint = {
     const view = `
     <div class="sprint allGames">
       <section class="allGames__startScreen">
-        <h1 class="allGames__heading">Саванна</h1>
-        <p class="allGames__description">Тренировка Саванна развивает словарный запас. Чем больше слов ты знаешь, тем больше очков опыта получишь.</p>
+        <h1 class="allGames__heading">Спринт</h1>
+        <p class="allGames__description">Тренировка спринт развивает способности быстрого перевода слов и выражений с английского языка на русский.</p>
         <button class="allGames__startBtn  btn">Начать</button>
       </section>
       <section class="allGames__timerScreen  allGames__timerScreen-hidden">
         <div class="allGames__timer">3</div>
-        <div class="allGames__tip">Используй клавиши 1, 2, 3 и 4, чтобы дать быстрый ответ</div>
+        <div class="allGames__tip">Используй клавиши влево и вправо, чтобы дать ответ.</div>
       </section>
-      <section class="sprint--game">
+      <section class="sprint--game  allGames__playScreen  allGames__playScreen-hidden">
         <div class="sprint--game__result">0</div>
         <div class="sprint--game__card">
           <div class="sprint--card__title">
@@ -54,7 +55,8 @@ const Sprint = {
         <div class="sprint--game__arrow">
           <div class="sprint--game__arrow_left"></div>          
           <div class="sprint--game__arrow_right"></div>          
-        </div> 
+        </div>
+        <p class="sprint__arrow_about">Нажимай на стрелки влево/вправо на клавиатуре, чтобы дать ответ.</p> 
       </section>
 
       <section class="sprint--end hidden">
@@ -74,14 +76,13 @@ const Sprint = {
   },
 
   afterRender: () => {
-    Game.startGame(game);
+    Game.startGame(timerw);
     let data = JSON.parse(localStorage.getItem('data'));
     if (data == null) {
       data = [];
       localStorage.setItem('data', JSON.stringify(data));
       data = JSON.parse(localStorage.getItem('data'));
     }
-    timerw();
     game();
   },
 };
