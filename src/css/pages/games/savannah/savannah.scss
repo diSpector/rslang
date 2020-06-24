@@ -19,7 +19,7 @@
     width: 100%;
     display: flex;
     justify-content: space-between;
-    padding: 10px;
+    padding: 15px;
 }
 
 .savannah--sound {
@@ -32,6 +32,10 @@
 
     &-off {
         background-image: url('../../../../img/games/savannah/no-audio.png');
+    }
+
+    &:hover {
+        cursor: pointer;
     }
 }
 
@@ -47,7 +51,7 @@
     opacity: 0.8;
 
     &-lost {
-        opacity: 0.5;
+        opacity: 0;
     }
 }
 

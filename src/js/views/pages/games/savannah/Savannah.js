@@ -185,6 +185,7 @@ const Savannah = {
   mistakesCount: 0,
   maxMistakesCount: 5,
   correctAnswersCount: 0,
+  isAnswerSelected: false,
 
   beforeRender() {
     this.clearHeaderAndFooter();
@@ -250,7 +251,6 @@ const Savannah = {
     const words = rounds[roundIndex];
 
     Utils.createBlockInside('div', ['savannah--game__question', 'savannah--game__question-fall'], game, words[0].word);
-    // Utils.createBlockInside('div', 'savannah--game__question', game, words[0].word);
     const answersList = Utils.createBlockInside('div', 'savannah--game__answersList', game);
 
     const shuffledWords = shuffle(words);
@@ -307,6 +307,8 @@ const Savannah = {
 
     console.log(this.mistakesCount);
 
+    this.isAnswerSelected = false;
+
     // при отсутствии ответа
     // показываем правильный перевод, когда кончится анимация (5,5 секунд)
     const timerShowCorrectTranslation = setTimeout(() => {
@@ -319,6 +321,8 @@ const Savannah = {
       correct.classList.add('savannah--game__answer-correct');
 
       question.classList.add('savannah--game__question-explode');
+
+      this.isAnswerSelected = true;
     }, 5500);
 
     // смена раунда или конец игры еще через секунду
@@ -326,7 +330,7 @@ const Savannah = {
 
     answersList.addEventListener('click', (e) => {
       // клик по переводу
-      if (e.target.classList.contains('savannah--game__answer')) {
+      if (e.target.classList.contains('savannah--game__answer') && !this.isAnswerSelected) {
         // удаляем таймеры, которые используются при отсутвии ответа
         clearTimeout(timerShowCorrectTranslation);
         clearTimeout(timerChangeRound);
@@ -337,6 +341,8 @@ const Savannah = {
           question.classList.remove('savannah--game__question-fall');
 
           this.playAudio('correct');
+
+          this.isAnswerSelected = true;
         } else {
           // неправильно
           e.target.classList.add('savannah--game__answer-wrong');
@@ -349,6 +355,8 @@ const Savannah = {
           this.mistakesCount += 1;
 
           this.playAudio('error');
+
+          this.isAnswerSelected = true;
         }
 
         // смена раунда или конец игры через секунду
@@ -357,12 +365,12 @@ const Savannah = {
     });
 
     document.onkeyup = ({ key }) => {
-      // удаляем таймеры, которые используются при отсутвии ответа
-      clearTimeout(timerShowCorrectTranslation);
-      clearTimeout(timerChangeRound);
-
       // только нужные клавиши с 1-4 слушаем
-      if (key === '1' || key === '2' || key === '3' || key === '4') {
+      if ((key === '1' || key === '2' || key === '3' || key === '4') && !this.isAnswerSelected) {
+        // удаляем таймеры, которые используются при отсутвии ответа
+        clearTimeout(timerShowCorrectTranslation);
+        clearTimeout(timerChangeRound);
+
         const answers = document.querySelectorAll('.savannah--game__answer');
         const correct = document.querySelector('.correct');
         const translationNumber = correct.getAttribute('data-key');
@@ -373,6 +381,8 @@ const Savannah = {
           question.classList.remove('savannah--game__question-fall');
 
           this.playAudio('correct');
+
+          this.isAnswerSelected = true;
         } else {
           // неправильно
           answers[key - 1].classList.add('savannah--game__answer-wrong');
@@ -384,6 +394,8 @@ const Savannah = {
           this.mistakesCount += 1;
 
           this.playAudio('error');
+
+          this.isAnswerSelected = true;
         }
 
         // смена раунда или конец игры
