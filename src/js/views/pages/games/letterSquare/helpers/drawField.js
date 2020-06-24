@@ -1,8 +1,14 @@
 import words from '../model/words';
-import GetCellValues from './getCellValues';
+import FillCellsRandomLetters from './randomLetters';
 import wordFilling from './addingWordsToTable';
 
 export default function drawPlayField() {
+  const startBtn = document.querySelector('.letterSquare--btn__startBtn');
+  startBtn.onclick = function() {
+    document.querySelector('.allGames__startScreen').classList.add('allGames__timerScreen-hidden');
+    document.querySelector('.letterSquare').classList.remove('allGames__timerScreen-hidden');
+    console.log('start');
+  }
   const numberСell = 10;
   const playField = document.createElement('table');
   playField.setAttribute('id', 'myTable');
@@ -19,5 +25,11 @@ export default function drawPlayField() {
   for (let i = 0; i < words.length; i += 1) {
     wordFilling(words[i]);
   }
-  GetCellValues();
+  for (let r = 0; r < playField.rows.length; r += 1) {
+    for (let c = 0; c < playField.rows[r].cells.length; c += 1) {
+      if (playField.rows[r].cells[c].innerHTML === '') {
+        FillCellsRandomLetters(playField.rows[r].cells[c]);
+      }
+    }
+  }
 }
