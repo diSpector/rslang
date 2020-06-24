@@ -1,3 +1,4 @@
+/* eslint-disable max-len */
 export default class AppModel {
   constructor() {
     this.searchString = 'https://afternoon-falls-25894.herokuapp.com/words?';
@@ -248,5 +249,32 @@ export default class AppModel {
         return null;
     }
     return resultArr;
+  }
+
+  // предполагается что это будет основная ф-я для получения слов из бекенда в миниигры
+  // на входе: difficulty - сложнонсть (от 0 до 5)
+  // round - номер раунда. в зависимости от длины раунда может быть от 0 до 29, 19 или 59.
+  // roundLength - количество слов в раунде игры. допустимые значения 10/20/30
+  // numberOfTranslations - количество НЕПРАВИЛЬНЫХ переводов идущих вместе с правильным (от 1 до 5)
+  async getSetOfWordsAndTranslations(difficulty, round, roundLength, numberOfTranslations) {
+    const correctResults = await this.getSetOfWordsByDifficulty(difficulty, round, roundLength);
+    const incorrectTranslationsPromises = [];
+    let incorrectTranslations = [];
+    let incorrectTranslationsSubArray = [];
+    const finalArray = [];
+    let usableDifficulties = [0, 1, 2, 3, 4, 5].filter((x) => x !== difficulty);
+    usableDifficulties = usableDifficulties.slice(0, numberOfTranslations);
+    for (let i = 0; i < numberOfTranslations; i += 1) {
+      incorrectTranslationsPromises.push(this.getSetOfWordsByDifficulty(usableDifficulties[i], round, roundLength));
+    }
+    incorrectTranslations = await Promise.all(incorrectTranslationsPromises);
+    for (let i = 0; i < roundLength; i += 1) {
+      incorrectTranslationsSubArray = [];
+      for (let j = 0; j < numberOfTranslations; j += 1) {
+        incorrectTranslationsSubArray.push(incorrectTranslations[j][i]);
+      }
+      finalArray.push({ correct: correctResults[i], incorrect: incorrectTranslationsSubArray });
+    }
+    return finalArray;
   }
 }
