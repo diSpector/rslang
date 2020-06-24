@@ -1,14 +1,12 @@
 import words from '../model/words';
-import FillCellsRandomLetters from './randomLetters';
 import wordFilling from './addingWordsToTable';
 
 export default function drawPlayField() {
   const startBtn = document.querySelector('.letterSquare--btn__startBtn');
-  startBtn.onclick = function() {
-    document.querySelector('.allGames__startScreen').classList.add('allGames__timerScreen-hidden');
-    document.querySelector('.letterSquare').classList.remove('allGames__timerScreen-hidden');
-    console.log('start');
-  }
+  startBtn.onclick = () => {
+    document.querySelector('.allGames__startScreen').classList.add('letterSquare-hidden');
+    document.querySelector('.letterSquare__game').classList.remove('letterSquare-hidden');
+  };
   const numberСell = 10;
   const playField = document.createElement('table');
   playField.setAttribute('id', 'myTable');
@@ -24,6 +22,13 @@ export default function drawPlayField() {
   document.querySelector('.letterSquare--playingField').appendChild(playField);
   for (let i = 0; i < words.length; i += 1) {
     wordFilling(words[i]);
+  }
+  function FillCellsRandomLetters(cell) {
+    const tableCell = cell;
+    let cellValue = '';
+    const alphabet = 'abcdefghijklmnopqrstuvwxyz';
+    while (cellValue.length < 1) { cellValue += alphabet[Math.random() * alphabet.length | 0]; }
+    tableCell.innerHTML = cellValue;
   }
   for (let r = 0; r < playField.rows.length; r += 1) {
     for (let c = 0; c < playField.rows[r].cells.length; c += 1) {

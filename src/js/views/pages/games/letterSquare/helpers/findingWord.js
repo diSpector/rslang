@@ -1,28 +1,33 @@
 import words from '../model/words.js';
+
 let word = '';
-let counterWord = 2;
+let counterWord = 1;
 
 export default function findingWord() {
+  /*function soundClick() {
+    const audio = new Audio(); 
+    audio.src = `src/audio/correct.mp3'`; 
+    audio.autoplay = true; 
+  }*/
+
   function checkWord(letter) {
     word += String(letter);
-    console.log(word);
-
     const btnCheck = document.querySelector('.letterSquare---wordList__btnCheck');
-    btnCheck.onclick = function() {
-      console.log(word + '1');
-      for(let i = 0; i < words.length; i++){
-        if(words[i] === word) {
+    btnCheck.onclick = () => {
+      for (let i = 0; i < words.length; i += 1) {
+        if (words[i] === word) {
+          //soundClick();
           counterWord -= 1;
-          if(counterWord === 0) {
-            console.log("finish");
+          if (counterWord === 0) {
+            document.querySelector('.letterSquare__game').classList.add('letterSquare-hidden');
+            document.querySelector('.letterSquare__statistic').classList.remove('letterSquare-hidden');
           }
-          console.log('+');
         }
       }
       word = '';
-      return false;
-    }
+    };
   }
+
   function catchLetters(idLetters) {
     if (idLetters === 'myTable') {
       return;
@@ -34,11 +39,10 @@ export default function findingWord() {
     }
     const letter = document.getElementById(idLetters).innerHTML;
     checkWord(letter);
-    console.log(letter);
   }
   document.querySelector('#myTable').addEventListener('click',
     (element) => {
       const { id } = element.target;
       catchLetters(id);
     });
-} 
+}
