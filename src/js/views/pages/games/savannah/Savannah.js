@@ -96,6 +96,67 @@ const rounds = [
       translation: 'незначительный',
     },
   ],
+
+  [
+    {
+      word: 'elegant',
+      translation: 'элегантный',
+    },
+    {
+      translation: 'слякотный',
+    },
+    {
+      translation: 'внезапный',
+    },
+    {
+      translation: 'собранный',
+    },
+  ],
+  [
+    {
+      word: 'composition',
+      translation: 'композиция',
+    },
+    {
+      translation: 'аннотация',
+    },
+    {
+      translation: 'репетиция',
+    },
+    {
+      translation: 'рукопожатие',
+    },
+  ],
+  [
+    {
+      word: 'devastating',
+      translation: 'разрушительный',
+    },
+    {
+      translation: 'законодательный',
+    },
+    {
+      translation: 'замечательный',
+    },
+    {
+      translation: 'незначительный',
+    },
+  ],
+  [
+    {
+      word: 'elegant',
+      translation: 'элегантный',
+    },
+    {
+      translation: 'слякотный',
+    },
+    {
+      translation: 'внезапный',
+    },
+    {
+      translation: 'собранный',
+    },
+  ],
 ];
 
 function shuffle(array) {
@@ -120,6 +181,7 @@ function shuffle(array) {
 }
 
 const Savannah = {
+  roundsCount: 10,
   mistakesCount: 0,
   maxMistakesCount: 5,
   correctAnswersCount: 0,
@@ -188,14 +250,18 @@ const Savannah = {
     const words = rounds[roundIndex];
 
     Utils.createBlockInside('div', ['savannah--game__question', 'savannah--game__question-fall'], game, words[0].word);
+    // Utils.createBlockInside('div', 'savannah--game__question', game, words[0].word);
     const answersList = Utils.createBlockInside('div', 'savannah--game__answersList', game);
 
     const shuffledWords = shuffle(words);
     shuffledWords.forEach((item, index) => {
+      const dataObj = {
+        key: `${index + 1}`,
+      };
       if (Object.keys(item).length > 1) {
-        Utils.createBlockInside('div', ['savannah--game__answer', 'correct'], answersList, `${index + 1} ${item.translation}`);
+        Utils.createBlockInside('div', ['savannah--game__answer', 'correct'], answersList, `${index + 1} ${item.translation}`, {}, dataObj);
       } else {
-        Utils.createBlockInside('div', 'savannah--game__answer', answersList, `${index + 1} ${item.translation}`);
+        Utils.createBlockInside('div', 'savannah--game__answer', answersList, `${index + 1} ${item.translation}`, {}, dataObj);
       }
     });
   },
@@ -222,6 +288,18 @@ const Savannah = {
     });
   },
 
+  goToNextRound(roundIndex, delay) {
+    return setTimeout(() => {
+      if (roundIndex < (this.roundsCount - 1) && this.mistakesCount < this.maxMistakesCount) {
+        this.play(roundIndex + 1);
+      } else {
+        Utils.clearBlock('.savannah--game__question');
+        Utils.clearBlock('.savannah--game__answersList');
+        alert('Game over. Show Statistic');
+      }
+    }, delay);
+  },
+
   checkAnswer(roundIndex) {
     const question = document.querySelector('.savannah--game__question');
     const answersList = document.querySelector('.savannah--game__answersList');
@@ -244,16 +322,7 @@ const Savannah = {
     }, 5500);
 
     // смена раунда или конец игры еще через секунду
-    const timerChangeRound = setTimeout(() => {
-      if (roundIndex <= 4 && this.mistakesCount < this.maxMistakesCount) {
-        this.play(roundIndex + 1);
-      } else {
-        Utils.clearBlock('.savannah--game__question');
-        Utils.clearBlock('.savannah--game__answersList');
-        console.log('Game over. Show Statistic');
-      }
-    }, 6500);
-
+    const timerChangeRound = this.goToNextRound(roundIndex, 6500);
 
     answersList.addEventListener('click', (e) => {
       // клик по переводу
@@ -282,18 +351,45 @@ const Savannah = {
           this.playAudio('error');
         }
 
-        // смена раунда или конец игры
-        setTimeout(() => {
-          if (roundIndex <= 4 && this.mistakesCount < this.maxMistakesCount) {
-            this.play(roundIndex + 1);
-          } else {
-            Utils.clearBlock('.savannah--game__question');
-            Utils.clearBlock('.savannah--game__answersList');
-            console.log('Game over. Show Statistic');
-          }
-        }, 1000);
+        // смена раунда или конец игры через секунду
+        this.goToNextRound(roundIndex, 1000);
       }
     });
+
+    document.onkeyup = ({ key }) => {
+      // удаляем таймеры, которые используются при отсутвии ответа
+      clearTimeout(timerShowCorrectTranslation);
+      clearTimeout(timerChangeRound);
+
+      // только нужные клавиши с 1-4 слушаем
+      if (key === '1' || key === '2' || key === '3' || key === '4') {
+        const answers = document.querySelectorAll('.savannah--game__answer');
+        const correct = document.querySelector('.correct');
+        const translationNumber = correct.getAttribute('data-key');
+
+        if (key === translationNumber) {
+          // правильно
+          correct.classList.add('savannah--game__answer-correct');
+          question.classList.remove('savannah--game__question-fall');
+
+          this.playAudio('correct');
+        } else {
+          // неправильно
+          answers[key - 1].classList.add('savannah--game__answer-wrong');
+          Utils.clearBlock('.savannah--game__question');
+
+          correct.classList.add('savannah--game__answer-correct');
+
+          stars[this.mistakesCount].classList.add('savannah--stars__item-lost');
+          this.mistakesCount += 1;
+
+          this.playAudio('error');
+        }
+
+        // смена раунда или конец игры
+        this.goToNextRound(roundIndex, 1000);
+      }
+    };
   },
 
   play(roundIndex) {
