@@ -26,7 +26,7 @@ const SpeakIt = {
         <div class="allGames__startScreen start">
             <h1 class="allGames__heading">Speak It!</h1>
             <p class="allGames__description">Тренировка произношения слов</p>
-            <div>
+            <div class="allGames__playMods">
               <div>
                 <h2>Игра с новыми словами</h2>
                 <div class="levels__container"></div>
@@ -77,7 +77,7 @@ const SpeakIt = {
                 <div class="button button__restart">Заново</div>
                 <div class="button button__speak">Говорить</div>
                 <div class="button button__results">Результат</div>
-                <div class="button button__startScreen">К старту</div>
+                <div class="button button__startScreen2">К старту</div>
             </div>
 
         </div>
@@ -220,8 +220,9 @@ const SpeakIt = {
       localStorage.setItem('speakItlevel', JSON.stringify(lastGame));
     }
     function start() { // страница "Старт"
+      document.querySelector('.allGames__startScreen-hidden').classList.remove('allGames__startScreen-hidden');
+      document.querySelector('.allGames__timer').textContent = 3;
       showPage('startPage');
-      console.log('старт');
     }
 
     async function game(words = null) { // страница "Игра"
@@ -320,7 +321,9 @@ const SpeakIt = {
 
 
       const startScreenButton = document.querySelector('.button__startScreen');
-      startScreenButton.addEventListener('click', start());
+      startScreenButton.addEventListener('click', start);
+      const startScreenButton2 = document.querySelector('.button__startScreen2');
+      startScreenButton2.addEventListener('click', start);
 
       const levelStartButton = document.querySelector('.level__start__button');
       levelStartButton.addEventListener('click', LevelStartButtonClick);
@@ -699,7 +702,7 @@ const SpeakIt = {
     addListeners();
 
 
-    start();
+    showPage('startPage');
     createLevels();
   },
 };
