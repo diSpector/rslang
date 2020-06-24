@@ -146,6 +146,7 @@ const SpeakIt = {
     let words = [];
     let wordsArr = [];
     let correctWords = [];
+    let unCorrectWords = [];
     let level = 0;
     let levels = {};
     let pages = {};
@@ -153,6 +154,9 @@ const SpeakIt = {
     let errors = 0;
     let page = 0;
     let mode = 'repeat';
+    const correctAudio = new Audio('./src/audio/correct.mp3');
+    const errorAudio = new Audio('./src/audio/error.mp3');
+
 
     // localStorage.setItem('games', null);
     async function getRepeatWords() {
@@ -217,6 +221,7 @@ const SpeakIt = {
     }
     function start() { // страница "Старт"
       showPage('startPage');
+      console.log('старт');
     }
 
     async function game(words = null) { // страница "Игра"
@@ -235,6 +240,7 @@ const SpeakIt = {
       errors = 0;
       corrects = 0;
       correctWords = [];
+      unCorrectWords = [];
       // this.wordsArr = [];
       wordsArr = words.map((wordObj) => wordObj.word.toLowerCase()); // массив слов игры
       gameInProcess = false;
@@ -344,7 +350,7 @@ const SpeakIt = {
       const statsResultButtons = document.querySelector('.result__buttons');
 
       const statsRestartButton = statsResultButtons.querySelector('.button__restart');
-      statsRestartButton.addEventListener('click', startButtonClick);
+      statsRestartButton.addEventListener('click', restart);
 
       // клик по кнопке "Results" в игре (показать статистику)
       const statsRepeatButton = statsResultButtons.querySelector('.button__next');
@@ -447,14 +453,16 @@ const SpeakIt = {
 
     async function renderResults() { // вывести страницу с результатом
       const errorsContainer = document.querySelector('.results__errors');
-      const wordsContainer = document.querySelector('.results__words');
-      clearContainer(wordsContainer);
+      const correctWordsContainer = document.querySelector('.results__correct__words');
+      const uncorrectWordsContainer = document.querySelector('.results__uncorrect__words');
+      clearContainer(uncorrectWordsContainer);
+      clearContainer(correctWordsContainer);
 
       errorsContainer.innerText = `errors: ${errors}`;
       const correctDivListWords = document.querySelectorAll('.words__container .correct');
       const correctDivWords = Array.prototype.slice.call(correctDivListWords);
-      const correctWords = [];
-      const unCorrectWords = [];
+      correctWords = [];
+      unCorrectWords = [];
       words.forEach((element) => {
         let isCorrect = false;
         correctDivWords.forEach((word) => {
@@ -519,6 +527,7 @@ const SpeakIt = {
 
       gameInProcess = true;
       correctWords = [];
+      unCorrectWords = [];
 
       // const correctWords = [];
 
@@ -550,6 +559,7 @@ const SpeakIt = {
                 speakedWordDiv.classList.add('correct');
                 translateContainer.classList.add('translation-correct');
                 const { image } = words.filter((word) => word.word.toLowerCase() === speakedWord.toLowerCase())[0];
+                correctAudio.play();
                 imgContainer.src = config.repoUrl + image;
                 corrects += 1;
                 if (isGameIsEnd()) {
@@ -557,6 +567,7 @@ const SpeakIt = {
                   results();
                 }
               } else {
+                errorAudio.play();
                 errors += 1;
                 translateContainer.classList.add('translation-error');
               }
