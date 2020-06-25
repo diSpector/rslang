@@ -10,6 +10,7 @@ const EnglishPuzzleConfig = {
 
   api: {
     githubRawData: 'https://raw.githubusercontent.com/dispector/rslang-data/master/',
+    githubPicturesData: 'https://raw.githubusercontent.com/dispector/rslang_data_paintings/master/',
   },
 
   pages: {

@@ -1,5 +1,6 @@
 const apiBackAddr = 'https://afternoon-falls-25894.herokuapp.com/words';
 const apiGithubAddr = 'https://raw.githubusercontent.com/dispector/rslang-data/master/data/';
+import Config from '../settings/gameConfig';
 
 const Model = {
   getWordsFromBackend: async (group, page) => {
@@ -125,6 +126,28 @@ const Model = {
     userSettings.localStat = Object.assign({}, statsObj);
     localStorage.setItem('EnglishPuzzleSettings', JSON.stringify(userSettings));
   },
+
+  getPictureInfoFromGithub: async (level, page) => {
+    const picsObj = await Model.getPicsObjForLevel(level);
+    return picsObj[page];
+  },
+
+  getPicsObjForLevel: async (level) => {
+    const picsApiAddr = `${Config.api.githubPicturesData}level${level + 1}.json`;
+    try {
+      const picsPromise = await fetch(picsApiAddr);
+      if (picsPromise.status !== 200) {
+        return null;
+      }
+      const picsObj = await picsPromise.json();
+      return picsObj;
+    } catch (e) {
+      console.log('Ошибка при получении картин', e.message);
+      return null;
+    }
+  },
+
+
 };
 
 export default Model;

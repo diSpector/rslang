@@ -22,6 +22,7 @@ const EnglishPuzzle = {
       knowWords: [],
       idkWords: [],
     },
+    picture: {},
   },
 
   beforeRender: async () => {
@@ -48,6 +49,9 @@ const EnglishPuzzle = {
       currentWord: currentWord,
       shuffledCurrentWord: shuffledCurrentWord,
     };
+
+    const pictureObj = await Model.getPictureInfoFromGithub(gameSettings.level, gameSettings.page);
+    EnglishPuzzle.settings.picture = pictureObj;
 
     // EnglishPuzzle.settings = await Model.getWordsFromGithub(1, 10, 10);
     // EnglishPuzzle.settings.words = await Model.getWordsFromBackend(1, 2);
@@ -150,14 +154,7 @@ const EnglishPuzzle = {
   },
 
   afterRender: () => {
-    EnglishPuzzle.hideMenus();
-    EnglishPuzzle.fillLevelsPagesMenus(),
-    EnglishPuzzle.fillDonePhrases();
-    EnglishPuzzle.fillRoundPhrase();
-    EnglishPuzzle.fillTaskPhrase();
-    EnglishPuzzle.setButtons();
-    EnglishPuzzle.setTips();
-    EnglishPuzzle.setBlocksByTips();
+    EnglishPuzzle.fillGamePage();
     EnglishPuzzle.addListeners();
 
     console.log('localStorage', JSON.parse(localStorage.getItem('EnglishPuzzleSettings')));
@@ -171,6 +168,18 @@ const EnglishPuzzle = {
     const pageMenu = document.querySelector(Config.containers.menus.dropDownClass.page);
 
     HtmlHelper.hideContainers([levelMenu, pageMenu]);
+  },
+
+  /** заполнить */
+  fillGamePage() {
+    EnglishPuzzle.hideMenus();
+    EnglishPuzzle.fillLevelsPagesMenus(),
+    EnglishPuzzle.fillDonePhrases();
+    EnglishPuzzle.fillRoundPhrase();
+    EnglishPuzzle.fillTaskPhrase();
+    EnglishPuzzle.setButtons();
+    EnglishPuzzle.setTips();
+    EnglishPuzzle.setBlocksByTips();
   },
 
   /** заполнить меню уровней и страниц */
@@ -252,7 +261,10 @@ const EnglishPuzzle = {
       const phraseBlock = Utils.createBlockInside('div', 'englishPuzzle__phrase');
       Utils.createBlockInside('div', 'phrase__number', phraseBlock, i + 1);
       const phraseWordsBlock = Utils.createBlockInside('div', 'phrase__words', phraseBlock);
-
+      
+      phraseWordsBlock.style.backgroundImage = `url('${Config.api.githubPicturesData}${EnglishPuzzle.settings.picture.imageSrc}')`;
+      phraseWordsBlock.style.backgroundPosition = `0px ${-40 * i}px`;
+      
       const wordsArr = phrase.textExample.split(' ');
       wordsArr.forEach((word) => Utils
         .createBlockInside('div', 'phrase__word', phraseWordsBlock, word));

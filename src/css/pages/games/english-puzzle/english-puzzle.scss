@@ -214,6 +214,13 @@ $imgCommonPath: '../../../../img/common/backgrounds/';
     line-height: 30px; 
 }
 
+.englishPuzzle__phrases-done {
+  // background-image: url('https://raw.githubusercontent.com/jules0802/rslang_data_paintings/master/level1/9th_wave.jpg');
+  // background-position: center;
+  // background-repeat: no-repeat;
+  // box-sizing: border-box;
+}
+
 .phrase__number {
     width: 35px;
     height: 35px;
@@ -234,7 +241,8 @@ $imgCommonPath: '../../../../img/common/backgrounds/';
     box-shadow: 0px 0px 4px -2px;  
     border: 1px solid lightgrey;
     border-bottom: none;
-    // box-sizing: border-box;
+    // color: white;
+    text-shadow: white 1px 1px 0px;
 }
 
 .phrase:last-child .phrase__words{
@@ -518,7 +526,7 @@ span.count__iknow{
 
 .block__word:hover {
   cursor: pointer;
-  border-bottom: 1px solid lightgrey;
+  outline: 1px solid lightgrey;
   box-sizing: border-box;
 }
 
