@@ -4,8 +4,10 @@ import Game from '../Game';
 
 let isGameActive = true;
 let currentWordCounter = 1;
-let correctAnswersCounter = 0;
-let wrongAnswersCounter = 0;
+const correctAnswers = [];
+const wrongAnswers = [];
+const startTime = Date.now();
+const wordsInGame = 10;
 
 const getRandomInRange = (min, max) => Math.floor(Math.random() * (max - min + 1)) + min;
 
@@ -77,15 +79,61 @@ const generateWordSlideHTML = () => {
   gameArea.innerHTML += wordSlide;
 };
 
+const addStatisticClickHandler = () => {
+  const statScreen = document.querySelector('.audition--statistic');
+  const wordsInGame = [...correctAnswers, ...wrongAnswers];
+  statScreen.addEventListener('click', ({ target }) => {
+    if (target.closest('.answer__speaker')) {
+      const answer = target.closest('.Answers__answer');
+      const word = answer.childNodes[3].firstElementChild.innerText;
+      wordsInGame.forEach((element) => {
+        if (element.word === word) {
+          const wordAudio = new Audio(element.audio);
+          wordAudio.play();
+        }
+      });
+    }
+  });
+};
+
+const setCorrectAnswers = () => {
+  const correctAnswersPlace = document.querySelectorAll('.statistic__Answers')[0];
+  correctAnswers.forEach((element) => {
+    const correctAnswerHTML = `<div class="Answers__answer">
+                                 <div class="answer__speaker"></div>
+                                 <div class="answer__words"><span>${element.word}</span> — ${element.wordTranslate}</div>
+                               </div>`;
+    correctAnswersPlace.innerHTML += correctAnswerHTML;
+  });
+};
+
+const setWrongAnswers = () => {
+  const wrongAnswersPlace = document.querySelectorAll('.statistic__Answers')[1];
+  wrongAnswers.forEach((element) => {
+    const wrongAnswerHTML = `<div class="Answers__answer">
+                               <div class="answer__speaker"></div>
+                               <div class="answer__words"><span>${element.word}</span> — ${element.wordTranslate}</div>
+                             </div>`;
+    wrongAnswersPlace.innerHTML += wrongAnswerHTML;
+  });
+};
+
 const generateStatisticHTML = () => {
   const gameArea = document.querySelector('.audition--game');
   const statistic = `
   <section class="audition--statistic hidden">
     <div class="statistic__title">Статистика игры</div>
-    <div class="statistic__correctAnswers">Верных ответов: ${correctAnswersCounter}</div>
-    <div class="statistic__wrongAnswers">Неверных ответов: ${wrongAnswersCounter}</div>
-    <button class="statistic__button">Начать заново</button>
-    <button class="statistic__button">Перейти на главную страницу</button>
+    <div class="statistic__Answers">
+      <div class="Answers__title_correct">Верных ответов: <div>${correctAnswers.length}</div></div>
+    </div>
+    <hr>
+    <div class="statistic__Answers">
+      <div class="Answers__title_wrong">Неверных ответов: <div>${wrongAnswers.length}</div></div>
+    </div>
+    <hr>
+    <div class="statistic__time">Время игры: ${new Date(Date.now() - startTime).getSeconds()} сек</div>
+    <button class="statistic__button" onclick="document.location.reload()">Начать заново</button>
+    <button class="statistic__button" onclick="location.href='/'">Перейти на главную страницу</button>
   </section>
   `;
   gameArea.innerHTML += statistic;
@@ -124,6 +172,9 @@ const generateNextWordSlide = (prevSlide) => {
 
 const generateStatistic = (prevSlide) => {
   generateStatisticHTML();
+  setCorrectAnswers();
+  setWrongAnswers();
+  addStatisticClickHandler();
   const wordScreen = document.querySelector('.audition--wordScreen');
   const statisticScreen = document.querySelector('.audition--statistic');
   statisticScreen.classList.remove('hidden');
@@ -131,8 +182,17 @@ const generateStatistic = (prevSlide) => {
   if (prevSlide) setTimeout(() => Utils.removeBlock(prevSlide), 2000);
 };
 
+const setCorrectWordButton = (correctWord) => {
+  const wordsButtons = document.querySelectorAll('.wordsList__word');
+  wordsButtons.forEach((element) => {
+    if (element.innerText.includes(correctWord)) element.classList.add('correct');
+  });
+};
+
 const addGameClickHandler = (wordAudio, correctWord) => {
   const wordScreens = document.querySelectorAll('.audition--wordScreen');
+  const correctAudio = new Audio('src/audio/correct.mp3');
+  const errorAudio = new Audio('src/audio/error.mp3');
   let gameScreen = document.querySelector('.audition--wordScreen');
   let button = document.querySelector('.wordScreen__button');
   if (wordScreens[1] !== undefined) {
@@ -148,10 +208,13 @@ const addGameClickHandler = (wordAudio, correctWord) => {
       if (targetWord.innerHTML.includes(correctWord.wordTranslate) && isGameActive) {
         targetWord.innerHTML = targetWord.innerHTML.slice(15);
         targetWord.classList.add('correct');
-        correctAnswersCounter += 1;
+        correctAnswers.push(correctWord);
+        correctAudio.play();
       } else if (!targetWord.innerHTML.includes(correctWord.wordTranslate) && isGameActive) {
         targetWord.classList.add('checked');
-        wrongAnswersCounter += 1;
+        wrongAnswers.push(correctWord);
+        setCorrectWordButton(correctWord.wordTranslate);
+        errorAudio.play();
       }
       showAnswer();
       Utils.clearBlock('.wordScreen__button');
@@ -160,12 +223,13 @@ const addGameClickHandler = (wordAudio, correctWord) => {
       currentWordCounter += 1;
     }
     if (event.key === 'Enter' && !isGameActive) {
-      if (currentWordCounter <= 10) {
+      if (currentWordCounter <= wordsInGame) {
         generateNextWordSlide('.audition--wordScreen');
         changeProgressBar();
       } else {
         generateStatistic('.audition--wordScreen');
         Utils.removeBlock('.audition--progressBar');
+        document.onkeyup = null;
       }
     }
   };
@@ -179,10 +243,12 @@ const addGameClickHandler = (wordAudio, correctWord) => {
       if (targetWord.innerHTML.includes(correctWord.wordTranslate) && isGameActive) {
         targetWord.innerHTML = targetWord.innerHTML.slice(15);
         targetWord.classList.add('correct');
-        correctAnswersCounter += 1;
+        correctAnswers.push(correctWord);
+        correctAudio.play();
       } else if (!targetWord.innerHTML.includes(correctWord.wordTranslate) && isGameActive) {
         targetWord.classList.add('checked');
-        wrongAnswersCounter += 1;
+        wrongAnswers.push(correctWord);
+        errorAudio.play();
       }
       showAnswer();
       Utils.clearBlock('.wordScreen__button');
@@ -191,7 +257,7 @@ const addGameClickHandler = (wordAudio, correctWord) => {
       currentWordCounter += 1;
     }
     if (event.target.closest('.wordScreen__button') && !isGameActive) {
-      if (currentWordCounter <= 10) {
+      if (currentWordCounter <= wordsInGame) {
         generateNextWordSlide('.audition--wordScreen');
         changeProgressBar();
       } else {
@@ -205,7 +271,7 @@ const addGameClickHandler = (wordAudio, correctWord) => {
       button.classList.add('correct');
       isGameActive = false;
       currentWordCounter += 1;
-      wrongAnswersCounter += 1;
+      wrongAnswers.push(correctWord);
     }
   });
 };
@@ -236,11 +302,12 @@ const Audition = {
           <p class="allGames__description">В этой игре вы улучшите восприятие английской речи на слух. Чем больше слов ты
               знаешь, тем больше очков опыта получишь.</p>
           <button class="allGames__startBtn  btn">Начать</button>
+          <div class="allGames__tip">Используй клавиши 1, 2, 3, 4 и 5 чтобы дать быстрый ответ, Enter для перехода к следующему слову.</div>
       </section>
 
       <section class="audition__timerScreen  allGames__timerScreen  allGames__timerScreen-hidden">
           <div class="allGames__timer">3</div>
-          <div class="allGames__tip">Используй клавиши 1, 2, 3, 4 и 5 чтобы дать быстрый ответ</div>
+          <div class="allGames__tip">Используй клавиши 1, 2, 3, 4 и 5 чтобы дать быстрый ответ, Enter для перехода к следующему слову.</div>
       </section>
     </div>
      `;
