@@ -5,7 +5,7 @@ export default class AppModel {
     this.contentURL = 'https://raw.githubusercontent.com/dispector/rslang-data/master/data/book';
     this.userName = 'defaultUser';
     this.maxDictionaryLength = 3600;
-    this.wordsCounter = 100;
+    this.learnedWordsCounter = 100;
     this.learnedWords = [];
     this.newWords = [];
     this.difficultWords = [];
@@ -33,7 +33,7 @@ export default class AppModel {
   async getLearnedWords() {
     const UserData = localStorage.getItem(this.userName);
     if (UserData) {
-      this.wordsCounter = UserData.wordsCounter;
+      this.learnedWordsCounter = UserData.learnedWordsCounter;
       const url = 'https://afternoon-falls-25894.herokuapp.com/words?group=1&page=1';
       const responce = await fetch(url);
       const data = await responce.json();
@@ -50,15 +50,15 @@ export default class AppModel {
 
   // get a single learned word
   async getRandomLearnedWord() {
-    const randomIndex = Math.floor(Math.random() * Math.floor(this.wordsCounter));
-    // console.log(this.wordsCounter);
+    const randomIndex = Math.floor(Math.random() * Math.floor(this.learnedWordsCounter));
+    // console.log(this.learnedWordsCounter);
     return this.getWordDataByIndex(randomIndex);
   }
 
   // get a single unknown word
   async getNewUnknownWord() {
-    this.wordsCounter += 1;
-    return this.getWordDataByIndex(this.wordsCounter);
+    this.learnedWordsCounter += 1;
+    return this.getWordDataByIndex(this.learnedWordsCounter);
   }
 
   // get a single random word with set difficulty and round
@@ -77,11 +77,11 @@ export default class AppModel {
   // initialize user data for the first load
   setDefaultUserData(userName) {
     this.userName = userName;
-    this.wordsCounter = 0;
+    this.learnedWordsCounter = 100;
     this.difficultWords = [];
     this.deletedWords = [];
     localStorage.setItem(this.userName, {
-      wordsCounter: this.wordsCounter,
+      learnedWordsCounter: this.learnedWordsCounter,
       difficultWords: [],
       deletedWords: [],
       gameStatistics: {
@@ -101,7 +101,7 @@ export default class AppModel {
   // save current user data in local storage(on document.unload)
   saveUserData() {
     localStorage.setItem('defaultUser', {
-      wordsCounter: this.wordsCounter,
+      learnedWordsCounter: this.learnedWordsCounter,
       difficultWords: this.difficultWords,
       deletedWords: this.deletedWords,
       gameStatistics: this.gameStatistics,
@@ -115,7 +115,7 @@ export default class AppModel {
     if (!UserData) {
       this.setDefaultUserData();
     } else {
-      this.wordsCounter = UserData.wordsCounter ? UserData.wordsCounter : 100;
+      this.learnedWordsCounter = UserData.learnedWordsCounter ? UserData.learnedWordsCounter : 100;
       this.difficultWords = UserData.difficultWords ? UserData.difficultWords : []; // ?? check this
       this.deletedWords = UserData.deletedWords ? UserData.deletedWords : [];
       this.gameStatistics = UserData.gameStatistics ? UserData.gameStatistics : {
@@ -134,17 +134,17 @@ export default class AppModel {
 
   // manually set counter for learned words, supposed to be used only for debugging!!
   setLearnedWords(num) {
-    this.wordsCounter = num;
+    this.learnedWordsCounter = num;
   }
 
   // increase counter forlearned words by 1
   increaseLearnedWordsBy1() {
-    this.wordsCounter += 1;
+    this.learnedWordsCounter += 1;
   }
 
   // decrease counter forlearned words by 1
   decreaseLearnedWordsBy1() {
-    this.wordsCounter -= 1;
+    this.learnedWordsCounter -= 1;
   }
 
   // utility function, cuts useless word data and sets correct paths for img/mp3 assets
@@ -330,5 +330,18 @@ export default class AppModel {
       finalArray.push({ correct: correctResults[i], incorrect: incorrectTranslationsSubArray });
     }
     return finalArray;
+  }
+
+  // выдает рандомный массив выученных слов заданной длины
+  async getSetOfLearnedWords(numberOfWords) {
+    let startIndex = 0;
+    if (numberOfWords > this.learnedWordsCounter) {
+      return null;
+    }
+    const randomSeed = Math.floor(Math.random() * (this.learnedWordsCounter - numberOfWords));
+    const randomDifficulty = Math.floor(randomSeed / this.wordSetLength) + 1;
+    await this.getWordsDataFromGithub(randomDifficulty);
+    startIndex = randomSeed - randomDifficulty * this.wordSetLength;
+    return this.currentWordSet.slice(startIndex, startIndex + numberOfWords);
   }
 }
