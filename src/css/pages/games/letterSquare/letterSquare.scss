@@ -69,11 +69,15 @@ html, body{
 }
 
 #timer {
+  position: absolute;
+  top: 3%;
+  right: 4%;
   display: inline-block;
-  position: relative;
   font-weight: bold;
   margin-left: auto;
   margin-right: 0;
+  font-size: 5em;
+  color: rgb(0, 0, 0);
 }
   
 table {
@@ -120,11 +124,34 @@ td:hover {
   border: 1px solid #794902;
   border-radius: 5px;
   outline: none;
-  background: #ff9046 linear-gradient(#ffa742, #fda65f 80%);
+  background: #fa883c linear-gradient(#fca543, #fca258 80%);
 }
 
 .td_active:hover {
   background: #ff853f linear-gradient(#fc9856, #ff9252 80%);
+}
+
+.td_guessed {
+  width: 40px;
+  height: 40px;
+  text-align: center;
+  cursor: pointer;
+  margin-left: 14px;
+  font-weight: bold;
+  font-size: 20px;
+  color: #fff;
+  text-decoration: none;
+  text-align: center;
+  text-shadow: 0 -1px rgba(0,0,0,.5);
+  user-select: none;
+  border: 1px solid #ad4f01;
+  border-radius: 5px;
+  outline: none;
+  background: #e7cd3b linear-gradient(#ffda37, #ccaa3c 80%);
+}
+
+.td_guessed:hover {
+  background: #ffea70 linear-gradient(#d8cd6d, #dbce59 80%);
 }
 
 .letterSquare---wordList__btnCheck {
@@ -133,7 +160,7 @@ td:hover {
   border-radius: 3px;
   transition: 0.1s;
   width: 150px;
-  margin-top: 40px;
+  margin-top: 25px;
   margin-left: 0px;
   height: 30px;
   color: white;
@@ -160,7 +187,7 @@ td:hover {
   background: rgb(255, 74, 68);
   box-shadow: -3px -3px rgb(252, 61, 48) inset;
   &:active{
-    background: rgb(253, 65, 51);
+    background: rgb(187, 53, 44);
     box-shadow: 3px 3px #fc2424 inset;
   }
 }
@@ -168,14 +195,24 @@ td:hover {
 .statistic__card {
   display: inline-block;
   position: absolute;
-    top: 25%;
+    top: 20%;
     left: 40%;
   width: 300px;
-  height: 340px;
+  height: 400px;
   border-radius: 16px;
   text-align: center;
   background-color: white;
   box-shadow: 6px 6px 6px darkgrey;
+}
+
+.statistic__numberWordsFound {
+  margin-top: 10px;
+  font-weight: bold;
+}
+
+.statistic__numberWordsNotFound {
+  margin-top: 15px;
+  font-weight: bold;
 }
 
 .statistic__title {
@@ -193,7 +230,7 @@ td:hover {
   border-radius: 3px;
   transition: 0.1s;
   width: 150px;
-  margin-top: 40px;
+  margin-top: 20px;
   margin-left: 0px;
   height: 30px;
   color: white;
@@ -212,7 +249,7 @@ td:hover {
   border-radius: 3px;
   transition: 0.1s;
   width: 150px;
-  margin-top: 40px;
+  margin-top: 15px;
   margin-left: 0px;
   height: 40px;
   color: white;

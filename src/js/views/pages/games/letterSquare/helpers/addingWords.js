@@ -1,7 +1,5 @@
-import words from '../model/words';
-
-export default function wordsToFind() {
-  const list = document.querySelector('.letterSquare--wordList__list');
+export default function addingWords(selector, words) {
+  const list = document.querySelector(`${selector}`);
   for (let i = 0; i < words.length; i += 1) {
     const listItem = document.createElement('div');
     listItem.setAttribute('class', 'letterSquare--wordList__itemList');

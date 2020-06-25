@@ -4,7 +4,6 @@ import Utils from '../../../../services/Utils';
 
 import gamePageRendering from './helpers/gamePageRendering';
 import drawPlayField from './helpers/drawField';
-import wordsToFind from './helpers/wordsToFind';
 import findingWord from './helpers/findingWord';
 
 const letterSquare = {
@@ -27,7 +26,6 @@ const letterSquare = {
 
   afterRender: () => {
     drawPlayField();
-    wordsToFind();
     findingWord();
   },
 };

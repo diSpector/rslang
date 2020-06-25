@@ -1,14 +1,17 @@
 import words from '../model/words';
 import wordFilling from './addingWordsToTable';
+import addingWords from './addingWords';
 import startTimer from './timer';
 
 export default function drawPlayField() {
   const startBtn = document.querySelector('.letterSquare--btn__startBtn');
+
   startBtn.onclick = () => {
     document.querySelector('.allGames__startScreen').classList.add('letterSquare-hidden');
     document.querySelector('.letterSquare__game').classList.remove('letterSquare-hidden');
     startTimer();
   };
+
   const numberСell = 10;
   const playField = document.createElement('table');
   playField.setAttribute('id', 'myTable');
@@ -25,6 +28,7 @@ export default function drawPlayField() {
   for (let i = 0; i < words.length; i += 1) {
     wordFilling(words[i]);
   }
+
   function FillCellsRandomLetters(cell) {
     const tableCell = cell;
     let cellValue = '';
@@ -32,6 +36,7 @@ export default function drawPlayField() {
     while (cellValue.length < 1) { cellValue += alphabet[Math.random() * alphabet.length | 0]; }
     tableCell.innerHTML = cellValue;
   }
+
   for (let r = 0; r < playField.rows.length; r += 1) {
     for (let c = 0; c < playField.rows[r].cells.length; c += 1) {
       if (playField.rows[r].cells[c].innerHTML === '') {
@@ -39,4 +44,5 @@ export default function drawPlayField() {
       }
     }
   }
+  addingWords('.letterSquare--wordList__list', words);
 }
