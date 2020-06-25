@@ -1,6 +1,6 @@
 import Utils from '../../../../services/Utils';
 import '../../../../../css/pages/games/allGames.scss';
-import '../../../../../css/pages/games/speakit/speakit.css';
+import '../../../../../css/pages/games/speakit/speakit.scss';
 import Game from '../game';
 
 const SpeakIt = {

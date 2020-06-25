@@ -1,4 +1,4 @@
-import '../../../../../css/pages/games/english-puzzle/english-puzzle.scss';
+//import '../../../../../css/pages/games/english-puzzle/english-puzzle.scss';
 import Utils from '../../../../services/Utils';
 import Model from './helpers/Model';
 
