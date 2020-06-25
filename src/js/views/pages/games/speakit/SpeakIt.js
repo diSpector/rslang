@@ -68,8 +68,10 @@ const SpeakIt = {
 
                 <!-- <div class="word">
                     <div class="word__icon"></div>
-                    <div class="word__english">test</div>
-                    <div class="word__transcription">[test]</div>
+                    <div class="word__block">
+                      <div class="word__english">test</div>
+                      <div class="word__transcription">[test]</div>
+                    </div>
                 </div> -->
 
             </div>
@@ -82,7 +84,7 @@ const SpeakIt = {
 
         </div>
         <div class="results">
-            <div class="results__header">Stats for the last game</div>
+            <h2 class="results__header">Результаты последней игры</h2>
             <div class="results__errors"></div>
             <h3>Произнесённые верно слова</h3>
             <div class="results__words results__correct__words">
@@ -116,7 +118,7 @@ const SpeakIt = {
                 </table>
             </div>
             <div class="global__buttons">
-                <div class="button button__game">Назад к игре</div>
+                
                 <div class="button button__stats">Назад к статистике</div>
             </div>
         </div>
@@ -285,8 +287,9 @@ const SpeakIt = {
     function renderWord(word, container) { // отрисовать блок со словом
       container.dataset.word = word.word.toLowerCase();
       renderDiv('word__icon', '', container);
-      renderDiv('word__english', word.word, container);
-      renderDiv('word__transcription', word.transcription, container);
+      const container2 = renderDiv('word__word', null, container);
+      renderDiv('word__english', word.word, container2);
+      renderDiv('word__transcription', word.transcription, container2);
     }
 
     function renderDiv(cssClass, text, container) {
@@ -294,6 +297,7 @@ const SpeakIt = {
       el.classList.add(cssClass);
       el.innerText = text;
       container.append(el);
+      return el;
     }
 
     async function getDataFromWordsApi() { // получить данные от API со словами
@@ -360,17 +364,14 @@ const SpeakIt = {
       statsRepeatButton.addEventListener('click', next);
 
       // проиграть произношение слова на статистике
-      const statWordsContainer = document.querySelector('.results__words');
+      const statWordsContainer = document.querySelector('.results');
       statWordsContainer.addEventListener('click', statsWordClick);
 
       // показать глобальную статистику приложения
       const globalStatsButton = document.querySelector('.result__buttons .button__global');
       globalStatsButton.addEventListener('click', globalStatsClick);
 
-      // вернуться из глобальной статистике к игре
-      const globalStatsButtonGame = document.querySelector('.global__buttons .button__game');
-      globalStatsButtonGame.addEventListener('click', startButtonClick);
-
+      
       // вернуться из глобальной статистики к статистике последней игры
       const globalStatsButtonBack = document.querySelector('.global__buttons .button__stats');
       globalStatsButtonBack.addEventListener('click', results);
@@ -428,6 +429,7 @@ const SpeakIt = {
       const audioIcon = target.querySelector('.sound__icon');
       const { audio } = audioIcon.dataset;
       playSound(audio);
+      console.log(audio);
     };
 
     const results = (e) => { // страница "Результаты"
@@ -461,7 +463,7 @@ const SpeakIt = {
       clearContainer(uncorrectWordsContainer);
       clearContainer(correctWordsContainer);
 
-      errorsContainer.innerText = `errors: ${errors}`;
+      errorsContainer.innerText = `Ошибок: ${errors}`;
       const correctDivListWords = document.querySelectorAll('.words__container .correct');
       const correctDivWords = Array.prototype.slice.call(correctDivListWords);
       correctWords = [];
