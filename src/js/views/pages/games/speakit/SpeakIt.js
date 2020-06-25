@@ -2,6 +2,7 @@ import Utils from '../../../../services/Utils';
 import '../../../../../css/pages/games/allGames.scss';
 import '../../../../../css/pages/games/speakit/speakit.scss';
 import Game from '../game';
+import AppModel from '../../../../model/AppModel';
 
 const SpeakIt = {
 
@@ -106,14 +107,14 @@ const SpeakIt = {
             </div>
         </div>
         <div class="global">
-            <div class="global__header">Stats for all FINISHED games</div>
+            <div class="global__header">Статистика по всем завершенным играм</div>
 
             <div class="global__results">
                 <table>
                     <tr>
-                        <th class = "td__datetime">DateTime</th>
-                        <th class = "td__words">Words</th>
-                        <th class = "td__errors">Errors</th>
+                        <th class = "td__datetime">Дата</th>
+                        <th class = "td__words">Слова</th>
+                        <th class = "td__errors">Количество ошибок</th>
                     </tr>
                 </table>
             </div>
@@ -162,7 +163,8 @@ const SpeakIt = {
 
     // localStorage.setItem('games', null);
     async function getRepeatWords() {
-      const repeatWords = [];
+      let repeatWords = [];
+      repeatWords = await AppModel.getSetOfLearnedWords(10);
 
       return repeatWords;
     }
