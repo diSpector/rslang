@@ -204,14 +204,17 @@
   font-size: 1.5rem;
 }
 
-.sprint--end__message{
+.sprint--end__message, .sprint--end__statistic{
   p{
-    margin: 5px;
+    margin: 15px;
   }
-  padding-top: 10px;
+  &.hidden{
+    display: none;
+  } 
+  overflow: hidden;
   text-align: center;
   width: 400px;
-  height: 200px;
+  height: 300px;
   background-color: white;
   border-radius: 15px;
   box-shadow:3px 3px 3px darkgrey;
@@ -221,9 +224,9 @@
   }
   @include media-mobile-big {
     width: 95%;
-    height: 220px;
     margin-left: calc(2.5vw);
   }
+
 
   .sprint--card__list{
     transform: rotate(35deg);
@@ -268,7 +271,60 @@
   height: 40px;
   margin: 0 40px;
 }
-.sprint__arrow_about{
-  font-size: 1.5rem;
-  margin: auto;
+
+.sprint--end__statistic {
+  width: 360px;
+  height: 260px;
+  overflow-y: scroll;
+  text-align: left;
+  padding: 20px;
+  @include media-mobile-big {
+    width: calc(95% - 40px);
+    margin-left: calc(2.5vw);
+  }
+}
+.sprint--end__slide{
+  display: flex;
+  width: 28px;
+  margin: auto
+;}
+
+.sprint--end__slide > span {
+  cursor: pointer;
+  height: 8px;
+  width: 8px;
+  margin: 3px;
+  background-color: grey;
+  border-radius: 50%;
+  &.active{
+    background-color: cornflowerblue;
+  }
+}
+
+.sprint--end__button_repeat,.sprint--end__button_main {
+  cursor: pointer;
+  width: 85%;
+  margin: 10px;
+  height: 35px;
+  color: white;
+  border: 0;
+  outline: none;
+  border-radius: 3px;
+  transition: 0.1s;
+  font-size: 2rem;
+  font-family: 'Neucha', cursive;
+  background: rgb(64,199,129);
+  box-shadow: -3px -3px rgb(53,167,110) inset;
+  &:active{
+    background: rgb(33,147,90);
+    box-shadow: 3px 3px #17653e inset;
+  }
+}
+.sprint--end__statistic_correct_text{
+  font-size: 2.5rem;
+  color: rgb(53,167,110);
+}
+.sprint--end__statistic_error_text{
+  font-size: 2.5rem;
+  color: #c34040;
 }

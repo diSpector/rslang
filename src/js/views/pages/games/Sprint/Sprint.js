@@ -56,18 +56,30 @@ const Sprint = {
           <div class="sprint--game__arrow_left"></div>          
           <div class="sprint--game__arrow_right"></div>          
         </div>
-        <p class="sprint__arrow_about">Нажимай на стрелки влево/вправо на клавиатуре, чтобы дать ответ.</p> 
       </section>
 
       <section class="sprint--end hidden">
-        <h2 class=sprint--end__title>Результаты тренировки</h2>
         <div class="sprint--end__message">
+          <div class="sprint--card__title">
+            <h2 class=sprint--end__title>Результаты тренировки</h2>
+          </div>
           <p class="sprint__result">Твой результат <span class="sprint__message__result"></span> очков.</p>
           <p class="sprint__averge">Твой средний результат <span class="sprint__message__average"></span> очков.</p>
           <p class="sprint__record">Твой рекорд <span class="sprint__message__record"></span> очков.</p>
-          <div class="sprint--card__list"></div>          
-          <div class="sprint--card__list2"></div>          
-
+          <button class="sprint--end__button_repeat">Играть еще раз</button>
+          <button class="sprint--end__button_main">Главная страница</button>
+        </div>
+        <div class="sprint--end__statistic hidden">
+          <div class="sprint--end__statistic_correct">
+            <p class="sprint--end__statistic_correct_text">Правильные ответы</p>
+          </div>
+          <div class="sprint--end__statistic_error">
+            <p class="sprint--end__statistic_error_text">Ответы с ошибками</p>
+          </div>
+        </div>
+        <div class ="sprint--end__slide">
+          <span class="sprint--end__slide_main active"></span>
+          <span class="sprint--end__slide_statistic"></span>
         </div>
       </section>
     </div>
@@ -76,6 +88,7 @@ const Sprint = {
   },
 
   afterRender: () => {
+    const { model } = Sprint.settings;
     Game.startGame(timerw);
     let data = JSON.parse(localStorage.getItem('data'));
     if (data == null) {
@@ -83,7 +96,7 @@ const Sprint = {
       localStorage.setItem('data', JSON.stringify(data));
       data = JSON.parse(localStorage.getItem('data'));
     }
-    game();
+    game(model);
   },
 };
 
