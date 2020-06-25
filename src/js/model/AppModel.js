@@ -2,7 +2,7 @@
 export default class AppModel {
   constructor() {
     this.searchString = 'https://afternoon-falls-25894.herokuapp.com/words?';
-    this.contentURL = 'https://raw.githubusercontent.com/dispector/rslang-data/master/';
+    this.contentURL = 'https://raw.githubusercontent.com/dispector/rslang-data/master/data/book';
     this.userName = 'defaultUser';
     this.maxDictionaryLength = 3600;
     this.wordsCounter = 100;
@@ -11,6 +11,10 @@ export default class AppModel {
     this.difficultWords = [];
     this.deletedWords = [];
     this.dailyQuote = 20;
+    this.maxWordsPerExampleSentence = 50;
+    this.wordSetLength = 600;
+    this.numberOfDifficulties = 6;
+    this.currentWordSet = [];
     this.gameStatistics = {
       englishPuzzle: {},
       savannah: {},
@@ -215,6 +219,14 @@ export default class AppModel {
     return result;
   }
 
+  async getSetOfWordsCustomLength(group, page, wordsPerPage) {
+    const url = `${this.searchString}group=${group}&page=${page}&wordsPerExampleSentenceLTE=${this.maxWordsPerExampleSentence}&wordsPerPage=${wordsPerPage}`;
+    const responce = await fetch(url);
+    const data = await responce.json();
+    const result = data.map((x) => this.reformatWordData(x));
+    return result;
+  }
+
   async getSetOfWordsByDifficulty(difficulty, round, roundLength) {
     let resultArr = [];
     let firstPage = [];
@@ -251,12 +263,8 @@ export default class AppModel {
     return resultArr;
   }
 
-  // предполагается что это будет основная ф-я для получения слов из бекенда в миниигры
-  // на входе: difficulty - сложнонсть (от 0 до 5)
-  // round - номер раунда. в зависимости от длины раунда может быть от 0 до 29, 19 или 59.
-  // roundLength - количество слов в раунде игры. допустимые значения 10/20/30
-  // numberOfTranslations - количество НЕПРАВИЛЬНЫХ переводов идущих вместе с правильным (от 1 до 5)
-  async getSetOfWordsAndTranslations(difficulty, round, roundLength, numberOfTranslations) {
+  // Deprecated!!!
+  /* async getSetOfWordsAndTranslationsOld(difficulty, round, roundLength, numberOfTranslations) {
     const correctResults = await this.getSetOfWordsByDifficulty(difficulty, round, roundLength);
     const incorrectTranslationsPromises = [];
     let incorrectTranslations = [];
@@ -268,6 +276,52 @@ export default class AppModel {
       incorrectTranslationsPromises.push(this.getSetOfWordsByDifficulty(usableDifficulties[i], round, roundLength));
     }
     incorrectTranslations = await Promise.all(incorrectTranslationsPromises);
+    for (let i = 0; i < roundLength; i += 1) {
+      incorrectTranslationsSubArray = [];
+      for (let j = 0; j < numberOfTranslations; j += 1) {
+        incorrectTranslationsSubArray.push(incorrectTranslations[j][i]);
+      }
+      finalArray.push({ correct: correctResults[i], incorrect: incorrectTranslationsSubArray });
+    }
+    return finalArray;
+  } */
+
+  // служебная функция, записывающая массив слов данной сложности из гитхаба в модель
+  async getWordsDataFromGithub(difficulty) {
+    const url = `${this.contentURL}${difficulty}.json`;
+    const responce = await fetch(url);
+    const data = await responce.json();
+    this.currentWordSet = await data;
+  }
+
+  // служебная ф-я, достающая из данных модели набор слов для указанного раунда
+  getRoundDataFromModel(round, roundLength) {
+    return this.currentWordSet.slice(round * roundLength, (round + 1) * roundLength);
+  }
+
+  // предполагается что это будет основная ф-я для получения слов из бекенда в миниигры
+  // на входе: difficulty - сложность (от 1 до 6)
+  // round - номер раунда. в зависимости от длины раунда может быть  0 - 29, 0-19 или 0-59.
+  // roundLength - количество слов в раунде игры. допустимые значения 10/20/30
+  // numberOfTranslations - количество НЕПРАВИЛЬНЫХ переводов идущих вместе с правильным (от 1 до 5)
+  async getSetOfWordsAndTranslations(difficulty, round, roundLength, numberOfTranslations) {
+    const incorrectTranslationsRounds = [];
+    const incorrectTranslations = [];
+    let incorrectTranslationsSubArray = [];
+    let numberOfCurrentRound;
+    const finalArray = [];
+    const totalNumberOfRounds = this.wordSetLength / roundLength;
+    await this.getWordsDataFromGithub(difficulty);
+    const correctResults = this.getRoundDataFromModel(round, roundLength);
+    do {
+      numberOfCurrentRound = Math.floor(Math.random() * totalNumberOfRounds);
+      if (!incorrectTranslationsRounds.includes(numberOfCurrentRound) && numberOfCurrentRound !== round) {
+        incorrectTranslationsRounds.push(numberOfCurrentRound);
+      }
+    } while (incorrectTranslationsRounds.length < numberOfTranslations);
+    for (let i = 0; i < numberOfTranslations; i += 1) {
+      incorrectTranslations[i] = this.getRoundDataFromModel(incorrectTranslationsRounds[i], roundLength);
+    }
     for (let i = 0; i < roundLength; i += 1) {
       incorrectTranslationsSubArray = [];
       for (let j = 0; j < numberOfTranslations; j += 1) {

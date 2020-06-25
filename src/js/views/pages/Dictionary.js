@@ -15,7 +15,7 @@ const Dictionary = {
     </section>
           `;
 
-    console.log(await model.getSetOfWordsAndTranslations(5, 15, 30, 4));
+    console.log(await model.getSetOfWordsAndTranslations(6, 19, 10, 5));
     return view;
   },
   afterRender: async () => {
