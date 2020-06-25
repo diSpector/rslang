@@ -2,6 +2,10 @@ const EnglishPuzzleConfig = {
   general: {
     maxLevels: 6,
     maxPages: 20,
+    max: {
+      level: 6,
+      page: 20,
+    },
   },
 
   api: {
@@ -23,12 +27,26 @@ const EnglishPuzzleConfig = {
     resultsField: '.englishPuzzle__results',
 
     // game
-    currentLevel: '.menu__level .level__current',
-    currentPage: '.menu__page .page__current',
-    levelDropDownMenu: '.level__menu.dropdown__menu',
-    pageDropDownMenu: '.page__menu.dropdown__menu',
-    levelMenuTitle: '.level__list',
-    pageMenuTitle: '.page__list',
+    // currentLevel: '.menu__level .level__current',
+    // currentPage: '.menu__page .page__current',
+    menus: {
+      current: {
+        level: '.menu__level .level__current',
+        page: '.menu__page .page__current',
+      },
+      dropDownClass: {
+        level: '.level__menu.dropdown__menu',
+        page: '.page__menu.dropdown__menu',
+      },
+      menuTitle: {
+        level: '.level__list',
+        page: '.page__list',
+      }
+    },
+    // levelDropDownMenu: '.level__menu.dropdown__menu',
+    // pageDropDownMenu: '.page__menu.dropdown__menu',
+    // levelMenuTitle: '.level__list',
+    // pageMenuTitle: '.page__list',
 
     gameButtons: '.englishPuzzle__buttons.gameButtons',
     tips: '.menu__tips.tips',

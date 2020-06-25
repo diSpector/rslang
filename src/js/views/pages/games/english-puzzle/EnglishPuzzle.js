@@ -3,6 +3,7 @@ import Utils from '../../../../services/Utils';
 import Model from './helpers/Model';
 import WordsHelper from './helpers/WordsHelper';
 import HtmlHelper from './helpers/HtmlHelper';
+import ArrayHelper from './helpers/ArrayHelper'
 import Config from './settings/gameConfig';
 
 const EnglishPuzzle = {
@@ -150,8 +151,7 @@ const EnglishPuzzle = {
 
   afterRender: () => {
     EnglishPuzzle.hideMenus();
-    EnglishPuzzle.fillMenuLevels();
-    EnglishPuzzle.fillMenuPages();
+    EnglishPuzzle.fillLevelsPagesMenus(),
     EnglishPuzzle.fillDonePhrases();
     EnglishPuzzle.fillRoundPhrase();
     EnglishPuzzle.fillTaskPhrase();
@@ -165,42 +165,38 @@ const EnglishPuzzle = {
 //
   },
 
+  /** спрятать оба меню - выбора уровня и раунда */
   hideMenus() {
-    const levelMenu = document.querySelector(Config.containers.levelDropDownMenu);
-    const pageMenu = document.querySelector(Config.containers.pageDropDownMenu);
+    const levelMenu = document.querySelector(Config.containers.menus.dropDownClass.level);
+    const pageMenu = document.querySelector(Config.containers.menus.dropDownClass.page);
 
     HtmlHelper.hideContainers([levelMenu, pageMenu]);
   },
 
-  /** заполнить меню выбора уровней цифрами (1-6) */
-  fillMenuLevels() {
-    const currentLevContainer = document.querySelector(Config.containers.currentLevel);
-    const currentLevel = this.settings.game.level + 1;
-    currentLevContainer.innerHTML = currentLevel;
+  /** заполнить меню уровней и страниц */
+  fillLevelsPagesMenus() {
+    EnglishPuzzle.fillMenu('level');
+    EnglishPuzzle.fillMenu('page');
+  },
+  
+  /** 
+   * заполнить меню (список, выделение текущей стр) уровня или страницы
+   * @param {string} menuKey - level|page какое меню нужно заполнить (уровень или страница)
+   */
+  fillMenu(menuKey) {
+    const currentMenuKeyContainer = document.querySelector(Config.containers.menus.current[menuKey]);
+    const currentKeyValue = this.settings.game[menuKey] + 1;
+    currentMenuKeyContainer.innerHTML = currentKeyValue; // текущий уровень или страница
 
-    const menuLevel = document.querySelector(Config.containers.levelDropDownMenu);
-    const levels = [...Array(Config.general.maxLevels)];
-    levels.forEach((level, i) => {
-      const cssStyles = (i === (currentLevel - 1)) ? ['menu__item', 'active'] : 'menu__item';
-      Utils.createBlockInside('div', cssStyles, menuLevel, i + 1, {}, { level: i });
+    const menuDropDown = document.querySelector(Config.containers.menus.dropDownClass[menuKey]);
+    const menuValues = [...Array(Config.general.max[menuKey])];
+    menuValues.forEach((value, i) => {
+      const cssStyles = (i === (currentKeyValue - 1)) ? ['menu__item', 'active'] : 'menu__item';
+      Utils.createBlockInside('div', cssStyles, menuDropDown, i + 1, {}, { [menuKey]: i });
     })
   },
 
-  /** заполнить меню выбора страниц цифрами (1-20) */
-  fillMenuPages() {
-    const currentPageContainer = document.querySelector(Config.containers.currentPage);
-    const currentPage = this.settings.game.page + 1;
-    currentPageContainer.innerHTML = currentPage;
-
-    const menuPage = document.querySelector(Config.containers.pageDropDownMenu);
-    const levels = [...Array(Config.general.maxPages)];
-    levels.forEach((level, i) => {
-      const cssStyles = (i === (currentPage - 1)) ? ['menu__item', 'active'] : 'menu__item';
-      Utils.createBlockInside('div', cssStyles, menuPage, i + 1, {}, { page: i });
-    })
-  },
-
-  /** установить начальную конфигурацию кнопок */
+  /** установить начальную видимость кнопок */
   setButtons() {
     const buttonsContainer = document.querySelector(Config.containers.gameButtons); 
     const idkButton = buttonsContainer.querySelector(Config.buttons.idkButton);
@@ -217,7 +213,7 @@ const EnglishPuzzle = {
     hideButtonsArr.forEach((button) => button.classList.add(Config.cssStyles.hidden));
   },
 
-  /** установить начальный конфиг с подсказками */
+  /** установить видимость подсказок (начальный конфиг с подсказками) */
   setTips() {
     const tipsButtons = document.querySelectorAll(Config.containers.tipsAll);
     const { tips } = this.settings;
@@ -264,7 +260,7 @@ const EnglishPuzzle = {
     });
   },
 
-  /** наполнить поле для текущего раунда */
+  /** наполнить поле для текущего раунда - номер раунда + пустые слова для сбора фразы */
   fillRoundPhrase() {
     const wordsInRound = this.settings.words.shuffledCurrentWord.length;
     const doneRounds = this.settings.words.solvedWords.length;
@@ -275,8 +271,8 @@ const EnglishPuzzle = {
     Utils.createBlockInside('div', ['phrase__number', 'phrase__number-current'], roundPhraseInnerContainer, doneRounds + 1);
     const currentPhraseContainer = Utils.createBlockInside('div', 'phrase__words', roundPhraseInnerContainer);
 
-    roundPhrases.forEach((word) => {
-      Utils.createBlockInside('div', ['phrase__word', 'empty'], currentPhraseContainer, word);
+    roundPhrases.forEach(() => {
+      Utils.createBlockInside('div', ['phrase__word', 'empty'], currentPhraseContainer);
     })
   },
 
@@ -293,10 +289,12 @@ const EnglishPuzzle = {
   /** повесить слушатели событий */
   addListeners() {
     const taskWordsContainer = document.querySelector(Config.containers.taskPhrase);
-    // drag and drop
+
+    // drag and drop - разрешить drop в контейнер с перемешанными словами
     taskWordsContainer.addEventListener('dragover', this.processDragOverTask);
     taskWordsContainer.addEventListener('dragenter', this.processDragEnterTask);
 
+    // drag and drop - действия на начале перетаскивания из task, попытке дропа в task
     taskWordsContainer.addEventListener('dragstart', this.processDragStartTaskWord);
     taskWordsContainer.addEventListener('dragend', this.processDragEndTaskWord);
     taskWordsContainer.addEventListener('drop', this.processDropToTask);
@@ -305,13 +303,15 @@ const EnglishPuzzle = {
     taskWordsContainer.addEventListener('click', this.processTaskWordClick);
 
     const roundWordsContainer = document.querySelector(Config.containers.roundPhraseWords);
-    // drag and drop
+    // drag and drop - разрешить drop в контейнер для сбора слов
     roundWordsContainer.addEventListener('dragover', this.processDragOverRound);
     roundWordsContainer.addEventListener('dragenter', this.processDragEnterRound);
     
+    // drag and drop - действия на начале перетаскивания из round, попытке дропа в round
     roundWordsContainer.addEventListener('dragstart', this.processDragStartRoundWord);    
     roundWordsContainer.addEventListener('dragend', this.processDragEndRoundWord);    
     roundWordsContainer.addEventListener('drop', this.processDropToRound);
+
     // click
     roundWordsContainer.addEventListener('click', this.processRoundWordClick);
 
@@ -326,16 +326,16 @@ const EnglishPuzzle = {
     contButton.addEventListener('click', this.processContClick);
     resButton.addEventListener('click', this.processResClick);
 
-    const menuLevel = document.querySelector(Config.containers.levelMenuTitle);
+    const menuLevel = document.querySelector(Config.containers.menus.menuTitle.level);
     menuLevel.addEventListener('click', this.toggleLevels);
 
-    const levelMenuItems = document.querySelector(Config.containers.levelDropDownMenu);
+    const levelMenuItems = document.querySelector(Config.containers.menus.dropDownClass.level);
     levelMenuItems.addEventListener('click', this.changeLevel);
 
-    const menuPage = document.querySelector(Config.containers.pageMenuTitle);
+    const menuPage = document.querySelector(Config.containers.menus.menuTitle.page);
     menuPage.addEventListener('click', this.togglePages);
 
-    const pageMenuItems = document.querySelector(Config.containers.pageDropDownMenu);
+    const pageMenuItems = document.querySelector(Config.containers.menus.dropDownClass.page);
     pageMenuItems.addEventListener('click', this.changePage);
 
     const tipsContainer = document.querySelector(Config.containers.tips);
@@ -367,16 +367,16 @@ const EnglishPuzzle = {
     contButton.removeEventListener('click', this.processContClick);
     resButton.removeEventListener('click', this.processResClick);
 
-    const menuLevel = document.querySelector(Config.containers.levelMenuTitle);
+    const menuLevel = document.querySelector(Config.containers.menus.menuTitle.level);
     menuLevel.removeEventListener('click', this.toggleLevels);
 
-    const levelMenuItems = document.querySelector(Config.containers.levelDropDownMenu);
+    const levelMenuItems = document.querySelector(Config.containers.menus.dropDownClass.level);
     levelMenuItems.removeEventListener('click', this.changeLevel);
 
-    const menuPage = document.querySelector(Config.containers.pageMenuTitle);
+    const menuPage = document.querySelector(Config.containers.menus.menuTitle.page);
     menuPage.removeEventListener('click', this.togglePages);
 
-    const pageMenuItems = document.querySelector(Config.containers.pageDropDownMenu);
+    const pageMenuItems = document.querySelector(Config.containers.menus.dropDownClass.page);
     pageMenuItems.removeEventListener('click', this.changePage);
 
     const tipsContainer = document.querySelector(Config.containers.tips);
@@ -386,68 +386,78 @@ const EnglishPuzzle = {
     soundIconBlock.removeEventListener('click', this.processSoundClick);
   },
 
-  /** drop в контейнер раунда */
+  /** 
+   * обработка drop'а в контейнер раунда - из task или внутри round
+   * @param {Event} event - объект события (event.target - НА КАКОЙ блок происходит drop)
+   * */
   processDropToRound: (event) => {
-    // EnglishPuzzle.deleteHighlightAreas();   
-    // console.log('dropped Data: ', event.dataTransfer.getData('text'));
-    // console.log('dropped event target: ', event.target);
-    // const underElement = event.target;
-    // const order = event.dataTransfer.getData('text');
-    // const draggedEl = document.querySelector(`${Config.containers.taskPhrase} .task__word[data-order-task="${order}"]`);
-    // console.log('draggedEl', draggedEl);
-    // if (!draggedEl) {
-    //   return;
-    // }
-    // EnglishPuzzle.dropToSpecElement(draggedEl, underElement);
     EnglishPuzzle.deleteHighlightAreas();   
     console.log('dropped Data: ', event.dataTransfer.getData('text'));
-    console.log('dropped event target: ', event.target);
     const underElement = event.target;
+    console.log('drop will be to: ', underElement);
     
     let order = 0;
-    let draggedEl = null;
+    let draggedEl = null; // перетаскиваемый элемент
     const textParam = event.dataTransfer.getData('text');
-    if (textParam.includes('@@')) {
+    
+    /** для того, чтобы определить, из какого контейнера перетаскивается эл-т 
+     *  используется "флаг" @@ в параметре 'text' перетаскиваемого эл-та:
+     * - если эл-т тянется из round, у него есть @@ - формат "order@@word"
+     * - если из task, то нет - формат "order"
+    */
+    if (textParam.includes('@@')) { // эл-т тянется из round (перенос внутри строки)
       const textParamArr = textParam.split('@@');
       order = textParamArr[0];
-      const text = textParamArr[1];
+      const text = textParamArr[1]; // текст слова на блоке
       draggedEl = document.querySelector(`${Config.containers.roundPhraseWords} .phrase__word[data-order-task="${order}"]`);
       if (!draggedEl) {
         return;
       }
       EnglishPuzzle.dropToSpecElement(draggedEl, underElement, true);
-    } else {
-      order = textParam;
-      draggedEl = document.querySelector(`${Config.containers.taskPhrase} .task__word[data-order-task="${order}"]`);
-      if (!draggedEl) {
+    } else { // элемент тянется из task 
+      try { // на случай глюка, когда выбраны и тянутся несколько элементов
+        order = textParam;
+        draggedEl = document.querySelector(`${Config.containers.taskPhrase} .task__word[data-order-task="${order}"]`);
+        console.log('dragged element from task', draggedEl);
+        if (!draggedEl) {
+          return;
+        }
+        EnglishPuzzle.dropToSpecElement(draggedEl, underElement);
+      } catch(error) {
         return;
       }
-      EnglishPuzzle.dropToSpecElement(draggedEl, underElement);
     }
   },
 
-  /** drop элемента внутрь другого */
+  /** 
+   * drop элемента на другой элемент (пустой или нет) 
+   * 
+   * @param {HTMLElement} dragEl - элемент, который юзер тянет 
+   * @param {HTMLElement} dropEl - элемент, на который юзер опускает dragEl
+   * @param {boolean} isNeedUpdate - true, если элемент тянется ВНУТРИ строки round
+   * */
   dropToSpecElement(dragEl, dropEl, isNeedUpdate = false) {
     let roundArr = EnglishPuzzle.getRoundArr();
     const dropPosition = EnglishPuzzle.getDropPosition(dropEl);
 
     let newRoundArr = [];
 
-    /** draggedParams: { width, order, text } */
+    /** draggedParams: { width, order, text } - параметры перетаскиваемого эл-та */
     const draggedParams = EnglishPuzzle.getClickedElParams(dragEl);
 
-    /** поместить пустой элемент на месте, с которого забрали слово */
-    EnglishPuzzle.makeElementEmpty(dragEl, draggedParams.width); 
+    /** поместить пустой элемент на место, с которого забрали слово */
+    HtmlHelper.makeElementEmpty(dragEl, draggedParams.width); 
 
-    if (isNeedUpdate) { // флаг, что перенос внутри раунда
+    // если перенос внутри раунда, то обновить массив слова после удаления слова
+    if (isNeedUpdate) {
       roundArr = EnglishPuzzle.getRoundArr();
     }
 
     if (!roundArr[dropPosition]) { // если на места сброса нет элемента, просто вставляем новый
-      newRoundArr = roundArr.slice(0);
+      newRoundArr = roundArr.slice();
       newRoundArr[dropPosition] = draggedParams;
     } else { // если на месте сброса есть элемент, двигаем массив по-умному
-      newRoundArr = EnglishPuzzle.getShiftedArray(roundArr.slice(0), dropPosition);
+      newRoundArr = ArrayHelper.getShiftedArray(roundArr.slice(), dropPosition);
       newRoundArr[dropPosition] = draggedParams;
     }
 
@@ -459,69 +469,16 @@ const EnglishPuzzle = {
     }
   },
 
-  /** сделать элемент пустым - серый цвет, фикс ширина, flex-grow = 0; */
-  makeElementEmpty(elem, width) {
-    elem.classList.add(Config.cssStyles.emptyWord);
-    elem.innerHTML = '';
-    elem.style.width = `${width}px`;
-    elem.style.flexGrow = '0';
-    elem.draggable = false;
-  },
-
-  /** получить новый массив с учетом сдвига от нового элемента */
-  getShiftedArray(arr, pos) {
-    const newArr = arr.slice(0);
-    let beforeArr = [];
-    let middleArr = [];
-    let afterArr = [];
-    let resArr = [];
-
-    const nullIndPos = this.getNullIndexPos(newArr, pos);
-    if (nullIndPos.dir === 'r') {
-      const nullPosToRight = nullIndPos.ind;
-      beforeArr = newArr.slice(0, pos);
-      middleArr = newArr.slice(pos, pos + nullPosToRight);
-      afterArr = newArr.slice(pos + nullPosToRight + 1);
-      resArr = [].concat(beforeArr, null, middleArr, afterArr);
-    } else {
-      const nullPosToLeft = nullIndPos.ind;
-      beforeArr = newArr.slice(0, pos - nullPosToLeft);
-      middleArr = newArr.slice(pos - nullPosToLeft + 1, pos + 1);
-      afterArr = newArr.slice(pos + 1);
-      resArr = [].concat(beforeArr, middleArr, null, afterArr);
-    }
-    return resArr;
-  },
-
-  /** найти через сколько элементов будет пустой элемент */
-  getNullIndexPos(arr, pos) {
-    let resObj = {};
-
-    const arrToRight = arr.slice(pos);
-    const arrToLeft = arr.slice(0, pos + 1).reverse();
-
-    const nullIndex = arrToRight.findIndex((element) => (element === null));
-
-    if (nullIndex > -1) { // если пустой элемент справа, он уже найден
-      resObj = {
-        dir: 'r',
-        ind: nullIndex,
-      };
-    } else { // если пустой элемент слева, найти его индекс
-      resObj = {
-        dir: 'l',
-        ind: arrToLeft.findIndex((element) => (element === null)),
-      };
-    }
-    return resObj;
-  },
-
   /** найти индекс первого null-элемента */
   getFirstNullInd(arr) {
     return arr.findIndex((elem) => elem === null);
   },
 
-  /** рендер слов в раунде на основании массива */
+  /** 
+   * рендер слов в раунде на основании массива 
+   * @param {Array} configArr - массив для рендера в формате:
+   * [null, ..., null, {order, text, width}, {order, text, width}, ..., null]
+   * */
   renderRoundWordsFromArr(configArr) {
     const roundWordsContainer = document.querySelector(Config.containers.roundPhraseWords);
     HtmlHelper.clearContainers([roundWordsContainer]);
@@ -538,7 +495,7 @@ const EnglishPuzzle = {
     });
   },
 
-  /** получить позицию, на которую сбрасывается элемент */
+  /** получить позицию, на которую сбрасывается элемент внутри своего контейнера */
   getDropPosition(dropEl) {
     const index = [...dropEl.parentElement.children].indexOf(dropEl);
     return index;
@@ -562,18 +519,24 @@ const EnglishPuzzle = {
   /** drop в контейнер для перемешанных слов */
   processDropToTask: (event) => {
     EnglishPuzzle.deleteHighlightAreas();
-    const order = event.dataTransfer.getData('text').split('@@')[0];
-    // const order = event.dataTransfer.getData('text');
-    const draggedEl = document.querySelector(`${Config.containers.roundPhrase} .phrase__word[data-order-task="${order}"]`);
-    if (!draggedEl) {
-      return;
+    try { // на случай, если юзер захватил несколько элементов
+      const order = event.dataTransfer.getData('text').split('@@')[0];
+      const draggedEl = document.querySelector(`${Config.containers.roundPhrase} .phrase__word[data-order-task="${order}"]`);
+      if (!draggedEl) {
+        return;
+      }
+      EnglishPuzzle.processRoundWordClick({target: draggedEl});
+    } catch (error) {
+      return
     }
-    EnglishPuzzle.processRoundWordClick({target: draggedEl});
   },
 
   /** установить передаваемые данные, подсветить поле для drop */
   processDragStartTaskWord: (event) => {
     event.stopPropagation();
+    if (!event.target.classList) { // глюк, когда выбирается несколько эл-тов
+      return;
+    }
     if (event.target.classList.contains(Config.cssStyles.emptyWord)) {
       return;
     }
@@ -588,13 +551,15 @@ const EnglishPuzzle = {
   /** установить передаваемые данные, подсветить поле для drop */
   processDragStartRoundWord: (event) => {
     event.stopPropagation();
+    if (!event.target.classList) { // глюк, когда выбирается несколько эл-тов
+      return;
+    }
     if (event.target.classList.contains(Config.cssStyles.emptyWord)) {
       return;
     }
     if (event.target.classList.contains(Config.cssStyles.taskWord)) {
       return;
     }
-    // event.dataTransfer.setData('text', event.target.dataset.orderTask);
     event.dataTransfer.setData('text', `${event.target.dataset.orderTask}@@${event.target.innerHTML}`);
 
     const taskWordsContainer = document.querySelector(Config.containers.taskPhrase);
@@ -854,13 +819,13 @@ const EnglishPuzzle = {
 
   /** показать/скрыть меню с выбором уровней */
   toggleLevels: () => {
-    const menuContainer = document.querySelector(Config.containers.levelDropDownMenu);
+    const menuContainer = document.querySelector(Config.containers.menus.dropDownClass.level);
     menuContainer.classList.toggle(Config.cssStyles.hidden);
   },
 
   /** показать/скрыть меню с выбором страниц */
   togglePages: () => {
-    const menuContainer = document.querySelector(Config.containers.pageDropDownMenu);
+    const menuContainer = document.querySelector(Config.containers.menus.dropDownClass.page);
     menuContainer.classList.toggle(Config.cssStyles.hidden);
   },
 
@@ -1000,7 +965,8 @@ const EnglishPuzzle = {
 
       taskWordsContainer.removeEventListener('click', EnglishPuzzle.processTaskWordClick);
       roundWordsContainer.removeEventListener('click', EnglishPuzzle.processRoundWordClick);
-
+      roundWordsContainer.removeEventListener('dragstart', EnglishPuzzle.processDragStartRoundWord);    
+      
       EnglishPuzzle.hideButton('idk');
       EnglishPuzzle.hideButton('check');
       EnglishPuzzle.showButton('cont');
@@ -1070,7 +1036,7 @@ const EnglishPuzzle = {
     const clickedParams = EnglishPuzzle.getClickedElParams(target);
 
     /** поместить пустой элемент на месте, по которому кликнули */
-    EnglishPuzzle.makeElementEmpty(target, clickedParams.width);
+    HtmlHelper.makeElementEmpty(target, clickedParams.width);
     
     /** поместить элемент, по которому кликнули на первом свободное место */
     roundArr[firstNullInd] = clickedParams;
@@ -1118,7 +1084,7 @@ const EnglishPuzzle = {
     const { width, text, order } = EnglishPuzzle.getClickedElParams(target);
 
     // сделать пустым элемент, по которому кликнули
-    EnglishPuzzle.makeElementEmpty(target, width);
+    HtmlHelper.makeElementEmpty(target, width);
 
     const taskEmptyWord = document.querySelectorAll('.task__words .task__word')[order - 1];
     EnglishPuzzle.updateElement(taskEmptyWord, text, width, order);

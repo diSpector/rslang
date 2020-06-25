@@ -19,8 +19,8 @@ const HtmlHelper = {
     const donePhrasesContainer = document.querySelector(Config.containers.donePhrases);
     const roundPhraseContainer = document.querySelector(Config.containers.roundPhrase);
     const taskPhraseContainer = document.querySelector(Config.containers.taskPhrase);
-    const menuLevelContainer = document.querySelector(Config.containers.levelDropDownMenu);
-    const menuPageContainer = document.querySelector(Config.containers.pageDropDownMenu);
+    const menuLevelContainer = document.querySelector(Config.containers.menus.dropDownClass.level);
+    const menuPageContainer = document.querySelector(Config.containers.menus.dropDownClass.page);
     const translationContainer = document.querySelector(Config.containers.translation);
 
     const containers = [
@@ -84,7 +84,21 @@ const HtmlHelper = {
   showPage(selectorStyle) {
     const page = document.querySelector(selectorStyle);
     page.classList.remove(Config.cssStyles.hidden);
-  }
+  },
+
+  /** 
+   * сделать элемент пустым - серый цвет, фикс ширина, flex-grow = 0; 
+   * 
+   * @param {HTMLElement} elem - элемент, который нужно сделать пустым
+   * @param {float} width - ширина, которую нужно назначить пустому элементу
+   * */
+  makeElementEmpty(elem, width) {
+    elem.classList.add(Config.cssStyles.emptyWord);
+    elem.innerHTML = '';
+    elem.style.width = `${width}px`;
+    elem.style.flexGrow = '0';
+    elem.draggable = false;
+  },
 
 };
 
