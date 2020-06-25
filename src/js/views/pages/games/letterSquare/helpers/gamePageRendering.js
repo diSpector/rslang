@@ -13,7 +13,8 @@ export default function gamePageRendering() {
     <button class="allGames--startBtn  letterSquare--btn__startBtn">Начать</button>
   </section>
 
-    <section class="letterSquare letterSquare__game letterSquare-hidden">
+    <section class="letterSquare letterSquare__game letterSquare-hidden"">
+      <span id="timer" style="color: #f00; font-size: 150%; font-weight: bold;">00:10</span>
       <div class="letterSquare--container">
       <div class="letterSquare--playingField"></div>
       <div id="words" class="letterSquare--wordList">

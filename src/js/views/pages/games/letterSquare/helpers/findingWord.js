@@ -1,22 +1,15 @@
-import words from '../model/words.js';
+import words from '../model/words';
 
 let word = '';
 let counterWord = 1;
 
 export default function findingWord() {
-  /*function soundClick() {
-    const audio = new Audio(); 
-    audio.src = `src/audio/correct.mp3'`; 
-    audio.autoplay = true; 
-  }*/
-
   function checkWord(letter) {
     word += String(letter);
     const btnCheck = document.querySelector('.letterSquare---wordList__btnCheck');
     btnCheck.onclick = () => {
       for (let i = 0; i < words.length; i += 1) {
         if (words[i] === word) {
-          //soundClick();
           counterWord -= 1;
           if (counterWord === 0) {
             document.querySelector('.letterSquare__game').classList.add('letterSquare-hidden');

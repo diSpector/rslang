@@ -1,11 +1,13 @@
 import words from '../model/words';
 import wordFilling from './addingWordsToTable';
+import startTimer from './timer';
 
 export default function drawPlayField() {
   const startBtn = document.querySelector('.letterSquare--btn__startBtn');
   startBtn.onclick = () => {
     document.querySelector('.allGames__startScreen').classList.add('letterSquare-hidden');
     document.querySelector('.letterSquare__game').classList.remove('letterSquare-hidden');
+    startTimer();
   };
   const numberСell = 10;
   const playField = document.createElement('table');

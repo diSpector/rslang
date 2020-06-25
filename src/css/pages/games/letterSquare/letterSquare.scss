@@ -67,6 +67,14 @@ html, body{
 .letterSquare-hidden {
   display: none;
 }
+
+#timer {
+  display: inline-block;
+  position: relative;
+  font-weight: bold;
+  margin-left: auto;
+  margin-right: 0;
+}
   
 table {
   margin-top: 5em;

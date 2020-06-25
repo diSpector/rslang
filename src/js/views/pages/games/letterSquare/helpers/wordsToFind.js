@@ -1,4 +1,4 @@
-import words from '../model/words.js';
+import words from '../model/words';
 
 export default function wordsToFind() {
   const list = document.querySelector('.letterSquare--wordList__list');
