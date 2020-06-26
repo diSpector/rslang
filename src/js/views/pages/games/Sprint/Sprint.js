@@ -25,7 +25,28 @@ const Sprint = {
     <div class="sprint allGames">
       <section class="allGames__startScreen">
         <h1 class="allGames__heading">Спринт</h1>
-        <p class="allGames__description">Тренировка спринт развивает способности быстрого перевода слов и выражений с английского языка на русский.</p>
+        <p class="allGames__description">Тренировка спринт развивает способности быстрого перевода слов и выражений с английского языка на русский.<br>За более чем три правильных ответа подряд будет начисляться удвоенное колличество баллов.</p>
+        <div class="allGames__choice">
+          <p class="allGames__choice_learn select">Игра с изученными словами</p>
+          <p class="allGames__choice_new">Игра с новыми словами</p>
+          <div class="allGames__choice_levels hidden">
+            <label>Уровень:</label>
+            <select name="levels" id="levels">
+              <option value="1">1</option>
+              <option value="2">2</option>
+              <option value="3">3</option>
+              <option value="4">4</option>
+              <option value="5">5</option>
+            </select>
+            <label>Раунд:</label>
+            <select name="pages" id="pages">
+              <option value="1">1</option>
+              <option value="2">2</option>
+              <option value="3">3</option>
+            </select>
+          </div>
+        </div>
+
         <button class="allGames__startBtn  btn">Начать</button>
       </section>
       <section class="allGames__timerScreen  allGames__timerScreen-hidden">
@@ -67,6 +88,7 @@ const Sprint = {
           <p class="sprint__averge">Твой средний результат <span class="sprint__message__average"></span> очков.</p>
           <p class="sprint__record">Твой рекорд <span class="sprint__message__record"></span> очков.</p>
           <button class="sprint--end__button_repeat">Играть еще раз</button>
+          <button class="sprint--end__button_continue">Продолжить</button>
           <button class="sprint--end__button_main">Главная страница</button>
         </div>
         <div class="sprint--end__statistic hidden">

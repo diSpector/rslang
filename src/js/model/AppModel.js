@@ -70,7 +70,7 @@ export default class AppModel {
   // initialize user data for the first load
   setDefaultUserData(userName) {
     this.userName = userName;
-    this.wordsCounter = 0;
+    // this.wordsCounter = 0;
     this.difficultWords = [];
     this.deletedWords = [];
     localStorage.setItem(this.userName, {

@@ -11,8 +11,10 @@ const generate = (words) => {
   const word = words[0];
   const translate = words[1];
   const notranslate = words[2];
+  const audio = words[3];
   obj.correctword = word;
   obj.correcttranslate = translate;
+  obj.audio = audio;
   let result;
   document.querySelector('.sprint--card__word > .word').innerHTML = word;
   if (Math.round(Math.random())) {
@@ -57,15 +59,44 @@ const check = (count) => {
 const generateStatisticWord = (masCorrect, masError) => {
   const correctList = document.querySelector('.sprint--end__statistic_correct');
   masCorrect.forEach((item) => {
-    const div = document.createElement('p');
-    div.innerHTML = `${item.correctword} - ${item.correcttranslate}`;
+    const div = document.createElement('div');
+    div.className = 'sprint--statistic__line';
+    let template = '<div class="sprint--statistic__audio"></div>';
+    template += `<p id="${item.correctword}">${item.correctword} - ${item.correcttranslate}</p>`;
+    div.innerHTML = template;
     correctList.append(div);
   });
   const errorList = document.querySelector('.sprint--end__statistic_error');
   masError.forEach((item) => {
-    const div = document.createElement('p');
-    div.innerHTML = `${item.correctword} - ${item.correcttranslate}`;
+    const div = document.createElement('div');
+    div.className = 'sprint--statistic__line';
+    let template = '<div class="sprint--statistic__audio"></div>';
+    template += `<p id="${item.correctword}">${item.correctword} - ${item.correcttranslate}</p>`;
+    div.innerHTML = template;
     errorList.append(div);
+  });
+};
+
+const playAudio = (mas, elem) => {
+  mas.forEach((item) => {
+    if (item.correctword === elem) {
+      const audio = new Audio(item.audio);
+      audio.play();
+    }
+  });
+};
+
+const searchAudio = () => {
+  document.querySelector('.sprint--end__statistic').addEventListener('click', (event) => {
+    if (event.target.classList.value === 'sprint--statistic__audio') {
+      const idElement = event.target.nextElementSibling.id;
+      if (event.target.parentElement.parentElement.className === 'sprint--end__statistic_error') {
+        playAudio(errorAnswer, idElement);
+      }
+      if (event.target.parentElement.parentElement.className === 'sprint--end__statistic_correct') {
+        playAudio(correctAnswer, idElement);
+      }
+    }
   });
 };
 
@@ -96,6 +127,7 @@ const generateStatistic = () => {
       document.querySelector('.sprint--end__message').classList.add('hidden');
     }
   };
+  searchAudio();
 };
 
 
@@ -106,7 +138,6 @@ const timerw = () => {
     clearTimeout(timer);
     generateStatistic();
     generateStatisticWord(correctAnswer, errorAnswer);
-    console.log(errorAnswer);
   } else {
     timer = setTimeout(timerw, 1000);
   }
@@ -114,7 +145,7 @@ const timerw = () => {
 
 const game = (model) => {
   model.getTwoPossibleTranslations().then((data) => {
-    let count = generate([data.correct.word, data.correct.wordTranslate, data.incorrect]);
+    let count = generate([data.correct.word, data.correct.wordTranslate, data.incorrect, data.correct.audio]);
     document.querySelector('.sprint--button__correct').onclick = () => {
       count += 1;
       check(count);
@@ -129,15 +160,33 @@ const game = (model) => {
       if (event.code === 'ArrowLeft') {
         count += 1;
         check(count);
-        game(model);
+        document.querySelector('.sprint--game__arrow_left').classList.add('click');
+        setTimeout(() => {
+          document.querySelector('.sprint--game__arrow_left').classList.remove('click');
+          game(model);
+        }, 100);
       }
       if (event.code === 'ArrowRight') {
         count += 0;
         check(count);
-        game(model);
+        document.querySelector('.sprint--game__arrow_right').classList.add('click');
+        setTimeout(() => {
+          document.querySelector('.sprint--game__arrow_right').classList.remove('click');
+          game(model);
+        }, 100);
       }
     };
   });
+  document.querySelector('.allGames__choice_learn').onclick = () => {
+    document.querySelector('.allGames__choice_learn').classList.add('select');
+    document.querySelector('.allGames__choice_new').classList.remove('select');
+    document.querySelector('.allGames__choice_levels').classList.add('hidden');
+  };
+  document.querySelector('.allGames__choice_new').onclick = () => {
+    document.querySelector('.allGames__choice_new').classList.add('select');
+    document.querySelector('.allGames__choice_learn').classList.remove('select');
+    document.querySelector('.allGames__choice_levels').classList.remove('hidden');
+  };
 };
 
 

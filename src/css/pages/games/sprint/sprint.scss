@@ -1,15 +1,47 @@
 @import '../../../abstract/constants.scss';
 @import '../../../abstract/mixins.scss';
 
+.allGames__choice{
+  width: 500px;
+  text-align: center;
+  display: flex;
+  flex-wrap: wrap;
+  p {
+    text-shadow: 1px 1px 0px #fff;
+    margin: auto;
+    cursor: pointer;
+    text-align: center;
+    width: 220px;
+    padding: 8px;
+    border-radius: 6px;
+    &.select{
+      border: 1px solid #90d890;
+    }
+  }
+  @include media-tablet {
+    width: 64%;
+  }
+
+}
+.allGames__choice_levels{
+  width: 100%;
+  &.hidden{
+    display: none;
+  }
+}
+
+
  .sprint {
    &.allGames{
      color: black;
    }
+   .allGames__description {
+    text-shadow: 1px 1px 0px #fff;
+  }  
  }
 .sprint--card__button{
   button{
     cursor: pointer;
-
     width: 90px;
     margin: 10px;
     height: 35px;
@@ -257,21 +289,38 @@
   margin: 10px auto;
 }
 .sprint--game__arrow_left{
+  filter: invert(0.8);
   background-image: url(../../../../img/games/sprint/right-arrow.png);
   transform: rotate(180deg);
   background-size: cover;
   width: 40px;
   height: 40px;
   margin: 0 40px;
+  &.click{
+    filter: invert(0);
+  }
 }
 .sprint--game__arrow_right{
+  filter: invert(0.8);
   background-image: url(../../../../img/games/sprint/right-arrow.png);
   background-size: cover;
   width: 40px;
   height: 40px;
   margin: 0 40px;
+  &.click{
+    filter: invert(0);
+  }
 }
 
+::-webkit-scrollbar { 
+  width: 10px;
+}
+::-webkit-scrollbar-thumb { 
+  height: 30px; 
+  background-color: #fde28e;
+  border-radius: 10px;
+  margin: 20px;
+}
 .sprint--end__statistic {
   width: 360px;
   height: 260px;
@@ -285,14 +334,14 @@
 }
 .sprint--end__slide{
   display: flex;
-  width: 28px;
-  margin: auto
+  width: 36px;
+  margin: 10px auto
 ;}
 
 .sprint--end__slide > span {
   cursor: pointer;
-  height: 8px;
-  width: 8px;
+  height: 12px;
+  width: 12px;
   margin: 3px;
   background-color: grey;
   border-radius: 50%;
@@ -327,4 +376,15 @@
 .sprint--end__statistic_error_text{
   font-size: 2.5rem;
   color: #c34040;
+}
+.sprint--statistic__line{
+  display: flex;
+}
+.sprint--statistic__audio{
+  background-image: url(../../../../img/games/sprint/audio.png);
+  height: 25px;
+  width: 25px;
+  background-size: cover;
+  margin: auto 7px;
+  display: inline-block;
 }
