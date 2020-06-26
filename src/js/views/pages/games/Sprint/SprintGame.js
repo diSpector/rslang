@@ -4,7 +4,7 @@ const correctAnswer = [];
 const errorAnswer = [];
 let obj = {};
 let timer;
-let time = 60;
+let time = 6;
 
 
 const generate = (words) => {
@@ -29,19 +29,27 @@ const generate = (words) => {
 
 const check = (count) => {
   if (count % 2 === 0) {
+    console.log(1234);
     countCorrect += 1;
     if (obj.correctword !== undefined) {
       correctAnswer.push(obj);
     }
     obj = {};
-    const k = Number(document.querySelector('.sprint--game__result').innerText);
+    const k = Number(document.querySelector('.sprint--game__result_points').innerText);
     if (countCorrect >= 4) {
-      document.querySelector('.sprint--game__result').innerHTML = k + 20;
+      document.querySelector('.sprint--game__result_addPoints').classList.remove('hiddn');
+      document.querySelector('.sprint--game__result_points').innerHTML = k + 20;
+      document.querySelector('.sprint--game__result_addPoints').innerHTML = '+20';
       document.querySelector('.sprint--card__list2').classList.remove('hidden');
     } else {
-      document.querySelector('.sprint--game__result').innerHTML = k + 10;
+      document.querySelector('.sprint--game__result_addPoints').classList.remove('hiddn');
+      document.querySelector('.sprint--game__result_points').innerHTML = k + 10;
+      document.querySelector('.sprint--game__result_addPoints').innerHTML = '+10';
       document.querySelector('.sprint--card__title').children[countCorrect - 1].classList.add('active');
     }
+    setTimeout(() => {
+      document.querySelector('.sprint--game__result_addPoints').classList.add('hiddn');
+    }, 300);
     return 1;
   }
   if (obj.correctword !== undefined) {
@@ -103,7 +111,7 @@ const searchAudio = () => {
 const generateStatistic = () => {
   document.querySelector('.sprint--game').classList.add('hidden');
   document.querySelector('.sprint--end').classList.remove('hidden');
-  const result = document.querySelector('.sprint--game__result').innerHTML;
+  const result = document.querySelector('.sprint--game__result_points').innerHTML;
   document.querySelector('.sprint__message__result').innerHTML = result;
   data.push(result);
   localStorage.setItem('data', JSON.stringify(data));

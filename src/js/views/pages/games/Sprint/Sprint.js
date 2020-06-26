@@ -25,7 +25,7 @@ const Sprint = {
     <div class="sprint allGames">
       <section class="allGames__startScreen">
         <h1 class="allGames__heading">Спринт</h1>
-        <p class="allGames__description">Тренировка спринт развивает способности быстрого перевода слов и выражений с английского языка на русский.<br>За более чем три правильных ответа подряд будет начисляться удвоенное колличество баллов.</p>
+        <p class="allGames__description">Тренировка спринт развивает способности быстрого перевода слов и выражений с английского языка на русский.<br>За более чем три правильных ответа подряд будет начисляться удвоенное количество баллов.</p>
         <div class="allGames__choice">
           <p class="allGames__choice_learn select">Игра с изученными словами</p>
           <p class="allGames__choice_new">Игра с новыми словами</p>
@@ -54,7 +54,10 @@ const Sprint = {
         <div class="allGames__tip">Используй клавиши влево и вправо, чтобы дать ответ.</div>
       </section>
       <section class="sprint--game  allGames__playScreen  allGames__playScreen-hidden">
-        <div class="sprint--game__result">0</div>
+        <div class="sprint--game__result">
+          <div class="sprint--game__result_points">0</div>
+          <div class="sprint--game__result_addPoints">0</div>
+        </div>
         <div class="sprint--game__card">
           <div class="sprint--card__title">
             <span class="sprint--card__title_check"></span>
