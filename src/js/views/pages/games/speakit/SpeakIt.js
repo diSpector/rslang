@@ -42,7 +42,7 @@ const SpeakIt = {
         </div>
         <div class="allGames__timerScreen allGames__timerScreen-hidden">
             <div class="allGames__timer">3</div>
-            <div class="allGames__tip">Нажми «говорить» и произноси слова</div>
+            <div class="allGames__tip">Нажми «Начать игру» и произноси поочередно слова в произвольном порядке</div>
         </div>   
         <div class="game allGames__playScreen allGames__playScreen-hidden">
             
@@ -77,9 +77,9 @@ const SpeakIt = {
 
             </div>
             <div class="buttons__container">
-                <div class="button button__restart">Заново</div>
-                <div class="button button__speak">Говорить</div>
-                <div class="button button__results">Результат</div>
+                
+                <div class="button button__speak">Начать игру</div>
+                <div class="button button__results">Завершить</div>
                 <div class="button button__startScreen2">К старту</div>
             </div>
 
@@ -96,7 +96,7 @@ const SpeakIt = {
                     <div class="translate">на самом деле</div>
                 </div> -->
               </div>   
-            <h3>Произнесённые неверно слова</h3>
+            <h3>Непроизнесенные слова</h3>
             <div class="results__words results__uncorrect__words"></div>
             
             <div class="result__buttons">
@@ -234,6 +234,8 @@ const SpeakIt = {
         setLastGame();
         if (mode === 'repeat') { await getRepeatWords(); } else { await reloadWords(); }
       }
+      const resultsButton = document.querySelector('.button__results');
+      resultsButton.style.display = 'none';
       await showPage('gamePage');
       resetGameCount();
       resetSpeak();
@@ -473,7 +475,7 @@ const SpeakIt = {
       words.forEach((element) => {
         let isCorrect = false;
         correctDivWords.forEach((word) => {
-          if (word.dataset.word === element.word) { correctWords.push(element); isCorrect = true; }
+          if (word.dataset.word.toLowerCase() === element.word.toLowerCase()) { correctWords.push(element); isCorrect = true; }
         });
         if (!isCorrect) unCorrectWords.push(element);
       });
@@ -514,11 +516,13 @@ const SpeakIt = {
 
     const restart = (e) => { // сброс игры
       game(words);
+      
     };
 
     const next = async (e) => {
       if (page < 59) localStorage.setItem('speakItlevel', JSON.stringify({ levels: level, pages: Number(page) + 1 }));
       else localStorage.setItem('speakItlevel', JSON.stringify({ levels: Number(level) + 1, pages: 0 }));
+      
 
       game();
     };
@@ -531,6 +535,8 @@ const SpeakIt = {
 
       const speakButton = document.querySelector('.button__speak');
       speakButton.classList.add('activated');
+      const resultsButton = document.querySelector('.button__results');
+      resultsButton.style.display = 'block';
 
       gameInProcess = true;
       correctWords = [];
@@ -616,9 +622,9 @@ const SpeakIt = {
       const wordsCl = document.querySelectorAll('.words__container .word');
       wordsCl.forEach((word) => word.classList.remove('pushed'));
       target.classList.add('pushed');
-      const pushedWord = target.dataset.word;
+      const pushedWord = target.dataset.word.toLowerCase();
       // let wordsArray = Array.prototype.slice.call(words);
-      const pushedWordData = words.find((wordObj) => wordObj.word === pushedWord);
+      const pushedWordData = words.find((wordObj) => wordObj.word.toLowerCase() === pushedWord);
 
       processWord(pushedWordData);
     };
