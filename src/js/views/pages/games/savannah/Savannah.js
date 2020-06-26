@@ -1,5 +1,5 @@
-import '../../../../../css/pages/games/savannah/savannah.scss';
 import '../../../../../css/pages/games/allGames.scss';
+import '../../../../../css/pages/games/savannah/savannah.scss';
 
 import Utils from '../../../../services/Utils';
 import Game from '../Game';
@@ -159,29 +159,39 @@ const rounds = [
   ],
 ];
 
+// function shuffle(array) {
+//   // const shuffledArray = array;
+//   const shuffledArray = array.slice();
+//   let currentIndex = shuffledArray.length;
+//   let temporaryValue;
+//   let randomIndex;
+
+//   // While there remain elements to shuffle...
+//   while (currentIndex !== 0) {
+//     // Pick a remaining element...
+//     randomIndex = Math.floor(Math.random() * currentIndex);
+//     currentIndex -= 1;
+
+//     // And swap it with the current element.
+//     temporaryValue = shuffledArray[currentIndex];
+//     shuffledArray[currentIndex] = array[randomIndex];
+//     shuffledArray[randomIndex] = temporaryValue;
+//   }
+
+//   return shuffledArray;
+// }
+
 function shuffle(array) {
-  const shuffledArray = array;
-  let currentIndex = shuffledArray.length;
-  let temporaryValue;
-  let randomIndex;
-
-  // While there remain elements to shuffle...
-  while (currentIndex !== 0) {
-    // Pick a remaining element...
-    randomIndex = Math.floor(Math.random() * currentIndex);
-    currentIndex -= 1;
-
-    // And swap it with the current element.
-    temporaryValue = shuffledArray[currentIndex];
-    shuffledArray[currentIndex] = array[randomIndex];
-    shuffledArray[randomIndex] = temporaryValue;
-  }
+  const shuffledArray = array.slice();
+  shuffledArray.sort(() => Math.random() - 0.5);
 
   return shuffledArray;
 }
 
 const Savannah = {
   roundsCount: 10,
+  // currentRoundWords: null,
+  // shuffledWords: null,
   mistakesCount: 0,
   maxMistakesCount: 5,
   correctAnswersCount: 0,
@@ -203,9 +213,8 @@ const Savannah = {
     <div class="savannah  allGames">
         <section class="allGames__startScreen">
             <h1 class="allGames__heading">Саванна</h1>
-            <p class="allGames__description">Тренировка Саванна развивает словарный запас. Чем больше слов ты
-                знаешь, тем больше очков опыта получишь.</p>
-            <button class="allGames__startBtn  btn">Начать</button>
+            <p class="allGames__description">Тренировка Саванна развивает словарный запас.</p>
+            <button class="allGames__startBtn  savannah--btn">Начать</button>
         </section>
 
         <section class="allGames__timerScreen  allGames__timerScreen-hidden">
@@ -233,7 +242,40 @@ const Savannah = {
                     <div class="savannah--game__answer">неправильно</div>
                 </div>
             </div>
+
+            <div class="savannah--stat  savannah--stat-hidden">
+                <h2 class="savannah--stat__heading">Статистика тренировки</h2>
+                <div class="savannah--stat__answers">
+                    <div class="savannah--stat__errors">
+                        <h3 class="savannah--stat__errorsHeading">Ошибок: <span>1</span></h3>
+                        <ul class="savannah--stat__list">
+                            <li class="savannah--stat__listItem">
+                                <div></div>
+                                <span><b>слово</b> - перевод<span>
+                            </li>
+                            <li class="savannah--stat__listItem">
+                                <div></div>
+                                <span><b>слово</b> - перевод<span>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="savannah--stat__correct">
+                        <h3 class="savannah--stat__correctHeading">Знаю: <span>1</span></h3>
+                        <ul class="savannah--stat__list">
+                            <li class="savannah--stat__listItem">
+                                <div></div>
+                                <span><b>слово</b> - перевод<span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+                <button class="savannah--btn  savannah--btn-continue" onclick="document.location.reload()">Продолжить тренировку</button>
+                <a class="savannah--link" href="/#/statistic">Смотреть статистику по всем играм</a>
+                <a class="savannah--link" href="/">На главную</a>
+            </div>
+
         </section>
+
         <audio id="savannah-audio"></audio>
     </div>
     `;
@@ -249,11 +291,15 @@ const Savannah = {
   createNewWords(roundIndex) {
     const game = document.querySelector('.savannah--game');
     const words = rounds[roundIndex];
+    // console.log('words', words);
+    // console.log('currentRoundWords', this.currentRoundWords);
 
     Utils.createBlockInside('div', ['savannah--game__question', 'savannah--game__question-fall'], game, words[0].word);
     const answersList = Utils.createBlockInside('div', 'savannah--game__answersList', game);
 
     const shuffledWords = shuffle(words);
+    // console.log('shuffledWords', shuffledWords);
+
     shuffledWords.forEach((item, index) => {
       const dataObj = {
         key: `${index + 1}`,
@@ -295,9 +341,21 @@ const Savannah = {
       } else {
         Utils.clearBlock('.savannah--game__question');
         Utils.clearBlock('.savannah--game__answersList');
-        alert('Game over. Show Statistic');
+        this.showStatistics();
       }
     }, delay);
+  },
+
+  showStatistics() {
+    // console.log('Game over. Show Statistic');
+    const stat = document.querySelector('.savannah--stat');
+    stat.classList.remove('savannah--stat-hidden');
+
+    const mistakesCount = document.querySelector('.savannah--stat__errorsHeading span');
+    mistakesCount.textContent = this.mistakesCount;
+
+    const correctAnswersCount = document.querySelector('.savannah--stat__correctHeading span');
+    correctAnswersCount.textContent = this.correctAnswersCount;
   },
 
   checkAnswer(roundIndex) {
@@ -340,6 +398,8 @@ const Savannah = {
           e.target.classList.add('savannah--game__answer-correct');
           question.classList.remove('savannah--game__question-fall');
 
+          this.correctAnswersCount += 1;
+
           this.playAudio('correct');
 
           this.isAnswerSelected = true;
@@ -379,6 +439,8 @@ const Savannah = {
           // правильно
           correct.classList.add('savannah--game__answer-correct');
           question.classList.remove('savannah--game__question-fall');
+
+          this.correctAnswersCount += 1;
 
           this.playAudio('correct');
 
