@@ -120,6 +120,7 @@ const setWrongAnswers = () => {
 
 const generateStatisticHTML = () => {
   const gameArea = document.querySelector('.audition--game');
+  const gameTime = new Date(Date.now() - startTime);
   const statistic = `
   <section class="audition--statistic hidden">
     <div class="statistic__title">Статистика игры</div>
@@ -131,7 +132,7 @@ const generateStatisticHTML = () => {
       <div class="Answers__title_wrong">Неверных ответов: <div>${wrongAnswers.length}</div></div>
     </div>
     <hr>
-    <div class="statistic__time">Время игры: ${new Date(Date.now() - startTime).getSeconds()} сек</div>
+    <div class="statistic__time">Время игры: ${gameTime.getMinutes()}:${gameTime.getSeconds()}</div>
     <button class="statistic__button" onclick="document.location.reload()">Начать заново</button>
     <button class="statistic__button" onclick="location.href='/'">Перейти на главную страницу</button>
   </section>
@@ -297,7 +298,7 @@ const Audition = {
     const view = `
     <div class="allGames__playScreen"></div>
     <div class="audition--game allGames">
-      <section class="audition__startScreen  allGames__startScreen">
+      <section class="audition--startScreen  allGames__startScreen">
           <h1 class="allGames__heading">Аудиовызов</h1>
           <p class="allGames__description">В этой игре вы улучшите восприятие английской речи на слух. <br>Чем больше слов ты
               знаешь, тем больше очков опыта получишь.</p>
