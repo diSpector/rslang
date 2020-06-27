@@ -4,183 +4,6 @@ import '../../../../../css/pages/games/savannah/savannah.scss';
 import Utils from '../../../../services/Utils';
 import Game from '../Game';
 
-const rounds = [
-  [
-    {
-      word: 'elegant',
-      translation: 'элегантный',
-    },
-    {
-      translation: 'слякотный',
-    },
-    {
-      translation: 'внезапный',
-    },
-    {
-      translation: 'собранный',
-    },
-  ],
-  [
-    {
-      word: 'composition',
-      translation: 'композиция',
-    },
-    {
-      translation: 'аннотация',
-    },
-    {
-      translation: 'репетиция',
-    },
-    {
-      translation: 'рукопожатие',
-    },
-  ],
-  [
-    {
-      word: 'devastating',
-      translation: 'разрушительный',
-    },
-    {
-      translation: 'законодательный',
-    },
-    {
-      translation: 'замечательный',
-    },
-    {
-      translation: 'незначительный',
-    },
-  ],
-
-  [
-    {
-      word: 'elegant',
-      translation: 'элегантный',
-    },
-    {
-      translation: 'слякотный',
-    },
-    {
-      translation: 'внезапный',
-    },
-    {
-      translation: 'собранный',
-    },
-  ],
-  [
-    {
-      word: 'composition',
-      translation: 'композиция',
-    },
-    {
-      translation: 'аннотация',
-    },
-    {
-      translation: 'репетиция',
-    },
-    {
-      translation: 'рукопожатие',
-    },
-  ],
-  [
-    {
-      word: 'devastating',
-      translation: 'разрушительный',
-    },
-    {
-      translation: 'законодательный',
-    },
-    {
-      translation: 'замечательный',
-    },
-    {
-      translation: 'незначительный',
-    },
-  ],
-
-  [
-    {
-      word: 'elegant',
-      translation: 'элегантный',
-    },
-    {
-      translation: 'слякотный',
-    },
-    {
-      translation: 'внезапный',
-    },
-    {
-      translation: 'собранный',
-    },
-  ],
-  [
-    {
-      word: 'composition',
-      translation: 'композиция',
-    },
-    {
-      translation: 'аннотация',
-    },
-    {
-      translation: 'репетиция',
-    },
-    {
-      translation: 'рукопожатие',
-    },
-  ],
-  [
-    {
-      word: 'devastating',
-      translation: 'разрушительный',
-    },
-    {
-      translation: 'законодательный',
-    },
-    {
-      translation: 'замечательный',
-    },
-    {
-      translation: 'незначительный',
-    },
-  ],
-  [
-    {
-      word: 'elegant',
-      translation: 'элегантный',
-    },
-    {
-      translation: 'слякотный',
-    },
-    {
-      translation: 'внезапный',
-    },
-    {
-      translation: 'собранный',
-    },
-  ],
-];
-
-// function shuffle(array) {
-//   // const shuffledArray = array;
-//   const shuffledArray = array.slice();
-//   let currentIndex = shuffledArray.length;
-//   let temporaryValue;
-//   let randomIndex;
-
-//   // While there remain elements to shuffle...
-//   while (currentIndex !== 0) {
-//     // Pick a remaining element...
-//     randomIndex = Math.floor(Math.random() * currentIndex);
-//     currentIndex -= 1;
-
-//     // And swap it with the current element.
-//     temporaryValue = shuffledArray[currentIndex];
-//     shuffledArray[currentIndex] = array[randomIndex];
-//     shuffledArray[randomIndex] = temporaryValue;
-//   }
-
-//   return shuffledArray;
-// }
-
 function shuffle(array) {
   const shuffledArray = array.slice();
   shuffledArray.sort(() => Math.random() - 0.5);
@@ -189,13 +12,16 @@ function shuffle(array) {
 }
 
 const Savannah = {
-  roundsCount: 10,
-  // currentRoundWords: null,
-  // shuffledWords: null,
+  difficulty: 1,
+  round: 1,
+  gameRoundsCount: 10,
+  data: null,
   mistakesCount: 0,
   maxMistakesCount: 5,
   correctAnswersCount: 0,
   isAnswerSelected: false,
+  // correctAnswers: [],
+  // wrongAnswers: [],
 
   beforeRender() {
     this.clearHeaderAndFooter();
@@ -206,8 +32,26 @@ const Savannah = {
     Utils.clearBlock('.footer');
   },
 
-  render: async () => {
+  reformat(wordsArray) {
+    return wordsArray.map((words) => {
+      const temp = [];
+      temp.push(words.correct);
+      words.incorrect.forEach((incorrect) => {
+        const obj = {
+          wordTranslate: incorrect.wordTranslate,
+        };
+        temp.push(obj);
+      });
+
+      return temp;
+    });
+  },
+
+  render: async (model) => {
     Savannah.beforeRender();
+    const data = await model.getSetOfWordsAndTranslations(Savannah.difficulty,
+      Savannah.round, Savannah.gameRoundsCount, 3);
+    Savannah.data = Savannah.reformat(data);
 
     const view = `
     <div class="savannah  allGames">
@@ -290,24 +134,22 @@ const Savannah = {
 
   createNewWords(roundIndex) {
     const game = document.querySelector('.savannah--game');
-    const words = rounds[roundIndex];
+    const words = this.data[roundIndex];
     // console.log('words', words);
-    // console.log('currentRoundWords', this.currentRoundWords);
 
     Utils.createBlockInside('div', ['savannah--game__question', 'savannah--game__question-fall'], game, words[0].word);
     const answersList = Utils.createBlockInside('div', 'savannah--game__answersList', game);
 
     const shuffledWords = shuffle(words);
-    // console.log('shuffledWords', shuffledWords);
 
     shuffledWords.forEach((item, index) => {
       const dataObj = {
         key: `${index + 1}`,
       };
       if (Object.keys(item).length > 1) {
-        Utils.createBlockInside('div', ['savannah--game__answer', 'correct'], answersList, `${index + 1} ${item.translation}`, {}, dataObj);
+        Utils.createBlockInside('div', ['savannah--game__answer', 'fl-correct'], answersList, `${index + 1} ${item.wordTranslate}`, {}, dataObj);
       } else {
-        Utils.createBlockInside('div', 'savannah--game__answer', answersList, `${index + 1} ${item.translation}`, {}, dataObj);
+        Utils.createBlockInside('div', 'savannah--game__answer', answersList, `${index + 1} ${item.wordTranslate}`, {}, dataObj);
       }
     });
   },
@@ -336,7 +178,7 @@ const Savannah = {
 
   goToNextRound(roundIndex, delay) {
     return setTimeout(() => {
-      if (roundIndex < (this.roundsCount - 1) && this.mistakesCount < this.maxMistakesCount) {
+      if (roundIndex < (this.gameRoundsCount - 1) && this.mistakesCount < this.maxMistakesCount) {
         this.play(roundIndex + 1);
       } else {
         Utils.clearBlock('.savannah--game__question');
@@ -347,7 +189,6 @@ const Savannah = {
   },
 
   showStatistics() {
-    // console.log('Game over. Show Statistic');
     const stat = document.querySelector('.savannah--stat');
     stat.classList.remove('savannah--stat-hidden');
 
@@ -356,6 +197,8 @@ const Savannah = {
 
     const correctAnswersCount = document.querySelector('.savannah--stat__correctHeading span');
     correctAnswersCount.textContent = this.correctAnswersCount;
+
+    // console.log('wrongAnswers', this.wrongAnswers);
   },
 
   checkAnswer(roundIndex) {
@@ -375,7 +218,7 @@ const Savannah = {
 
       this.playAudio('error');
 
-      const correct = document.querySelector('.correct');
+      const correct = document.querySelector('.fl-correct');
       correct.classList.add('savannah--game__answer-correct');
 
       question.classList.add('savannah--game__question-explode');
@@ -393,7 +236,7 @@ const Savannah = {
         clearTimeout(timerShowCorrectTranslation);
         clearTimeout(timerChangeRound);
 
-        if (e.target.classList.contains('correct')) {
+        if (e.target.classList.contains('fl-correct')) {
           // если правильно
           e.target.classList.add('savannah--game__answer-correct');
           question.classList.remove('savannah--game__question-fall');
@@ -408,7 +251,7 @@ const Savannah = {
           e.target.classList.add('savannah--game__answer-wrong');
           Utils.clearBlock('.savannah--game__question');
 
-          const correct = document.querySelector('.correct');
+          const correct = document.querySelector('.fl-correct');
           correct.classList.add('savannah--game__answer-correct');
 
           stars[this.mistakesCount].classList.add('savannah--stars__item-lost');
@@ -432,7 +275,7 @@ const Savannah = {
         clearTimeout(timerChangeRound);
 
         const answers = document.querySelectorAll('.savannah--game__answer');
-        const correct = document.querySelector('.correct');
+        const correct = document.querySelector('.fl-correct');
         const translationNumber = correct.getAttribute('data-key');
 
         if (key === translationNumber) {
@@ -454,6 +297,8 @@ const Savannah = {
 
           stars[this.mistakesCount].classList.add('savannah--stars__item-lost');
           this.mistakesCount += 1;
+
+          // this.wrongAnswers.push(this.data[roundIndex][0]);
 
           this.playAudio('error');
 
