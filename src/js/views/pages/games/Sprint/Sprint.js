@@ -56,7 +56,7 @@ const Sprint = {
       <section class="sprint--game  allGames__playScreen  allGames__playScreen-hidden">
         <div class="sprint--game__result">
           <div class="sprint--game__result_points">0</div>
-          <div class="sprint--game__result_addPoints">0</div>
+          <div class="sprint--game__result_addPoints"></div>
         </div>
         <div class="sprint--game__card">
           <div class="sprint--card__title">
@@ -90,9 +90,9 @@ const Sprint = {
           <p class="sprint__result">Твой результат <span class="sprint__message__result"></span> очков.</p>
           <p class="sprint__averge">Твой средний результат <span class="sprint__message__average"></span> очков.</p>
           <p class="sprint__record">Твой рекорд <span class="sprint__message__record"></span> очков.</p>
-          <button class="sprint--end__button_repeat">Играть еще раз</button>
-          <button class="sprint--end__button_continue">Продолжить</button>
-          <button class="sprint--end__button_main">Главная страница</button>
+          <button class="sprint--end__button_repeat" onclick="document.location.reload()">Играть еще раз</button>
+          <button class="sprint--end__button_continue" onclick="document.location.reload()">Продолжить</button>
+          <button class="sprint--end__button_main" onclick="location.href='/'">Главная страница</button>
         </div>
         <div class="sprint--end__statistic hidden">
           <div class="sprint--end__statistic_correct">

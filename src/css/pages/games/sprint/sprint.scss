@@ -8,7 +8,11 @@
   display: flex;
   flex-wrap: wrap;
   p {
-    text-shadow: 1px 1px 0px #fff;
+    text-shadow: 
+		-0   -1px 4px #FFFFFF,
+		 0   -1px 4px #FFFFFF,
+		-0    1px 4px #FFFFFF,
+		 0    1px 4px #FFFFFF;
     margin: 0 auto auto;
     cursor: pointer;
     text-align: center;
@@ -19,11 +23,15 @@
       border: 1px solid #90d890;
     }
     &:hover{
-      background: #90d890;
+      background: rgba($color: #90d890, $alpha: 0.3);
     }
   }
   @include media-tablet {
-    width: 64%;
+    width: 300px;
+    height: 110px;
+  }
+  @include media-mobile-big {
+    width: 95%;
   }
 
 }
@@ -42,7 +50,11 @@
      color: black;
    }
    .allGames__description {
-    text-shadow: 1px 1px 0px #fff;
+    text-shadow: 
+		-0   -1px 4px #FFFFFF,
+		 0   -1px 4px #FFFFFF,
+		-0    1px 4px #FFFFFF,
+		 0    1px 4px #FFFFFF;
   }  
  }
 .sprint--card__button{
@@ -410,10 +422,15 @@
   display: flex;
 }
 .sprint--statistic__audio{
+  cursor: pointer;
   background-image: url(../../../../img/games/sprint/audio.png);
   height: 25px;
   width: 25px;
   background-size: cover;
   margin: auto 7px;
   display: inline-block;
+  &:hover{
+    height: 27px;
+    width: 27px;
+  }
 }

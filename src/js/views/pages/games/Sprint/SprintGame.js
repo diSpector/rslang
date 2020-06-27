@@ -2,10 +2,11 @@ let countCorrect = 0;
 const data = JSON.parse(localStorage.getItem('data'));
 const correctAnswer = [];
 const errorAnswer = [];
+const correctAudio = new Audio('src/audio/correct.mp3');
+const errorAudio = new Audio('src/audio/error.mp3');
 let obj = {};
 let timer;
-let time = 6;
-
+let time = 60;
 
 const generate = (words) => {
   const word = words[0];
@@ -29,7 +30,7 @@ const generate = (words) => {
 
 const check = (count) => {
   if (count % 2 === 0) {
-    console.log(1234);
+    correctAudio.play();
     countCorrect += 1;
     if (obj.correctword !== undefined) {
       correctAnswer.push(obj);
@@ -53,6 +54,7 @@ const check = (count) => {
     return 1;
   }
   if (obj.correctword !== undefined) {
+    errorAudio.play();
     errorAnswer.push(obj);
   }
   obj = {};
@@ -153,7 +155,8 @@ const timerw = () => {
 
 const game = (model) => {
   model.getTwoPossibleTranslations().then((data) => {
-    let count = generate([data.correct.word, data.correct.wordTranslate, data.incorrect, data.correct.audio]);
+    const dataCor = data.correct;
+    let count = generate([dataCor.word, dataCor.wordTranslate, data.incorrect, dataCor.audio]);
     document.querySelector('.sprint--button__correct').onclick = () => {
       count += 1;
       check(count);
