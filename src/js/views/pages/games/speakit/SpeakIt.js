@@ -1,7 +1,7 @@
 import Utils from '../../../../services/Utils';
 import '../../../../../css/pages/games/allGames.scss';
 import '../../../../../css/pages/games/speakit/speakit.scss';
-import Game from '../game';
+import Game from '../Game';
 import AppModel from '../../../../model/AppModel';
 
 const SpeakIt = {
@@ -159,6 +159,7 @@ const SpeakIt = {
     let mode = 'repeat';
     const correctAudio = new Audio('./src/audio/correct.mp3');
     const errorAudio = new Audio('./src/audio/error.mp3');
+    const model = new AppModel();
 
 
     // localStorage.setItem('games', null);
@@ -170,6 +171,451 @@ const SpeakIt = {
 
       return repeatWords;
     }
+    function shuffleWords(wordsArr) { // перемешать слова в массиве
+      const wordsArray = wordsArr;
+      for (let i = wordsArr.length - 1; i > 0; i -= 1) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [wordsArray[i], wordsArray[j]] = [wordsArray[j], wordsArray[i]];
+      }
+      return wordsArr;
+    }
+    function hidePage(page) { // скрыть одну страницу
+      const pageSelector = document.querySelector(`.${page}`);
+      if (pageSelector) {
+        pageSelector.classList.add(config.hiddenCssCLass);
+      }
+    }
+    function hideAllPages() { // скрыть все "страницы"
+      const { pages } = config;
+      console.log(pages);
+      for (const page in pages) {
+        hidePage(config.pages[page]);
+      }
+    }
+
+    function showPage(page) { // скрыть все страницы, показать нужную
+      hideAllPages();
+      const pageClass = config.pages[page];
+      const container = document.querySelector(`.${pageClass}`);
+      container.classList.remove(config.hiddenCssCLass);
+    }
+
+
+    function setLastGame() {
+      let lastGame = JSON.parse(localStorage.getItem('speakItlevel'));
+      if (lastGame === null) {
+        lastGame = { levels: 0, pages: 0 };
+      }
+      levels.value = lastGame.levels;
+      pages.value = lastGame.pages;
+      level = lastGame.levels;
+      page = lastGame.pages;
+      localStorage.setItem('speakItlevel', JSON.stringify(lastGame));
+    }
+
+
+    function resetGameCount() { // сбросить счет, остановить игру
+      errors = 0;
+      corrects = 0;
+      correctWords = [];
+      unCorrectWords = [];
+      // this.wordsArr = [];
+      wordsArr = words.map((wordObj) => wordObj.word.toLowerCase()); // массив слов игры
+      gameInProcess = false;
+    }
+
+    function resetSpeak() { // убрать стиль с кнопки "speak", откл+вкл прослушивание кнопки
+      const speakButton = document.querySelector('.button__speak');
+      speakButton.classList.remove('activated');
+    }
+
+
+    function renderDiv(cssClass, text, container) {
+      const el = document.createElement('div');
+      el.classList.add(cssClass);
+      el.innerText = text;
+      container.append(el);
+      return el;
+    }
+    function renderWord(word, container) { // отрисовать блок со словом
+      container.dataset.word = word.word.toLowerCase();
+      renderDiv('word__icon', '', container);
+      const container2 = renderDiv('word__word', null, container);
+      renderDiv('word__english', word.word, container2);
+      renderDiv('word__transcription', word.transcription, container2);
+    }
+    function renderWords() { // отрисовать слова в контейнере
+      const wordsContainer = document.querySelectorAll('.words__container .word');
+      words.forEach((word, i) => renderWord(word, wordsContainer[i]));
+    }
+
+    function intersection(wordsArr, spaekedWords) {
+      const speakedWords = spaekedWords;
+      let speakedWord = spaekedWords[0].transcript.toLowerCase();
+
+      speakedWords.forEach((element) => {
+        if (wordsArr.includes(element.transcript.toLowerCase())) {
+          speakedWord = element.transcript.toLowerCase();
+        }
+      });
+
+      return speakedWord;
+    }
+
+    async function getDataFromWordsApi() { // получить данные от API со словами
+      // const page = Math.round(Math.random() * config.apiMaxPage);
+      const polPage = Math.floor(page / 2);
+      const url = `${config.wordsApiUrl}group=${level}&page=${polPage}`;
+      const DatWords = await fetch(url);
+      const json = await DatWords.json();
+      if (page % 2) return shuffleWords(json.slice(10, 20));
+      return shuffleWords(json.slice(0, 10));
+      // this.words = this.shuffleWords(json).slice(0,10);
+    }
+    async function reloadWords() { // загрузить новые слова
+      words = [];
+      words = await getDataFromWordsApi();
+    }
+
+
+    function clearGlobalResults() {
+      const resTable = document.querySelector('.global__results table');
+      const tds = resTable.querySelectorAll('td');
+      tds.forEach((td) => td.remove());
+    }
+
+    function renderGlobalResults() {
+      const gamesInfo = getGamesFromLocalStorage();
+      if (gamesInfo !== null) {
+        gamesInfo.forEach((game) => renderGameRes(game));
+      }
+    }
+
+    function renderGameRes(gameObj) {
+      const globalResContainer = document.querySelector('.global__results table');
+
+      const newTr = document.createElement('tr');
+
+      const dateTd = document.createElement('td');
+      dateTd.innerText = gameObj.date;
+      newTr.append(dateTd);
+
+      const wordsTd = document.createElement('td');
+      wordsTd.innerText = gameObj.words.join(', ');
+      newTr.append(wordsTd);
+
+      const errorsTd = document.createElement('td');
+      errorsTd.innerText = gameObj.errors;
+      newTr.append(errorsTd);
+
+      globalResContainer.append(newTr);
+    }
+
+
+    function saveGameToLocalStorage() { // записать результаты игры в localStorage
+      let gameInfo = JSON.parse(localStorage.getItem('speakItStat'));
+      if (gameInfo === null) {
+        gameInfo = [];
+      }
+
+      gameInfo.push({
+        date: new Date().toLocaleString(),
+        errors,
+        words: wordsArr,
+      });
+
+      localStorage.setItem('speakItStat', JSON.stringify(gameInfo));
+    }
+
+    function getGamesFromLocalStorage() {
+      return JSON.parse(localStorage.getItem('speakItStat'));
+    }
+
+    async function renderResults() { // вывести страницу с результатом
+      const errorsContainer = document.querySelector('.results__errors');
+      const correctWordsContainer = document.querySelector('.results__correct__words');
+      const uncorrectWordsContainer = document.querySelector('.results__uncorrect__words');
+      clearContainer(uncorrectWordsContainer);
+      clearContainer(correctWordsContainer);
+
+      errorsContainer.innerText = `Ошибок: ${errors}`;
+      const correctDivListWords = document.querySelectorAll('.words__container .correct');
+      const correctDivWords = Array.prototype.slice.call(correctDivListWords);
+      correctWords = [];
+      unCorrectWords = [];
+      words.forEach((element) => {
+        let isCorrect = false;
+        correctDivWords.forEach((word) => {
+          if (word.dataset.word.toLowerCase() === element.word.toLowerCase()) { correctWords.push(element); isCorrect = true; }
+        });
+        if (!isCorrect) unCorrectWords.push(element);
+      });
+
+      correctWords.forEach((word) => renderStatForWord(word, '.results__correct__words'));
+
+      unCorrectWords.forEach((word) => renderStatForWord(word, '.results__uncorrect__words'));
+    }
+    const statsWordClick = (e) => {
+      const target = e.target.closest('.stat__word');
+      if (!target) { // если это не слово со звуком
+        return;
+      }
+
+      const audioIcon = target.querySelector('.sound__icon');
+      const { audio } = audioIcon.dataset;
+      playSound(audio);
+    };
+
+    const results = () => { // страница "Результаты"
+      showPage('resultsPage');
+      gameInProcess = false;
+      renderResults();
+    };
+    async function game(words = null) { // страница "Игра"
+      if (words === null) { // если не переданы слова, получить новые
+        setLastGame();
+        if (mode === 'repeat') { await getRepeatWords(); } else { await reloadWords(); }
+      }
+      const resultsButton = document.querySelector('.button__results');
+      resultsButton.style.display = 'none';
+      await showPage('gamePage');
+      resetGameCount();
+      resetSpeak();
+      clearWords();
+      renderWords();
+    }
+    async function renderStatForWord(wordObj, selector) { // вывести статистику для одного слова
+      const wordsContainer = document.querySelector(selector);
+      const newWord = document.createElement('div');
+      newWord.classList.add('stat__word');
+
+      const newWordSoundIcon = document.createElement('div');
+      newWordSoundIcon.classList.add('sound__icon');
+      newWordSoundIcon.dataset.audio = wordObj.audio;
+      newWord.append(newWordSoundIcon);
+
+      const newWordText = document.createElement('div');
+      newWordText.classList.add('text');
+      newWordText.innerText = wordObj.word;
+      newWord.append(newWordText);
+
+      const newWordTransciption = document.createElement('div');
+      newWordTransciption.classList.add('transcription');
+      newWordTransciption.innerText = wordObj.transcription;
+      newWord.append(newWordTransciption);
+
+      const newWordTranslate = document.createElement('div');
+      newWordTranslate.classList.add('translate');
+      const translated = await getTranslate(wordObj.word);
+      newWordTranslate.innerText = translated;
+      newWord.append(newWordTranslate);
+
+      wordsContainer.append(newWord);
+    }
+
+    function globalStats() {
+      showPage('globalPage');
+      clearGlobalResults();
+      renderGlobalResults();
+    }
+
+    const globalStatsClick = () => {
+      globalStats();
+    };
+
+
+    const restart = () => { // сброс игры
+      game(words);
+    };
+
+    const next = async () => {
+      if (mode === 'repeat') { } else if (page < 59) localStorage.setItem('speakItlevel', JSON.stringify({ levels: level, pages: Number(page) + 1 }));
+      else localStorage.setItem('speakItlevel', JSON.stringify({ levels: Number(level) + 1, pages: 0 }));
+      game();
+    };
+
+    const speak = () => { // начать игру о распознаванию слов
+      if (gameInProcess === true) {
+        return;
+      }
+      // сбросить игру
+
+      const speakButton = document.querySelector('.button__speak');
+      speakButton.classList.add('activated');
+      const resultsButton = document.querySelector('.button__results');
+      resultsButton.style.display = 'block';
+
+      gameInProcess = true;
+      correctWords = [];
+      unCorrectWords = [];
+
+      // const correctWords = [];
+
+      // const words = this.words.map(wordObj => wordObj.word); // массив слов игры
+      // this.wordsArr = this.words.map(wordObj => wordObj.word); // массив слов игры
+      const wordsContainer = document.querySelector('.words__container');
+      const wordsDivs = document.querySelectorAll('.words__container .word');
+      const imgContainer = document.querySelector('.pic__image img');
+      const translateContainer = document.querySelector('.pic__translate');
+
+      wordsDivs.forEach((wordDiv) => wordDiv.classList.remove('pushed'));
+      wordsDivs.forEach((wordDiv) => wordDiv.classList.remove('correct'));
+
+      if (recognition === null) {
+        recognition = new webkitSpeechRecognition();
+        recognition.lang = 'en-US';
+        recognition.maxAlternatives = 5;
+
+        recognition.addEventListener('result', (event) => {
+          if (gameInProcess === true) {
+            const spaekedWords = Array.from(event.results[0]);
+            const speakedWord = intersection(wordsArr, spaekedWords);
+            if (!correctWords.includes(speakedWord)) {
+              translateContainer.classList.remove('translation-correct');
+              translateContainer.classList.remove('translation-error');
+              translateContainer.innerText = speakedWord;
+
+              if (wordsArr.includes(speakedWord)) {
+                const speakedWordDiv = wordsContainer.querySelector(`[data-word='${speakedWord}']`);
+                correctWords.push(speakedWord);
+                speakedWordDiv.classList.add('correct');
+                translateContainer.classList.add('translation-correct');
+                const { image } = words.filter((word) => word.word.toLowerCase() === speakedWord)[0];
+                correctAudio.play();
+                imgContainer.src = config.repoUrl + image;
+                corrects += 1;
+                if (isGameIsEnd()) {
+                  saveGameToLocalStorage();
+                  results();
+                }
+              } else {
+                errorAudio.play();
+                errors += 1;
+                translateContainer.classList.add('translation-error');
+              }
+            }
+          }
+        });
+
+        recognition.addEventListener('end', recognition.start);
+
+        recognition.start();
+      } else {
+        // this.recognition.start();
+      }
+    };
+
+    function isGameIsEnd() {
+      return corrects === words.length;
+    }
+    const LevelStartButtonClick = async () => {
+      mode = 'level';
+      game();
+    };
+    const startButtonClick = async () => { // обработчик нажатия на "Start"
+      mode = 'repeat';
+      words = await getRepeatWords();
+      if (words.length === 0) { words = null; LevelStartButtonClick(); alert('Играй новыми'); } else { game(words); }
+    };
+
+
+    const wordClick = (e) => { // обработчик нажатия на слово
+      const target = e.target.closest('.word');
+      if (!target) { // если это не контейнер со словом
+        return;
+      }
+      if (gameInProcess === true) { // если игра запущена
+        return;
+      }
+
+      const wordsCl = document.querySelectorAll('.words__container .word');
+      wordsCl.forEach((word) => word.classList.remove('pushed'));
+      target.classList.add('pushed');
+      const pushedWord = target.dataset.word.toLowerCase();
+      // let wordsArray = Array.prototype.slice.call(words);
+      const pushedWordData = words.find((wordObj) => wordObj.word.toLowerCase() === pushedWord);
+
+      processWord(pushedWordData);
+    };
+
+
+    function setImage(image) { // установить картинку
+      const imgContainer = document.querySelector('.pic__image img');
+      imgContainer.src = config.repoUrl + image;
+    }
+
+    async function setTranslate(word) { // получить перевод слова и вставить его на страницу
+      const url = `${config.YaTranslateApiUrl}text=${word}&lang=en-ru`;
+      const translationObj = await fetch(url);
+      const json = await translationObj.json();
+      const translation = json.text[0];
+
+      const translateContainer = document.querySelector('.pic__translate');
+      translateContainer.innerText = translation;
+    }
+
+    async function getTranslate(word) {
+      const url = `${config.YaTranslateApiUrl}text=${word}&lang=en-ru`;
+      const translationObj = await fetch(url);
+      const json = await translationObj.json();
+      const translation = json.text[0];
+      return translation;
+    }
+
+    function playSound(sound) { // проиграть слово
+      const soundPath = config.repoUrl + sound;
+
+      const audio = new Audio(soundPath);
+      audio.play();
+    }
+
+    /*
+    const changeLevelClick = (e) => { // обработчик выбора уровня сложности
+      const { target } = e;
+      if (!target.classList.contains('lev')) {
+        return;
+      }
+      const levs = document.querySelectorAll('.levels__container .lev');
+      levs.forEach((lev) => lev.classList.remove('active'));
+
+      target.classList.add('active');
+      level = target.dataset.lev;
+      game();
+    };
+    */
+
+
+    function clearContainer(container) { // очистить переданный контейнер
+      container.innerHTML = '';
+    }
+
+    function processWord(wordObj) { // вставить картинку, слово, проиграть звук
+      const { image } = wordObj;
+      const { audio } = wordObj;
+      setImage(image);
+      setTranslate(wordObj.word);
+      playSound(audio);
+    }
+    async function clearWords() { // удалить все слова из блоков, заменить картинку, удалить перевод
+      const words = document.querySelectorAll('.words__container .word');
+      words.forEach((word) => {
+        clearContainer(word);
+        word.classList.remove('pushed');
+        word.classList.remove('correct');
+      });
+
+      // поставить стандартную картинку
+      const imgContainer = document.querySelector('.pic__image img');
+      imgContainer.src = './src/img/games/speakit/dummy.jpg';
+      // imgContainer.src = dummyImg;
+
+      // удалить последнее из поля слово и убрать стили (угадано/ошибка)
+      const translateContainer = document.querySelector('.pic__translate');
+      translateContainer.innerText = '';
+      translateContainer.classList.remove('translation-correct');
+      translateContainer.classList.remove('translation-error');
+    }
+
 
     function createLevels() {
       const levelsContainer = document.querySelector('.levels__container');
@@ -214,127 +660,12 @@ const SpeakIt = {
         localStorage.setItem('speakItlevel', JSON.stringify({ levels: level, pages: page }));
       };
     }
-    function setLastGame() {
-      let lastGame = JSON.parse(localStorage.getItem('speakItlevel'));
-      if (lastGame === null) {
-        lastGame = { levels: 0, pages: 0 };
-      }
-      levels.value = lastGame.levels;
-      pages.value = lastGame.pages;
-      level = lastGame.levels;
-      page = lastGame.pages;
-      localStorage.setItem('speakItlevel', JSON.stringify(lastGame));
-    }
     function start() { // страница "Старт"
       document.querySelector('.allGames__startScreen-hidden').classList.remove('allGames__startScreen-hidden');
       document.querySelector('.allGames__timer').textContent = 3;
       showPage('startPage');
     }
 
-    async function game(words = null) { // страница "Игра"
-      if (words === null) { // если не переданы слова, получить новые
-        setLastGame();
-        if (mode === 'repeat') { await getRepeatWords(); } else { await reloadWords(); }
-      }
-      const resultsButton = document.querySelector('.button__results');
-      resultsButton.style.display = 'none';
-      await showPage('gamePage');
-      resetGameCount();
-      resetSpeak();
-      clearWords();
-      renderWords();
-    }
-
-    function resetGameCount() { // сбросить счет, остановить игру
-      errors = 0;
-      corrects = 0;
-      correctWords = [];
-      unCorrectWords = [];
-      // this.wordsArr = [];
-      wordsArr = words.map((wordObj) => wordObj.word.toLowerCase()); // массив слов игры
-      gameInProcess = false;
-    }
-
-    function resetSpeak() { // убрать стиль с кнопки "speak", откл+вкл прослушивание кнопки
-      const speakButton = document.querySelector('.button__speak');
-      speakButton.classList.remove('activated');
-    }
-
-    async function clearWords() { // удалить все слова из блоков, заменить картинку на стандартную, удалить перевод
-      const words = document.querySelectorAll('.words__container .word');
-      words.forEach((word) => {
-        clearContainer(word);
-        word.classList.remove('pushed');
-        word.classList.remove('correct');
-      });
-
-      // поставить стандартную картинку
-      const imgContainer = document.querySelector('.pic__image img');
-      imgContainer.src = './src/img/games/speakit/dummy.jpg';
-      // imgContainer.src = dummyImg;
-
-      // удалить последнее из поля слово и убрать стили (угадано/ошибка)
-      const translateContainer = document.querySelector('.pic__translate');
-      translateContainer.innerText = '';
-      translateContainer.classList.remove('translation-correct');
-      translateContainer.classList.remove('translation-error');
-    }
-
-    async function reloadWords() { // загрузить новые слова
-      words = [];
-      words = await getDataFromWordsApi();
-    }
-
-    function renderWords() { // отрисовать слова в контейнере
-      const wordsContainer = document.querySelectorAll('.words__container .word');
-      words.forEach((word, i) => renderWord(word, wordsContainer[i]));
-    }
-
-    function renderWord(word, container) { // отрисовать блок со словом
-      container.dataset.word = word.word.toLowerCase();
-      renderDiv('word__icon', '', container);
-      const container2 = renderDiv('word__word', null, container);
-      renderDiv('word__english', word.word, container2);
-      renderDiv('word__transcription', word.transcription, container2);
-    }
-
-    function renderDiv(cssClass, text, container) {
-      const el = document.createElement('div');
-      el.classList.add(cssClass);
-      el.innerText = text;
-      container.append(el);
-      return el;
-    }
-    function intersection(wordsArr, spaekedWords) {
-      const speakedWords = spaekedWords;
-      let speakedWord = spaekedWords[0].transcript.toLowerCase();
-
-      speakedWords.forEach((element) => {
-        if (wordsArr.includes(element.transcript.toLowerCase())) {
-          speakedWord = element.transcript.toLowerCase();
-        }
-      });
-
-      return speakedWord;
-    }
-
-    async function getDataFromWordsApi() { // получить данные от API со словами
-      // const page = Math.round(Math.random() * config.apiMaxPage);
-      const polPage = Math.floor(page / 2);
-      const url = `${config.wordsApiUrl}group=${level}&page=${polPage}`;
-      const DatWords = await fetch(url);
-      const json = await DatWords.json();
-      if (page % 2) return shuffleWords(json.slice(10, 20));
-      return shuffleWords(json.slice(0, 10));
-      // this.words = this.shuffleWords(json).slice(0,10);
-    }
-
-    function showPage(page) { // скрыть все страницы, показать нужную
-      hideAllPages();
-      const pageClass = config.pages[page];
-      const container = document.querySelector(`.${pageClass}`);
-      container.classList.remove(config.hiddenCssCLass);
-    }
 
     function addListeners() { // повесить слушатели событий
       // нажатие на "Старт"
@@ -395,336 +726,6 @@ const SpeakIt = {
       globalStatsButtonBack.addEventListener('click', results);
     }
 
-    const globalStatsClick = () => {
-      globalStats();
-    };
-
-    function globalStats() {
-      showPage('globalPage');
-      clearGlobalResults();
-      renderGlobalResults();
-    }
-
-    function clearGlobalResults() {
-      const resTable = document.querySelector('.global__results table');
-      const tds = resTable.querySelectorAll('td');
-      tds.forEach((td) => td.remove());
-    }
-
-    function renderGlobalResults() {
-      const gamesInfo = getGamesFromLocalStorage();
-      if (gamesInfo !== null) {
-        gamesInfo.forEach((game) => renderGameRes(game));
-      }
-    }
-
-    function renderGameRes(gameObj) {
-      const globalResContainer = document.querySelector('.global__results table');
-
-      const newTr = document.createElement('tr');
-
-      const dateTd = document.createElement('td');
-      dateTd.innerText = gameObj.date;
-      newTr.append(dateTd);
-
-      const wordsTd = document.createElement('td');
-      wordsTd.innerText = gameObj.words.join(', ');
-      newTr.append(wordsTd);
-
-      const errorsTd = document.createElement('td');
-      errorsTd.innerText = gameObj.errors;
-      newTr.append(errorsTd);
-
-      globalResContainer.append(newTr);
-    }
-
-    const statsWordClick = (e) => {
-      const target = e.target.closest('.stat__word');
-      if (!target) { // если это не слово со звуком
-        return;
-      }
-
-      const audioIcon = target.querySelector('.sound__icon');
-      const { audio } = audioIcon.dataset;
-      playSound(audio);
-      console.log(audio);
-    };
-
-    const results = (e) => { // страница "Результаты"
-      showPage('resultsPage');
-      gameInProcess = false;
-      renderResults();
-    };
-
-    function saveGameToLocalStorage() { // записать результаты игры в localStorage
-      let gameInfo = JSON.parse(localStorage.getItem('speakItStat'));
-      if (gameInfo === null) {
-        gameInfo = [];
-      }
-
-      gameInfo.push({
-        date: new Date().toLocaleString(),
-        errors,
-        words: wordsArr,
-      });
-
-      localStorage.setItem('speakItStat', JSON.stringify(gameInfo));
-    }
-
-    function getGamesFromLocalStorage() {
-      return JSON.parse(localStorage.getItem('speakItStat'));
-    }
-
-    async function renderResults() { // вывести страницу с результатом
-      const errorsContainer = document.querySelector('.results__errors');
-      const correctWordsContainer = document.querySelector('.results__correct__words');
-      const uncorrectWordsContainer = document.querySelector('.results__uncorrect__words');
-      clearContainer(uncorrectWordsContainer);
-      clearContainer(correctWordsContainer);
-
-      errorsContainer.innerText = `Ошибок: ${errors}`;
-      const correctDivListWords = document.querySelectorAll('.words__container .correct');
-      const correctDivWords = Array.prototype.slice.call(correctDivListWords);
-      correctWords = [];
-      unCorrectWords = [];
-      words.forEach((element) => {
-        let isCorrect = false;
-        correctDivWords.forEach((word) => {
-          if (word.dataset.word.toLowerCase() === element.word.toLowerCase()) { correctWords.push(element); isCorrect = true; }
-        });
-        if (!isCorrect) unCorrectWords.push(element);
-      });
-
-      correctWords.forEach((word) => renderStatForWord(word, '.results__correct__words'));
-
-      unCorrectWords.forEach((word) => renderStatForWord(word, '.results__uncorrect__words'));
-    }
-
-    async function renderStatForWord(wordObj, selector) { // вывести статистику для одного слова
-      const wordsContainer = document.querySelector(selector);
-      const newWord = document.createElement('div');
-      newWord.classList.add('stat__word');
-
-      const newWordSoundIcon = document.createElement('div');
-      newWordSoundIcon.classList.add('sound__icon');
-      newWordSoundIcon.dataset.audio = wordObj.audio;
-      newWord.append(newWordSoundIcon);
-
-      const newWordText = document.createElement('div');
-      newWordText.classList.add('text');
-      newWordText.innerText = wordObj.word;
-      newWord.append(newWordText);
-
-      const newWordTransciption = document.createElement('div');
-      newWordTransciption.classList.add('transcription');
-      newWordTransciption.innerText = wordObj.transcription;
-      newWord.append(newWordTransciption);
-
-      const newWordTranslate = document.createElement('div');
-      newWordTranslate.classList.add('translate');
-      const translated = await getTranslate(wordObj.word);
-      newWordTranslate.innerText = translated;
-      newWord.append(newWordTranslate);
-
-      wordsContainer.append(newWord);
-    }
-
-    const restart = (e) => { // сброс игры
-      game(words);
-    };
-
-    const next = async (e) => {
-      if (mode === 'repeat') { } else if (page < 59) localStorage.setItem('speakItlevel', JSON.stringify({ levels: level, pages: Number(page) + 1 }));
-      else localStorage.setItem('speakItlevel', JSON.stringify({ levels: Number(level) + 1, pages: 0 }));
-
-
-      game();
-    };
-
-    const speak = (e) => { // начать игру о распознаванию слов
-      if (gameInProcess === true) {
-        return;
-      }
-      // сбросить игру
-
-      const speakButton = document.querySelector('.button__speak');
-      speakButton.classList.add('activated');
-      const resultsButton = document.querySelector('.button__results');
-      resultsButton.style.display = 'block';
-
-      gameInProcess = true;
-      correctWords = [];
-      unCorrectWords = [];
-
-      // const correctWords = [];
-
-      // const words = this.words.map(wordObj => wordObj.word); // массив слов игры
-      // this.wordsArr = this.words.map(wordObj => wordObj.word); // массив слов игры
-      const wordsContainer = document.querySelector('.words__container');
-      const wordsDivs = document.querySelectorAll('.words__container .word');
-      const imgContainer = document.querySelector('.pic__image img');
-      const translateContainer = document.querySelector('.pic__translate');
-
-      wordsDivs.forEach((wordDiv) => wordDiv.classList.remove('pushed'));
-      wordsDivs.forEach((wordDiv) => wordDiv.classList.remove('correct'));
-
-      if (recognition === null) {
-        recognition = new webkitSpeechRecognition();
-        recognition.lang = 'en-US';
-        recognition.maxAlternatives = 5;
-
-        recognition.addEventListener('result', (event) => {
-          if (gameInProcess === true) {
-            const spaekedWords = Array.from(event.results[0]);
-            const speakedWord = intersection(wordsArr, spaekedWords);
-            console.log(spaekedWords);
-            if (!correctWords.includes(speakedWord)) {
-              translateContainer.classList.remove('translation-correct');
-              translateContainer.classList.remove('translation-error');
-              translateContainer.innerText = speakedWord;
-
-              if (wordsArr.includes(speakedWord)) {
-                const speakedWordDiv = wordsContainer.querySelector(`[data-word='${speakedWord}']`);
-                correctWords.push(speakedWord);
-                speakedWordDiv.classList.add('correct');
-                translateContainer.classList.add('translation-correct');
-                const { image } = words.filter((word) => word.word.toLowerCase() === speakedWord.toLowerCase())[0];
-                correctAudio.play();
-                imgContainer.src = config.repoUrl + image;
-                corrects += 1;
-                if (isGameIsEnd()) {
-                  saveGameToLocalStorage();
-                  results();
-                }
-              } else {
-                errorAudio.play();
-                errors += 1;
-                translateContainer.classList.add('translation-error');
-              }
-            }
-          }
-        });
-
-        recognition.addEventListener('end', recognition.start);
-
-        recognition.start();
-      } else {
-        // this.recognition.start();
-      }
-    };
-
-    function isGameIsEnd() {
-      return corrects === words.length;
-    }
-    const LevelStartButtonClick = async () => {
-      mode = 'level';
-      game();
-    };
-    const startButtonClick = async () => { // обработчик нажатия на "Start"
-      mode = 'repeat';
-      words = await getRepeatWords();
-      if (words.length === 0) { words = null; LevelStartButtonClick(); alert('Играй новыми'); } else { game(words); }
-    };
-
-
-    const wordClick = (e) => { // обработчик нажатия на слово
-      const target = e.target.closest('.word');
-      if (!target) { // если это не контейнер со словом
-        return;
-      }
-      if (gameInProcess === true) { // если игра запущена
-        return;
-      }
-
-      const wordsCl = document.querySelectorAll('.words__container .word');
-      wordsCl.forEach((word) => word.classList.remove('pushed'));
-      target.classList.add('pushed');
-      const pushedWord = target.dataset.word.toLowerCase();
-      // let wordsArray = Array.prototype.slice.call(words);
-      const pushedWordData = words.find((wordObj) => wordObj.word.toLowerCase() === pushedWord);
-
-      processWord(pushedWordData);
-    };
-
-    function processWord(wordObj) { // вставить картинку, слово, проиграть звук
-      const { image } = wordObj;
-      const { audio } = wordObj;
-      setImage(image);
-      setTranslate(wordObj.word);
-      playSound(audio);
-    }
-
-    function setImage(image) { // установить картинку
-      const imgContainer = document.querySelector('.pic__image img');
-      imgContainer.src = config.repoUrl + image;
-    }
-
-    async function setTranslate(word) { // получить перевод слова и вставить его на страницу
-      const url = `${config.YaTranslateApiUrl}text=${word}&lang=en-ru`;
-      const translationObj = await fetch(url);
-      const json = await translationObj.json();
-      const translation = json.text[0];
-
-      const translateContainer = document.querySelector('.pic__translate');
-      translateContainer.innerText = translation;
-    }
-
-    async function getTranslate(word) {
-      const url = `${config.YaTranslateApiUrl}text=${word}&lang=en-ru`;
-      const translationObj = await fetch(url);
-      const json = await translationObj.json();
-      const translation = json.text[0];
-      return translation;
-    }
-
-    function playSound(sound) { // проиграть слово
-      const soundPath = config.repoUrl + sound;
-
-      const audio = new Audio(soundPath);
-      audio.play();
-    }
-
-    /*
-    const changeLevelClick = (e) => { // обработчик выбора уровня сложности
-      const { target } = e;
-      if (!target.classList.contains('lev')) {
-        return;
-      }
-      const levs = document.querySelectorAll('.levels__container .lev');
-      levs.forEach((lev) => lev.classList.remove('active'));
-
-      target.classList.add('active');
-      level = target.dataset.lev;
-      game();
-    };
-    */
-
-    function hideAllPages() { // скрыть все "страницы"
-      const { pages } = config;
-      for (const page in pages) {
-        hidePage(config.pages[page]);
-      }
-    }
-
-    function hidePage(page) { // скрыть одну страницу
-      const pageSelector = document.querySelector(`.${page}`);
-      if (pageSelector) {
-        pageSelector.classList.add(config.hiddenCssCLass);
-      }
-    }
-
-    function shuffleWords(wordsArr) { // перемешать слова в массиве
-      for (let i = wordsArr.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1));
-        [wordsArr[i], wordsArr[j]] = [wordsArr[j], wordsArr[i]];
-      }
-      return wordsArr;
-    }
-
-    function clearContainer(container) { // очистить переданный контейнер
-      container.innerHTML = '';
-    }
-    const model = new AppModel();
     Game.startGame();
     addListeners();
 
