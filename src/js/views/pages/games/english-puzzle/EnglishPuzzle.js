@@ -53,6 +53,13 @@ const EnglishPuzzle = {
     const pictureObj = await Model.getPictureInfoFromGithub(gameSettings.level, gameSettings.page);
     EnglishPuzzle.settings.picture = pictureObj;
 
+    // const img = new Image();
+    // img.src = `${Config.api.githubPicturesData}${EnglishPuzzle.settings.picture.imageSrc}`;
+
+    // console.log(img);
+    // console.log('height for image:', img.height);
+    // EnglishPuzzle.settings.pictureHeight = img.height;
+
     // EnglishPuzzle.settings = await Model.getWordsFromGithub(1, 10, 10);
     // EnglishPuzzle.settings.words = await Model.getWordsFromBackend(1, 2);
     // EnglishPuzzle.settings.words = await Model.getWordsFromGithub(1);
@@ -262,8 +269,14 @@ const EnglishPuzzle = {
       Utils.createBlockInside('div', 'phrase__number', phraseBlock, i + 1);
       const phraseWordsBlock = Utils.createBlockInside('div', 'phrase__words', phraseBlock);
       
+      // phraseWordsBlock.style.backgroundImage =EnglishPuzzle.settings.immmmmmmage;
       phraseWordsBlock.style.backgroundImage = `url('${Config.api.githubPicturesData}${EnglishPuzzle.settings.picture.imageSrc}')`;
+      
+      // const height = EnglishPuzzle.settings.pictureHeight / 10;
+      // phraseWordsBlock.style.height = `${height}px`;
       phraseWordsBlock.style.backgroundPosition = `0px ${-40 * i}px`;
+      
+      // phraseWordsBlock.style.backgroundPosition = `0px ${-40 * i}px`;
       
       const wordsArr = phrase.textExample.split(' ');
       wordsArr.forEach((word) => Utils
