@@ -299,7 +299,7 @@ const Audition = {
     <div class="audition--game allGames">
       <section class="audition__startScreen  allGames__startScreen">
           <h1 class="allGames__heading">Аудиовызов</h1>
-          <p class="allGames__description">В этой игре вы улучшите восприятие английской речи на слух. Чем больше слов ты
+          <p class="allGames__description">В этой игре вы улучшите восприятие английской речи на слух. <br>Чем больше слов ты
               знаешь, тем больше очков опыта получишь.</p>
           <button class="allGames__startBtn  btn">Начать</button>
           <div class="allGames__tip">Используй клавиши 1, 2, 3, 4 и 5 чтобы дать быстрый ответ, Enter для перехода к следующему слову.</div>
@@ -307,7 +307,6 @@ const Audition = {
 
       <section class="audition__timerScreen  allGames__timerScreen  allGames__timerScreen-hidden">
           <div class="allGames__timer">3</div>
-          <div class="allGames__tip">Используй клавиши 1, 2, 3, 4 и 5 чтобы дать быстрый ответ, Enter для перехода к следующему слову.</div>
       </section>
     </div>
      `;

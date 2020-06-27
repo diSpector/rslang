@@ -42,6 +42,7 @@
   height: 100vh;
   margin: -71px 0 0;
   overflow: hidden;
+  font-family: 'Neucha', cursive;
 }
 
 .audition--wordScreen {
@@ -119,7 +120,7 @@
 .wordsList__word {
   margin: 10px;
   color: black;
-  font-size: 2rem;
+  font-size: 2.2rem;
   border: 1px solid black;
   border-radius: 10px;
   padding: 10px;
@@ -150,11 +151,12 @@
 }
 
 .wordScreen__button {
+  font-family: 'Neucha', cursive;
   border: 1px solid black;
   border-radius: 10px;
   background-color: white;
   padding: 10px;
-  font-size: 2rem;
+  font-size: 2.2rem;
   color: black;
   outline: none;
   cursor: pointer;
@@ -185,9 +187,10 @@
 }
 
 .statistic__button {
+  font-family: 'Neucha', cursive;
   margin: 10px;
   color: black;
-  font-size: 2rem;
+  font-size: 2.2rem;
   border: 1px solid black;
   border-radius: 10px;
   padding: 10px;
@@ -199,7 +202,7 @@
 }
 
 .statistic__Answers {
-  height: 100px;
+  height: 165px;
   overflow-y: scroll;
   text-align: left;
   &::-webkit-scrollbar {
