@@ -10,7 +10,7 @@ import Error404 from './Error404';
 const gameList = {
   // 'audition'        : Audition,
   'english-puzzle': EnglishPuzzle,
-  speakit         : SpeakIt,
+  speakit: SpeakIt,
   savannah: Savannah,
   // 'sprint'          : Sprint,
   // 'square'          : Square,

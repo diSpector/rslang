@@ -164,7 +164,9 @@ const SpeakIt = {
     // localStorage.setItem('games', null);
     async function getRepeatWords() {
       let repeatWords = [];
-      repeatWords = await AppModel.getSetOfLearnedWords(10);
+
+      repeatWords = await model.getSetOfLearnedWords(10);
+      words = repeatWords;
 
       return repeatWords;
     }
@@ -303,6 +305,18 @@ const SpeakIt = {
       container.append(el);
       return el;
     }
+    function intersection(wordsArr, spaekedWords) {
+      const speakedWords = spaekedWords;
+      let speakedWord = spaekedWords[0].transcript.toLowerCase();
+
+      speakedWords.forEach((element) => {
+        if (wordsArr.includes(element.transcript.toLowerCase())) {
+          speakedWord = element.transcript.toLowerCase();
+        }
+      });
+
+      return speakedWord;
+    }
 
     async function getDataFromWordsApi() { // получить данные от API со словами
       // const page = Math.round(Math.random() * config.apiMaxPage);
@@ -375,7 +389,7 @@ const SpeakIt = {
       const globalStatsButton = document.querySelector('.result__buttons .button__global');
       globalStatsButton.addEventListener('click', globalStatsClick);
 
-      
+
       // вернуться из глобальной статистики к статистике последней игры
       const globalStatsButtonBack = document.querySelector('.global__buttons .button__stats');
       globalStatsButtonBack.addEventListener('click', results);
@@ -438,6 +452,7 @@ const SpeakIt = {
 
     const results = (e) => { // страница "Результаты"
       showPage('resultsPage');
+      gameInProcess = false;
       renderResults();
     };
 
@@ -516,13 +531,12 @@ const SpeakIt = {
 
     const restart = (e) => { // сброс игры
       game(words);
-      
     };
 
     const next = async (e) => {
-      if (page < 59) localStorage.setItem('speakItlevel', JSON.stringify({ levels: level, pages: Number(page) + 1 }));
+      if (mode === 'repeat') { } else if (page < 59) localStorage.setItem('speakItlevel', JSON.stringify({ levels: level, pages: Number(page) + 1 }));
       else localStorage.setItem('speakItlevel', JSON.stringify({ levels: Number(level) + 1, pages: 0 }));
-      
+
 
       game();
     };
@@ -557,10 +571,13 @@ const SpeakIt = {
       if (recognition === null) {
         recognition = new webkitSpeechRecognition();
         recognition.lang = 'en-US';
+        recognition.maxAlternatives = 5;
 
         recognition.addEventListener('result', (event) => {
           if (gameInProcess === true) {
-            const speakedWord = event.results[0][0].transcript.toLowerCase();
+            const spaekedWords = Array.from(event.results[0]);
+            const speakedWord = intersection(wordsArr, spaekedWords);
+            console.log(spaekedWords);
             if (!correctWords.includes(speakedWord)) {
               translateContainer.classList.remove('translation-correct');
               translateContainer.classList.remove('translation-error');
@@ -707,7 +724,7 @@ const SpeakIt = {
     function clearContainer(container) { // очистить переданный контейнер
       container.innerHTML = '';
     }
-
+    const model = new AppModel();
     Game.startGame();
     addListeners();
 
