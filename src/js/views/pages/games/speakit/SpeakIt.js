@@ -1,7 +1,8 @@
 import Utils from '../../../../services/Utils';
 import '../../../../../css/pages/games/allGames.scss';
-import '../../../../../css/pages/games/speakit/speakit.css';
+import '../../../../../css/pages/games/speakit/speakit.scss';
 import Game from '../game';
+import AppModel from '../../../../model/AppModel';
 
 const SpeakIt = {
 
@@ -26,7 +27,7 @@ const SpeakIt = {
         <div class="allGames__startScreen start">
             <h1 class="allGames__heading">Speak It!</h1>
             <p class="allGames__description">Тренировка произношения слов</p>
-            <div>
+            <div class="allGames__playMods">
               <div>
                 <h2>Игра с новыми словами</h2>
                 <div class="levels__container"></div>
@@ -41,7 +42,7 @@ const SpeakIt = {
         </div>
         <div class="allGames__timerScreen allGames__timerScreen-hidden">
             <div class="allGames__timer">3</div>
-            <div class="allGames__tip">Нажми «говорить» и произноси слова</div>
+            <div class="allGames__tip">Нажми «Начать игру» и произноси поочередно слова в произвольном порядке</div>
         </div>   
         <div class="game allGames__playScreen allGames__playScreen-hidden">
             
@@ -68,21 +69,23 @@ const SpeakIt = {
 
                 <!-- <div class="word">
                     <div class="word__icon"></div>
-                    <div class="word__english">test</div>
-                    <div class="word__transcription">[test]</div>
+                    <div class="word__block">
+                      <div class="word__english">test</div>
+                      <div class="word__transcription">[test]</div>
+                    </div>
                 </div> -->
 
             </div>
             <div class="buttons__container">
-                <div class="button button__restart">Заново</div>
-                <div class="button button__speak">Говорить</div>
-                <div class="button button__results">Результат</div>
-                <div class="button button__startScreen">К старту</div>
+                
+                <div class="button button__speak">Начать игру</div>
+                <div class="button button__results">Завершить</div>
+                <div class="button button__startScreen2">К старту</div>
             </div>
 
         </div>
         <div class="results">
-            <div class="results__header">Stats for the last game</div>
+            <h2 class="results__header">Результаты последней игры</h2>
             <div class="results__errors"></div>
             <h3>Произнесённые верно слова</h3>
             <div class="results__words results__correct__words">
@@ -93,7 +96,7 @@ const SpeakIt = {
                     <div class="translate">на самом деле</div>
                 </div> -->
               </div>   
-            <h3>Произнесённые неверно слова</h3>
+            <h3>Непроизнесенные слова</h3>
             <div class="results__words results__uncorrect__words"></div>
             
             <div class="result__buttons">
@@ -104,19 +107,19 @@ const SpeakIt = {
             </div>
         </div>
         <div class="global">
-            <div class="global__header">Stats for all FINISHED games</div>
+            <div class="global__header">Статистика по всем завершенным играм</div>
 
             <div class="global__results">
                 <table>
                     <tr>
-                        <th class = "td__datetime">DateTime</th>
-                        <th class = "td__words">Words</th>
-                        <th class = "td__errors">Errors</th>
+                        <th class = "td__datetime">Дата</th>
+                        <th class = "td__words">Слова</th>
+                        <th class = "td__errors">Количество ошибок</th>
                     </tr>
                 </table>
             </div>
             <div class="global__buttons">
-                <div class="button button__game">Назад к игре</div>
+                
                 <div class="button button__stats">Назад к статистике</div>
             </div>
         </div>
@@ -160,7 +163,10 @@ const SpeakIt = {
 
     // localStorage.setItem('games', null);
     async function getRepeatWords() {
-      const repeatWords = [];
+      let repeatWords = [];
+
+      repeatWords = await model.getSetOfLearnedWords(10);
+      words = repeatWords;
 
       return repeatWords;
     }
@@ -176,7 +182,7 @@ const SpeakIt = {
       for (let i = 0; i < 6; i += 1) {
         const lev = document.createElement('option');
         lev.value = i;
-        lev.innerHTML = i;
+        lev.innerHTML = i + 1;
         levels.append(lev);
       }
       levelsContainer.append(levelsLable);
@@ -187,7 +193,7 @@ const SpeakIt = {
       for (let i = 0; i < 60; i += 1) {
         const pag = document.createElement('option');
         pag.value = i;
-        pag.innerHTML = i;
+        pag.innerHTML = i + 1;
         pages.append(pag);
       }
       pages.id = 'pages';
@@ -220,8 +226,9 @@ const SpeakIt = {
       localStorage.setItem('speakItlevel', JSON.stringify(lastGame));
     }
     function start() { // страница "Старт"
+      document.querySelector('.allGames__startScreen-hidden').classList.remove('allGames__startScreen-hidden');
+      document.querySelector('.allGames__timer').textContent = 3;
       showPage('startPage');
-      console.log('старт');
     }
 
     async function game(words = null) { // страница "Игра"
@@ -229,6 +236,8 @@ const SpeakIt = {
         setLastGame();
         if (mode === 'repeat') { await getRepeatWords(); } else { await reloadWords(); }
       }
+      const resultsButton = document.querySelector('.button__results');
+      resultsButton.style.display = 'none';
       await showPage('gamePage');
       resetGameCount();
       resetSpeak();
@@ -284,8 +293,9 @@ const SpeakIt = {
     function renderWord(word, container) { // отрисовать блок со словом
       container.dataset.word = word.word.toLowerCase();
       renderDiv('word__icon', '', container);
-      renderDiv('word__english', word.word, container);
-      renderDiv('word__transcription', word.transcription, container);
+      const container2 = renderDiv('word__word', null, container);
+      renderDiv('word__english', word.word, container2);
+      renderDiv('word__transcription', word.transcription, container2);
     }
 
     function renderDiv(cssClass, text, container) {
@@ -293,6 +303,19 @@ const SpeakIt = {
       el.classList.add(cssClass);
       el.innerText = text;
       container.append(el);
+      return el;
+    }
+    function intersection(wordsArr, spaekedWords) {
+      const speakedWords = spaekedWords;
+      let speakedWord = spaekedWords[0].transcript.toLowerCase();
+
+      speakedWords.forEach((element) => {
+        if (wordsArr.includes(element.transcript.toLowerCase())) {
+          speakedWord = element.transcript.toLowerCase();
+        }
+      });
+
+      return speakedWord;
     }
 
     async function getDataFromWordsApi() { // получить данные от API со словами
@@ -320,7 +343,9 @@ const SpeakIt = {
 
 
       const startScreenButton = document.querySelector('.button__startScreen');
-      startScreenButton.addEventListener('click', start());
+      startScreenButton.addEventListener('click', start);
+      const startScreenButton2 = document.querySelector('.button__startScreen2');
+      startScreenButton2.addEventListener('click', start);
 
       const levelStartButton = document.querySelector('.level__start__button');
       levelStartButton.addEventListener('click', LevelStartButtonClick);
@@ -357,16 +382,13 @@ const SpeakIt = {
       statsRepeatButton.addEventListener('click', next);
 
       // проиграть произношение слова на статистике
-      const statWordsContainer = document.querySelector('.results__words');
+      const statWordsContainer = document.querySelector('.results');
       statWordsContainer.addEventListener('click', statsWordClick);
 
       // показать глобальную статистику приложения
       const globalStatsButton = document.querySelector('.result__buttons .button__global');
       globalStatsButton.addEventListener('click', globalStatsClick);
 
-      // вернуться из глобальной статистике к игре
-      const globalStatsButtonGame = document.querySelector('.global__buttons .button__game');
-      globalStatsButtonGame.addEventListener('click', startButtonClick);
 
       // вернуться из глобальной статистики к статистике последней игры
       const globalStatsButtonBack = document.querySelector('.global__buttons .button__stats');
@@ -425,10 +447,12 @@ const SpeakIt = {
       const audioIcon = target.querySelector('.sound__icon');
       const { audio } = audioIcon.dataset;
       playSound(audio);
+      console.log(audio);
     };
 
     const results = (e) => { // страница "Результаты"
       showPage('resultsPage');
+      gameInProcess = false;
       renderResults();
     };
 
@@ -458,7 +482,7 @@ const SpeakIt = {
       clearContainer(uncorrectWordsContainer);
       clearContainer(correctWordsContainer);
 
-      errorsContainer.innerText = `errors: ${errors}`;
+      errorsContainer.innerText = `Ошибок: ${errors}`;
       const correctDivListWords = document.querySelectorAll('.words__container .correct');
       const correctDivWords = Array.prototype.slice.call(correctDivListWords);
       correctWords = [];
@@ -466,7 +490,7 @@ const SpeakIt = {
       words.forEach((element) => {
         let isCorrect = false;
         correctDivWords.forEach((word) => {
-          if (word.dataset.word === element.word) { correctWords.push(element); isCorrect = true; }
+          if (word.dataset.word.toLowerCase() === element.word.toLowerCase()) { correctWords.push(element); isCorrect = true; }
         });
         if (!isCorrect) unCorrectWords.push(element);
       });
@@ -510,8 +534,9 @@ const SpeakIt = {
     };
 
     const next = async (e) => {
-      if (page < 59) localStorage.setItem('speakItlevel', JSON.stringify({ levels: level, pages: Number(page) + 1 }));
+      if (mode === 'repeat') { } else if (page < 59) localStorage.setItem('speakItlevel', JSON.stringify({ levels: level, pages: Number(page) + 1 }));
       else localStorage.setItem('speakItlevel', JSON.stringify({ levels: Number(level) + 1, pages: 0 }));
+
 
       game();
     };
@@ -524,6 +549,8 @@ const SpeakIt = {
 
       const speakButton = document.querySelector('.button__speak');
       speakButton.classList.add('activated');
+      const resultsButton = document.querySelector('.button__results');
+      resultsButton.style.display = 'block';
 
       gameInProcess = true;
       correctWords = [];
@@ -544,10 +571,13 @@ const SpeakIt = {
       if (recognition === null) {
         recognition = new webkitSpeechRecognition();
         recognition.lang = 'en-US';
+        recognition.maxAlternatives = 5;
 
         recognition.addEventListener('result', (event) => {
           if (gameInProcess === true) {
-            const speakedWord = event.results[0][0].transcript.toLowerCase();
+            const spaekedWords = Array.from(event.results[0]);
+            const speakedWord = intersection(wordsArr, spaekedWords);
+            console.log(spaekedWords);
             if (!correctWords.includes(speakedWord)) {
               translateContainer.classList.remove('translation-correct');
               translateContainer.classList.remove('translation-error');
@@ -609,9 +639,9 @@ const SpeakIt = {
       const wordsCl = document.querySelectorAll('.words__container .word');
       wordsCl.forEach((word) => word.classList.remove('pushed'));
       target.classList.add('pushed');
-      const pushedWord = target.dataset.word;
+      const pushedWord = target.dataset.word.toLowerCase();
       // let wordsArray = Array.prototype.slice.call(words);
-      const pushedWordData = words.find((wordObj) => wordObj.word === pushedWord);
+      const pushedWordData = words.find((wordObj) => wordObj.word.toLowerCase() === pushedWord);
 
       processWord(pushedWordData);
     };
@@ -694,12 +724,12 @@ const SpeakIt = {
     function clearContainer(container) { // очистить переданный контейнер
       container.innerHTML = '';
     }
-
+    const model = new AppModel();
     Game.startGame();
     addListeners();
 
 
-    start();
+    showPage('startPage');
     createLevels();
   },
 };
