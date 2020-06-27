@@ -182,7 +182,7 @@ const SpeakIt = {
       for (let i = 0; i < 6; i += 1) {
         const lev = document.createElement('option');
         lev.value = i;
-        lev.innerHTML = i;
+        lev.innerHTML = i + 1;
         levels.append(lev);
       }
       levelsContainer.append(levelsLable);
@@ -193,7 +193,7 @@ const SpeakIt = {
       for (let i = 0; i < 60; i += 1) {
         const pag = document.createElement('option');
         pag.value = i;
-        pag.innerHTML = i;
+        pag.innerHTML = i + 1;
         pages.append(pag);
       }
       pages.id = 'pages';
