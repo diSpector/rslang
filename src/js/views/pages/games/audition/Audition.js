@@ -135,6 +135,7 @@ const generateStatisticHTML = () => {
     <div class="statistic__time">Время игры: ${gameTime.getMinutes()}:${gameTime.getSeconds()}</div>
     <button class="statistic__button" onclick="document.location.reload()">Начать заново</button>
     <button class="statistic__button" onclick="location.href='/'">Перейти на главную страницу</button>
+    <button class="statistic__button" onclick="location.href='/'">Глобальная статистика</button>
   </section>
   `;
   gameArea.innerHTML += statistic;
@@ -204,7 +205,10 @@ const addGameClickHandler = (wordAudio, correctWord) => {
   document.onkeyup = (event) => {
     if (event.key > 0 && event.key < 6 && isGameActive) {
       const answers = document.querySelectorAll('.wordsList__word');
-      const targetWord = answers[event.key - 1];
+      let targetWord = answers[event.key - 1];
+      if (answers.length === 10) {
+        targetWord = answers[event.key - 1 + 5];
+      }
       setClassesForWrongWords(correctWord.wordTranslate);
       if (targetWord.innerHTML.includes(correctWord.wordTranslate) && isGameActive) {
         targetWord.innerHTML = targetWord.innerHTML.slice(15);
@@ -218,7 +222,7 @@ const addGameClickHandler = (wordAudio, correctWord) => {
         errorAudio.play();
       }
       showAnswer();
-      Utils.clearBlock('.wordScreen__button');
+      button.innerText = '';
       button.classList.add('correct');
       isGameActive = false;
       currentWordCounter += 1;
