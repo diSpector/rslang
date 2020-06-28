@@ -2,7 +2,8 @@
 export default class AppModel {
   constructor() {
     this.searchString = 'https://afternoon-falls-25894.herokuapp.com/words?';
-    this.contentURL = 'https://raw.githubusercontent.com/dispector/rslang-data/master/data/book';
+    this.contentBookURL = 'https://raw.githubusercontent.com/dispector/rslang-data/master/data/book';
+    this.contentURL = 'https://raw.githubusercontent.com/dispector/rslang-data/master/';
     this.userName = 'defaultUser';
     this.maxDictionaryLength = 3600;
     this.learnedWordsCounter = 100;
@@ -168,6 +169,7 @@ export default class AppModel {
       audioExample: `${this.contentURL}${wordData.audioExample}`,
       image: `${this.contentURL}${wordData.image}`,
       difficulty: wordData.group,
+      // wordsPerExampleSentence: wordData.wordsPerExampleSentence,
     };
   }
 
@@ -180,6 +182,7 @@ export default class AppModel {
     const url = `https://afternoon-falls-25894.herokuapp.com/words?group=${group}&page=${page}`;
     const responce = await fetch(url);
     const data = await responce.json();
+    console.log(data);
     const result = this.reformatWordData(data[wordIndex]);
     return result;
   }
@@ -293,7 +296,7 @@ export default class AppModel {
 
   // служебная функция, записывающая массив слов данной сложности из гитхаба в модель
   async getWordsDataFromGithub(difficulty) {
-    const url = `${this.contentURL}${difficulty}.json`;
+    const url = `${this.contentBookURL}${difficulty}.json`;
     const responce = await fetch(url);
     const data = await responce.json();
     this.currentWordSet = await data;
@@ -317,7 +320,7 @@ export default class AppModel {
     const finalArray = [];
     const totalNumberOfRounds = this.wordSetLength / roundLength;
     await this.getWordsDataFromGithub(difficulty);
-    const correctResults = this.getRoundDataFromModel(round, roundLength);
+    const correctResults = this.getRoundDataFromModel(round, roundLength).map((x) => this.reformatWordData(x));
     do {
       numberOfCurrentRound = Math.floor(Math.random() * totalNumberOfRounds);
       if (!incorrectTranslationsRounds.includes(numberOfCurrentRound) && numberOfCurrentRound !== round) {
@@ -347,7 +350,7 @@ export default class AppModel {
     const randomDifficulty = Math.floor(randomSeed / this.wordSetLength) + 1;
     await this.getWordsDataFromGithub(randomDifficulty);
     startIndex = randomSeed - randomDifficulty * this.wordSetLength;
-    return this.currentWordSet.slice(startIndex, startIndex + numberOfWords);
+    return this.currentWordSet.slice(startIndex, startIndex + numberOfWords).map(x => this.reformatWordData(x));
   }
 
   async createUser(user) {
