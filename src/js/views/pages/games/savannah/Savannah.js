@@ -214,7 +214,7 @@ const Savannah = {
 
       if (audioIcon) {
         const audio = document.querySelector('#savannah-audio');
-        const audoiSrc = `https://raw.githubusercontent.com/dispector/rslang-data/master/${audioIcon.getAttribute('data-audio')}`;
+        const audoiSrc = audioIcon.getAttribute('data-audio');
 
         audio.setAttribute('src', audoiSrc);
         audio.play();
