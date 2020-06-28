@@ -160,8 +160,26 @@ const SpeakIt = {
     const correctAudio = new Audio('./src/audio/correct.mp3');
     const errorAudio = new Audio('./src/audio/error.mp3');
     const model = new AppModel();
+    const translateContainer = document.querySelector('.pic__translate');
 
+    const objToMap = ((obj) => {
+      const map = new Map();
+      Object.keys(obj).forEach((key) => { map.set(key, obj[key]); });
+      return map;
+    });
 
+    function clearContainer(container) { // очистить переданный контейнер
+      const cont = container;
+      cont.innerHTML = '';
+    }
+
+    async function getTranslate(word) {
+      const url = `${config.YaTranslateApiUrl}text=${word}&lang=en-ru`;
+      const translationObj = await fetch(url);
+      const json = await translationObj.json();
+      const translation = json.text[0];
+      return translation;
+    }
     // localStorage.setItem('games', null);
     async function getRepeatWords() {
       let repeatWords = [];
@@ -170,6 +188,32 @@ const SpeakIt = {
       words = repeatWords;
 
       return repeatWords;
+    }
+    function playSound(sound) { // проиграть слово
+      const soundPath = config.repoUrl + sound;
+
+      const audio = new Audio(soundPath);
+      audio.play();
+    }
+
+    async function clearWords() { // удалить все слова из блоков, заменить картинку, удалить перевод
+      const words = document.querySelectorAll('.words__container .word');
+      words.forEach((word) => {
+        clearContainer(word);
+        word.classList.remove('pushed');
+        word.classList.remove('correct');
+      });
+
+      // поставить стандартную картинку
+      const imgContainer = document.querySelector('.pic__image img');
+      imgContainer.src = './src/img/games/speakit/dummy.jpg';
+      // imgContainer.src = dummyImg;
+
+      // удалить последнее из поля слово и убрать стили (угадано/ошибка)
+      // const translateContainer = document.querySelector('.pic__translate');
+      translateContainer.innerText = '';
+      translateContainer.classList.remove('translation-correct');
+      translateContainer.classList.remove('translation-error');
     }
     function shuffleWords(wordsArr) { // перемешать слова в массиве
       const wordsArray = wordsArr;
@@ -186,13 +230,14 @@ const SpeakIt = {
       }
     }
     function hideAllPages() { // скрыть все "страницы"
-      const { pages } = config;
-      console.log(pages);
-      for (const page in pages) {
-        hidePage(config.pages[page]);
-      }
+      const pagesMap = objToMap(config.pages);
+      pagesMap.forEach((e) => {
+        hidePage(e);
+      });
     }
-
+    function isGameIsEnd() {
+      return corrects === words.length;
+    }
     function showPage(page) { // скрыть все страницы, показать нужную
       hideAllPages();
       const pageClass = config.pages[page];
@@ -238,7 +283,8 @@ const SpeakIt = {
       return el;
     }
     function renderWord(word, container) { // отрисовать блок со словом
-      container.dataset.word = word.word.toLowerCase();
+      const cont = container;
+      cont.dataset.word = word.word.toLowerCase();
       renderDiv('word__icon', '', container);
       const container2 = renderDiv('word__word', null, container);
       renderDiv('word__english', word.word, container2);
@@ -284,12 +330,6 @@ const SpeakIt = {
       tds.forEach((td) => td.remove());
     }
 
-    function renderGlobalResults() {
-      const gamesInfo = getGamesFromLocalStorage();
-      if (gamesInfo !== null) {
-        gamesInfo.forEach((game) => renderGameRes(game));
-      }
-    }
 
     function renderGameRes(gameObj) {
       const globalResContainer = document.querySelector('.global__results table');
@@ -330,6 +370,34 @@ const SpeakIt = {
     function getGamesFromLocalStorage() {
       return JSON.parse(localStorage.getItem('speakItStat'));
     }
+    async function renderStatForWord(wordObj, selector) { // вывести статистику для одного слова
+      const wordsContainer = document.querySelector(selector);
+      const newWord = document.createElement('div');
+      newWord.classList.add('stat__word');
+
+      const newWordSoundIcon = document.createElement('div');
+      newWordSoundIcon.classList.add('sound__icon');
+      newWordSoundIcon.dataset.audio = wordObj.audio;
+      newWord.append(newWordSoundIcon);
+
+      const newWordText = document.createElement('div');
+      newWordText.classList.add('text');
+      newWordText.innerText = wordObj.word;
+      newWord.append(newWordText);
+
+      const newWordTransciption = document.createElement('div');
+      newWordTransciption.classList.add('transcription');
+      newWordTransciption.innerText = wordObj.transcription;
+      newWord.append(newWordTransciption);
+
+      const newWordTranslate = document.createElement('div');
+      newWordTranslate.classList.add('translate');
+      const translated = await getTranslate(wordObj.word);
+      newWordTranslate.innerText = translated;
+      newWord.append(newWordTranslate);
+
+      wordsContainer.append(newWord);
+    }
 
     async function renderResults() { // вывести страницу с результатом
       const errorsContainer = document.querySelector('.results__errors');
@@ -346,7 +414,9 @@ const SpeakIt = {
       words.forEach((element) => {
         let isCorrect = false;
         correctDivWords.forEach((word) => {
-          if (word.dataset.word.toLowerCase() === element.word.toLowerCase()) { correctWords.push(element); isCorrect = true; }
+          if (word.dataset.word.toLowerCase() === element.word.toLowerCase()) {
+            correctWords.push(element); isCorrect = true;
+          }
         });
         if (!isCorrect) unCorrectWords.push(element);
       });
@@ -384,44 +454,6 @@ const SpeakIt = {
       clearWords();
       renderWords();
     }
-    async function renderStatForWord(wordObj, selector) { // вывести статистику для одного слова
-      const wordsContainer = document.querySelector(selector);
-      const newWord = document.createElement('div');
-      newWord.classList.add('stat__word');
-
-      const newWordSoundIcon = document.createElement('div');
-      newWordSoundIcon.classList.add('sound__icon');
-      newWordSoundIcon.dataset.audio = wordObj.audio;
-      newWord.append(newWordSoundIcon);
-
-      const newWordText = document.createElement('div');
-      newWordText.classList.add('text');
-      newWordText.innerText = wordObj.word;
-      newWord.append(newWordText);
-
-      const newWordTransciption = document.createElement('div');
-      newWordTransciption.classList.add('transcription');
-      newWordTransciption.innerText = wordObj.transcription;
-      newWord.append(newWordTransciption);
-
-      const newWordTranslate = document.createElement('div');
-      newWordTranslate.classList.add('translate');
-      const translated = await getTranslate(wordObj.word);
-      newWordTranslate.innerText = translated;
-      newWord.append(newWordTranslate);
-
-      wordsContainer.append(newWord);
-    }
-
-    function globalStats() {
-      showPage('globalPage');
-      clearGlobalResults();
-      renderGlobalResults();
-    }
-
-    const globalStatsClick = () => {
-      globalStats();
-    };
 
 
     const restart = () => { // сброс игры
@@ -429,8 +461,10 @@ const SpeakIt = {
     };
 
     const next = async () => {
-      if (mode === 'repeat') { } else if (page < 59) localStorage.setItem('speakItlevel', JSON.stringify({ levels: level, pages: Number(page) + 1 }));
-      else localStorage.setItem('speakItlevel', JSON.stringify({ levels: Number(level) + 1, pages: 0 }));
+      if (mode === 'level') {
+        if (page < 59) localStorage.setItem('speakItlevel', JSON.stringify({ levels: level, pages: Number(page) + 1 }));
+        else localStorage.setItem('speakItlevel', JSON.stringify({ levels: Number(level) + 1, pages: 0 }));
+      }
       game();
     };
 
@@ -456,7 +490,7 @@ const SpeakIt = {
       const wordsContainer = document.querySelector('.words__container');
       const wordsDivs = document.querySelectorAll('.words__container .word');
       const imgContainer = document.querySelector('.pic__image img');
-      const translateContainer = document.querySelector('.pic__translate');
+      // const translateContainer = document.querySelector('.pic__translate');
 
       wordsDivs.forEach((wordDiv) => wordDiv.classList.remove('pushed'));
       wordsDivs.forEach((wordDiv) => wordDiv.classList.remove('correct'));
@@ -480,7 +514,7 @@ const SpeakIt = {
                 correctWords.push(speakedWord);
                 speakedWordDiv.classList.add('correct');
                 translateContainer.classList.add('translation-correct');
-                const { image } = words.filter((word) => word.word.toLowerCase() === speakedWord)[0];
+                const { image } = words.filter((e) => e.word.toLowerCase() === speakedWord)[0];
                 correctAudio.play();
                 imgContainer.src = config.repoUrl + image;
                 corrects += 1;
@@ -505,20 +539,66 @@ const SpeakIt = {
       }
     };
 
-    function isGameIsEnd() {
-      return corrects === words.length;
-    }
-    const LevelStartButtonClick = async () => {
+
+    const levelStartButtonClick = async () => {
       mode = 'level';
-      game();
+      await game();
+      translateContainer.textContent = 'Прослушай новые слова и нажми «Начать&#160игру»';
     };
     const startButtonClick = async () => { // обработчик нажатия на "Start"
       mode = 'repeat';
       words = await getRepeatWords();
-      if (words.length === 0) { words = null; LevelStartButtonClick(); alert('Играй новыми'); } else { game(words); }
+
+      if (words.length < 10) {
+        words = null;
+        mode = 'level';
+        await game();
+        translateContainer.textContent = 'Недостаточно слов для повторения, игра идет с новыми словами';
+      } else {
+        await game(words);
+        translateContainer.innerHTML = 'Прослушай слова для повторения и нажми «Начать&#160игру»';
+      }
+    };
+    function renderGlobalResults() {
+      const gamesInfo = getGamesFromLocalStorage();
+      if (gamesInfo !== null) {
+        gamesInfo.forEach((game) => renderGameRes(game));
+      }
+    }
+    function globalStats() {
+      showPage('globalPage');
+      clearGlobalResults();
+      renderGlobalResults();
+    }
+
+    const globalStatsClick = () => {
+      globalStats();
     };
 
 
+    function setImage(image) { // установить картинку
+      const imgContainer = document.querySelector('.pic__image img');
+      imgContainer.src = config.repoUrl + image;
+    }
+
+    async function setTranslate(word) { // получить перевод слова и вставить его на страницу
+      const url = `${config.YaTranslateApiUrl} text = ${word}& lang=en - ru`;
+      const translationObj = await fetch(url);
+      const json = await translationObj.json();
+      const translation = json.text[0];
+
+
+      translateContainer.innerText = translation;
+    }
+
+
+    function processWord(wordObj) { // вставить картинку, слово, проиграть звук
+      const { image } = wordObj;
+      const { audio } = wordObj;
+      setImage(image);
+      setTranslate(wordObj.word);
+      playSound(audio);
+    }
     const wordClick = (e) => { // обработчик нажатия на слово
       const target = e.target.closest('.word');
       if (!target) { // если это не контейнер со словом
@@ -539,36 +619,6 @@ const SpeakIt = {
     };
 
 
-    function setImage(image) { // установить картинку
-      const imgContainer = document.querySelector('.pic__image img');
-      imgContainer.src = config.repoUrl + image;
-    }
-
-    async function setTranslate(word) { // получить перевод слова и вставить его на страницу
-      const url = `${config.YaTranslateApiUrl}text=${word}&lang=en-ru`;
-      const translationObj = await fetch(url);
-      const json = await translationObj.json();
-      const translation = json.text[0];
-
-      const translateContainer = document.querySelector('.pic__translate');
-      translateContainer.innerText = translation;
-    }
-
-    async function getTranslate(word) {
-      const url = `${config.YaTranslateApiUrl}text=${word}&lang=en-ru`;
-      const translationObj = await fetch(url);
-      const json = await translationObj.json();
-      const translation = json.text[0];
-      return translation;
-    }
-
-    function playSound(sound) { // проиграть слово
-      const soundPath = config.repoUrl + sound;
-
-      const audio = new Audio(soundPath);
-      audio.play();
-    }
-
     /*
     const changeLevelClick = (e) => { // обработчик выбора уровня сложности
       const { target } = e;
@@ -583,38 +633,6 @@ const SpeakIt = {
       game();
     };
     */
-
-
-    function clearContainer(container) { // очистить переданный контейнер
-      container.innerHTML = '';
-    }
-
-    function processWord(wordObj) { // вставить картинку, слово, проиграть звук
-      const { image } = wordObj;
-      const { audio } = wordObj;
-      setImage(image);
-      setTranslate(wordObj.word);
-      playSound(audio);
-    }
-    async function clearWords() { // удалить все слова из блоков, заменить картинку, удалить перевод
-      const words = document.querySelectorAll('.words__container .word');
-      words.forEach((word) => {
-        clearContainer(word);
-        word.classList.remove('pushed');
-        word.classList.remove('correct');
-      });
-
-      // поставить стандартную картинку
-      const imgContainer = document.querySelector('.pic__image img');
-      imgContainer.src = './src/img/games/speakit/dummy.jpg';
-      // imgContainer.src = dummyImg;
-
-      // удалить последнее из поля слово и убрать стили (угадано/ошибка)
-      const translateContainer = document.querySelector('.pic__translate');
-      translateContainer.innerText = '';
-      translateContainer.classList.remove('translation-correct');
-      translateContainer.classList.remove('translation-error');
-    }
 
 
     function createLevels() {
@@ -679,7 +697,7 @@ const SpeakIt = {
       startScreenButton2.addEventListener('click', start);
 
       const levelStartButton = document.querySelector('.level__start__button');
-      levelStartButton.addEventListener('click', LevelStartButtonClick);
+      levelStartButton.addEventListener('click', levelStartButtonClick);
 
 
       // переключение уровня сложности
@@ -728,8 +746,6 @@ const SpeakIt = {
 
     Game.startGame();
     addListeners();
-
-
     showPage('startPage');
     createLevels();
   },
