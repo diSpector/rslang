@@ -22,6 +22,11 @@ export default class AppModel {
       sprint: {},
       square: {},
     };
+    this.defaultUserEmail = '66group@user.com';
+    this.defaultUserPassword = 'Gfhjkm_123';
+    this.defaultUserId = '5ef6f4c5f3e215001785d617';
+    this.emailValidator = /^[-.\w]+@(?:[a-z\d]{2,}\.)+[a-z]{2,6}$/;
+    this.passwordValidator = /^(?=.*[A-Z])(?=.*[a-z])(?=.*[0-9])(?=.*[+\-_@$!%*?&#.,;:[\]{}])[\S]{8,}$/;
   }
 
   // change current user to new one
@@ -343,5 +348,36 @@ export default class AppModel {
     await this.getWordsDataFromGithub(randomDifficulty);
     startIndex = randomSeed - randomDifficulty * this.wordSetLength;
     return this.currentWordSet.slice(startIndex, startIndex + numberOfWords);
+  }
+
+  async createUser(user) {
+    const rawResponse = await fetch('https://afternoon-falls-25894.herokuapp.com/users', {
+      method: 'POST',
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(user),
+    });
+    const content = await rawResponse.json();
+    return content;
+  }
+
+  async loginUser(user) {
+    const rawResponse = await fetch('https://afternoon-falls-25894.herokuapp.com/signin', {
+      method: 'POST',
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(user),
+    });
+    const content = await rawResponse.json();
+    console.log(content);
+  }
+
+  validateUserData(user) {
+    return user.email && user.password && this.emailValidator.test(user.email)
+    && this.passwordValidator.test(user.password);
   }
 }

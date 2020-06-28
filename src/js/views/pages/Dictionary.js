@@ -15,7 +15,7 @@ const Dictionary = {
     </section>
           `;
 
-    console.log(await model.getSetOfWordsAndTranslations(1, 10, 20, 4));
+    console.log(await model.loginUser({ email: '66group@user.com', password: 'Gfhjkm_1789' }));
     return view;
   },
   afterRender: async () => {

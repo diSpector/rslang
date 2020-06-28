@@ -80,6 +80,7 @@ window.addEventListener('hashchange', router);
 window.addEventListener('load', router);
 window.addEventListener('load', model.loadUserData());
 
+
 // model.setDefaultUserData('defaultUser); - раскомменть чтобы сбросить данные на стартовые
 
 // сохранение данных пользователя при закрытии страницы
