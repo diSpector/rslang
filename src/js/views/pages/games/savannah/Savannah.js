@@ -20,8 +20,8 @@ const Savannah = {
   maxMistakesCount: 5,
   correctAnswersCount: 0,
   isAnswerSelected: false,
-  // correctAnswers: [],
-  // wrongAnswers: [],
+  correctAnswers: [],
+  wrongAnswers: [],
 
   beforeRender() {
     this.clearHeaderAndFooter();
@@ -94,11 +94,11 @@ const Savannah = {
                         <h3 class="savannah--stat__errorsHeading">Ошибок: <span>1</span></h3>
                         <ul class="savannah--stat__list">
                             <li class="savannah--stat__listItem">
-                                <div></div>
+                                <div class="savannah--stat__audio"></div>
                                 <span><b>слово</b> - перевод<span>
                             </li>
                             <li class="savannah--stat__listItem">
-                                <div></div>
+                                <div class="savannah--stat__audio"></div>
                                 <span><b>слово</b> - перевод<span>
                             </li>
                         </ul>
@@ -107,7 +107,7 @@ const Savannah = {
                         <h3 class="savannah--stat__correctHeading">Знаю: <span>1</span></h3>
                         <ul class="savannah--stat__list">
                             <li class="savannah--stat__listItem">
-                                <div></div>
+                                <div class="savannah--stat__audio"></div>
                                 <span><b>слово</b> - перевод<span>
                             </li>
                         </ul>
@@ -194,19 +194,52 @@ const Savannah = {
 
     const mistakesCount = document.querySelector('.savannah--stat__errorsHeading span');
     mistakesCount.textContent = this.mistakesCount;
+    const errorList = document.querySelector('.savannah--stat__errors .savannah--stat__list');
+    errorList.innerHTML = '';
+    this.showAnswersList(errorList, this.wrongAnswers);
 
     const correctAnswersCount = document.querySelector('.savannah--stat__correctHeading span');
     correctAnswersCount.textContent = this.correctAnswersCount;
+    const correctList = document.querySelector('.savannah--stat__correct .savannah--stat__list');
+    correctList.innerHTML = '';
+    this.showAnswersList(correctList, this.correctAnswers);
 
-    // console.log('wrongAnswers', this.wrongAnswers);
+    this.clickOnAudioHandler();
+  },
+
+  clickOnAudioHandler() {
+    const answers = document.querySelector('.savannah--stat__answers');
+    answers.addEventListener('click', (e) => {
+      const audioIcon = e.target.closest('.savannah--stat__audio');
+
+      if (audioIcon) {
+        const audio = document.querySelector('#savannah-audio');
+        const audoiSrc = `https://raw.githubusercontent.com/dispector/rslang-data/master/${audioIcon.getAttribute('data-audio')}`;
+
+        audio.setAttribute('src', audoiSrc);
+        audio.play();
+      }
+    });
+  },
+
+  showAnswersList(answersListElement, answersArr) {
+    answersArr.forEach((answer) => {
+      const div = Utils.createBlockInside('div', 'savannah--stat__audio');
+      div.dataset.audio = answer.audio;
+
+      const span = Utils.createBlockInside('span', null, null, `<b>${answer.word}</b> - ${answer.wordTranslate}`);
+
+      const li = document.createElement('li');
+      li.classList.add('savannah--stat__listItem');
+      li.append(div, span);
+      answersListElement.append(li);
+    });
   },
 
   checkAnswer(roundIndex) {
     const question = document.querySelector('.savannah--game__question');
     const answersList = document.querySelector('.savannah--game__answersList');
     const stars = document.querySelectorAll('.savannah--stars__item');
-
-    console.log(this.mistakesCount);
 
     this.isAnswerSelected = false;
 
@@ -215,6 +248,8 @@ const Savannah = {
     const timerShowCorrectTranslation = setTimeout(() => {
       stars[this.mistakesCount].classList.add('savannah--stars__item-lost');
       this.mistakesCount += 1;
+
+      this.wrongAnswers.push(this.data[roundIndex][0]);
 
       this.playAudio('error');
 
@@ -243,6 +278,8 @@ const Savannah = {
 
           this.correctAnswersCount += 1;
 
+          this.correctAnswers.push(this.data[roundIndex][0]);
+
           this.playAudio('correct');
 
           this.isAnswerSelected = true;
@@ -256,6 +293,8 @@ const Savannah = {
 
           stars[this.mistakesCount].classList.add('savannah--stars__item-lost');
           this.mistakesCount += 1;
+
+          this.wrongAnswers.push(this.data[roundIndex][0]);
 
           this.playAudio('error');
 
@@ -285,6 +324,8 @@ const Savannah = {
 
           this.correctAnswersCount += 1;
 
+          this.correctAnswers.push(this.data[roundIndex][0]);
+
           this.playAudio('correct');
 
           this.isAnswerSelected = true;
@@ -298,7 +339,7 @@ const Savannah = {
           stars[this.mistakesCount].classList.add('savannah--stars__item-lost');
           this.mistakesCount += 1;
 
-          // this.wrongAnswers.push(this.data[roundIndex][0]);
+          this.wrongAnswers.push(this.data[roundIndex][0]);
 
           this.playAudio('error');
 
