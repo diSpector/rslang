@@ -4,8 +4,8 @@ const Home = {
   render: async () => {
     const view = /* html */`
     <section class="section login--container">
-      <p>Ввести имейл (дефолтный 66group@user.com)</p>
-      <input type="text" class="login--email__input" placeholder="66group@user.com" value="66group@user.com">
+      <p>Ввести имейл (дефолтный 66group@gmail.com)</p>
+      <input type="text" class="login--email__input" placeholder="66group@gmail.com" value="66group@gmail.com">
       <p>Ввести пароль(дефолтный Gfhjkm_123)</p>
       <input type="text" class="login--password__input" placeholder="Gfhjkm_123" value="Gfhjkm_123">
       <button class="login--create-user__button">Create user</button>
@@ -23,11 +23,21 @@ const Home = {
     const loginUserButton = document.querySelector('.login--login-user__button');
     const logOutput = document.querySelector('.login--log_output');
     createUserButton.addEventListener('click', async () => {
-      await model.createUser({ 'email': emailInput.value, 'password': passwordInput.value });
+      const responce = await model.createUser({ 'email': emailInput.value, 'password': passwordInput.value });
+      if (responce.error) {
+        logOutput.innerHTML = responce.errorText;
+      } else {
+        logOutput.innerHTML = 'user created';
+      }
     });
     loginUserButton.addEventListener('click', async () => {
-      logOutput.innerHTML = `${emailInput.value} ${passwordInput.value}`;
-      await model.loginUser({ 'email': "hello@user.com", 'password': "Gfhjkm_123" });
+      console.log(emailInput.value + passwordInput.value);
+      const responce = await model.loginUser({ 'email': emailInput.value, 'password': passwordInput.value });
+      if (responce.error) {
+        logOutput.innerHTML = responce.errorText;
+      } else {
+        logOutput.innerHTML = JSON.stringify(responce.data);
+      }
     });
   },
 

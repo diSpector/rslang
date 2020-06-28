@@ -23,7 +23,7 @@ export default class AppModel {
       sprint: {},
       square: {},
     };
-    this.defaultUserEmail = '66group@user.com';
+    this.defaultUserEmail = '66group@gmail.com';
     this.defaultUserPassword = 'Gfhjkm_123';
     this.defaultUserId = '5ef6f4c5f3e215001785d617';
     this.emailValidator = /^[-.\w]+@(?:[a-z\d]{2,}\.)+[a-z]{2,6}$/;
@@ -350,37 +350,51 @@ export default class AppModel {
     const randomDifficulty = Math.floor(randomSeed / this.wordSetLength) + 1;
     await this.getWordsDataFromGithub(randomDifficulty);
     startIndex = randomSeed - randomDifficulty * this.wordSetLength;
-    return this.currentWordSet.slice(startIndex, startIndex + numberOfWords).map(x => this.reformatWordData(x));
+    return this.currentWordSet.slice(startIndex, startIndex + numberOfWords).map((x) => this.reformatWordData(x));
   }
 
   async createUser(user) {
-    const rawResponse = await fetch('https://afternoon-falls-25894.herokuapp.com/users', {
-      method: 'POST',
-      headers: {
-        Accept: 'application/json',
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(user),
-    });
-    const content = await rawResponse.json();
-    return content;
+    const validation = this.validateUserData(user);
+    if (validation.valid) {
+      const rawResponse = await fetch('https://afternoon-falls-25894.herokuapp.com/users', {
+        method: 'POST',
+        headers: {
+          Accept: 'application/json',
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(user),
+      });
+      const content = await rawResponse.json();
+      return { data: content, error: false, errorText: '' };
+    }
+    return { data: null, error: validation.error, errorText: validation.errorText };
   }
 
   async loginUser(user) {
-    const rawResponse = await fetch('https://afternoon-falls-25894.herokuapp.com/signin', {
-      method: 'POST',
-      headers: {
-        Accept: 'application/json',
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(user),
-    });
-    const content = await rawResponse.json();
-    console.log(content);
+    const validation = this.validateUserData(user);
+    if (validation.valid) {
+      const rawResponse = await fetch('https://afternoon-falls-25894.herokuapp.com/signin', {
+        method: 'POST',
+        headers: {
+          Accept: 'application/json',
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(user),
+      });
+      const content = await rawResponse.json();
+      console.log(content);
+      return { data: content, error: false, errorText: '' };
+    }
+    return { data: null, error: validation.error, errorText: validation.errorText };
   }
 
   validateUserData(user) {
-    return user.email && user.password && this.emailValidator.test(user.email)
-    && this.passwordValidator.test(user.password);
+    if (!user.email || !this.emailValidator.test(user.email)) {
+      return { error: true, errorText: 'Enter correct email please', valid: false };
+    }
+    if (!user.password || !this.passwordValidator.test(user.password)) {
+      return { error: true, errorText: 'Enter correct password please', valid: false };
+    }
+    return { error: false, errorText: '', valid: true };
   }
 }
