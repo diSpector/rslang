@@ -22,6 +22,11 @@ export default class AppModel {
       sprint: {},
       square: {},
     };
+    this.defaultUserEmail = '66group@gmail.com';
+    this.defaultUserPassword = 'Gfhjkm_123';
+    this.defaultUserId = '5ef6f4c5f3e215001785d617';
+    this.emailValidator = /^[-.\w]+@(?:[a-z\d]{2,}\.)+[a-z]{2,6}$/;
+    this.passwordValidator = /^(?=.*[A-Z])(?=.*[a-z])(?=.*[0-9])(?=.*[+\-_@$!%*?&#.,;:[\]{}])[\S]{8,}$/;
   }
 
   // change current user to new one
@@ -163,6 +168,7 @@ export default class AppModel {
       audioExample: `${this.contentURL}${wordData.audioExample}`,
       image: `${this.contentURL}${wordData.image}`,
       difficulty: wordData.group,
+      // wordsPerExampleSentence: wordData.wordsPerExampleSentence,
     };
   }
 
@@ -175,6 +181,7 @@ export default class AppModel {
     const url = `https://afternoon-falls-25894.herokuapp.com/words?group=${group}&page=${page}`;
     const responce = await fetch(url);
     const data = await responce.json();
+    console.log(data);
     const result = this.reformatWordData(data[wordIndex]);
     return result;
   }
@@ -288,7 +295,7 @@ export default class AppModel {
 
   // служебная функция, записывающая массив слов данной сложности из гитхаба в модель
   async getWordsDataFromGithub(difficulty) {
-    const url = `${this.contentURL}${difficulty}.json`;
+    const url = `${this.contentBookURL}${difficulty}.json`;
     const responce = await fetch(url);
     const data = await responce.json();
     this.currentWordSet = await data;
@@ -312,7 +319,7 @@ export default class AppModel {
     const finalArray = [];
     const totalNumberOfRounds = this.wordSetLength / roundLength;
     await this.getWordsDataFromGithub(difficulty);
-    const correctResults = this.getRoundDataFromModel(round, roundLength);
+    const correctResults = this.getRoundDataFromModel(round, roundLength).map((x) => this.reformatWordData(x));
     do {
       numberOfCurrentRound = Math.floor(Math.random() * totalNumberOfRounds);
       if (!incorrectTranslationsRounds.includes(numberOfCurrentRound) && numberOfCurrentRound !== round) {
@@ -342,6 +349,51 @@ export default class AppModel {
     const randomDifficulty = Math.floor(randomSeed / this.wordSetLength) + 1;
     await this.getWordsDataFromGithub(randomDifficulty);
     startIndex = randomSeed - randomDifficulty * this.wordSetLength;
-    return this.currentWordSet.slice(startIndex, startIndex + numberOfWords);
+    return this.currentWordSet.slice(startIndex, startIndex + numberOfWords).map((x) => this.reformatWordData(x));
+  }
+
+  async createUser(user) {
+    const validation = this.validateUserData(user);
+    if (validation.valid) {
+      const rawResponse = await fetch('https://afternoon-falls-25894.herokuapp.com/users', {
+        method: 'POST',
+        headers: {
+          Accept: 'application/json',
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(user),
+      });
+      const content = await rawResponse.json();
+      return { data: content, error: false, errorText: '' };
+    }
+    return { data: null, error: validation.error, errorText: validation.errorText };
+  }
+
+  async loginUser(user) {
+    const validation = this.validateUserData(user);
+    if (validation.valid) {
+      const rawResponse = await fetch('https://afternoon-falls-25894.herokuapp.com/signin', {
+        method: 'POST',
+        headers: {
+          Accept: 'application/json',
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(user),
+      });
+      const content = await rawResponse.json();
+      console.log(content);
+      return { data: content, error: false, errorText: '' };
+    }
+    return { data: null, error: validation.error, errorText: validation.errorText };
+  }
+
+  validateUserData(user) {
+    if (!user.email || !this.emailValidator.test(user.email)) {
+      return { error: true, errorText: 'Enter correct email please', valid: false };
+    }
+    if (!user.password || !this.passwordValidator.test(user.password)) {
+      return { error: true, errorText: 'Enter correct password please', valid: false };
+    }
+    return { error: false, errorText: '', valid: true };
   }
 }
