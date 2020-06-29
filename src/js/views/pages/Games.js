@@ -19,10 +19,10 @@ const gameList = {
 const Games = {
   currentGame: null,
 
-  render: async () => {
+  render: async (model) => {
     Games.beforeRender();
 
-    const view = /* html */ await Games.currentGame.render();
+    const view = /* html */ await Games.currentGame.render(model);
     return view;
   },
 
