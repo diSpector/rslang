@@ -6,6 +6,7 @@ const EnglishPuzzleConfig = {
       level: 6,
       page: 20,
     },
+    pictureOffset: -200,
   },
 
   api: {
@@ -17,6 +18,7 @@ const EnglishPuzzleConfig = {
     // start: '',
     game: 'gameField',
     results: 'resultsField',
+    picture: 'pictureField',
   },
 
   containers: {
@@ -26,6 +28,7 @@ const EnglishPuzzleConfig = {
 
     gameField: '.englishPuzzle__field',
     resultsField: '.englishPuzzle__results',
+    pictureField: '.englishPuzzle__picture',
 
     // game
     // currentLevel: '.menu__level .level__current',
@@ -59,10 +62,18 @@ const EnglishPuzzleConfig = {
     donePhrases: '.englishPuzzle__phrases-done',
     roundPhrase: '.englishPuzzle__phrases-round',
     roundPhraseWords: '.englishPuzzle__phrases-round .phrase__words',
+    roundPhraseAll: '.phrase__words',
     roundWordsAll: '.phrase__word',
-    taskPhrase: '.englishPuzzle__task .task__words',
+    roundNumbersAll: '.phrase__number',
 
+    taskPhrase: '.englishPuzzle__task .task__words',
+    taskPhraseAll: '.task__words',
+    
     // results
+
+    pictureMin: '.englishPuzzle__pictureMinField',
+    pictureMinImg: '.pictureMin__img',
+    pictureMinDesc: '.pictureMin__desc',
 
     wholeResultsField: '.englishPuzzle__resultsField',
     
@@ -77,6 +88,10 @@ const EnglishPuzzleConfig = {
     successWords: '.success__words',
     
     resultsButtons: '.englishPuzzle__results .results__buttons',
+
+    picture: '.englishPuzzle__picture',
+    pictureImg: '.picture__img',
+    pictureDesc: '.picture__desc',
 
   },
 

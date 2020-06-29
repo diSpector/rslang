@@ -12,6 +12,7 @@ const HtmlHelper = {
   clearAll() {
     this.clearGameField();
     this.clearResults();
+    this.clearPicture();
   },
 
   /** очистить игровое поле - собранные слова, поле сбора, перемеш. слова и т.д. */
@@ -52,6 +53,15 @@ const HtmlHelper = {
     ];
 
     this.clearContainers(containers);
+  },
+
+  /** очистить контейнер с картиной */
+  clearPicture() {
+    const pictureContainer = document.querySelector(Config.containers.picture);
+    const pictureImg = pictureContainer.querySelector(Config.containers.pictureImg);
+    const pictureDesc = pictureContainer.querySelector(Config.containers.pictureDesc);
+    pictureImg.style.backgroundImage = 'none';
+    pictureDesc.innerHTML = '';
   },
 
   /** спрятать все контейнеры (добавить класс) - игра, статистика */
@@ -98,6 +108,23 @@ const HtmlHelper = {
     elem.style.width = `${width}px`;
     elem.style.flexGrow = '0';
     elem.draggable = false;
+    elem.style.backgroundImage = 'none';
+  },
+
+  /** получить название картины для вывода (автор - название (год)) 
+   * @param {Object} pictureObj - объект картины { author, name, year }
+   * @return {String} 
+   */
+  beautifyAuthorText(pictureObj) {
+    const { author, name, year} = pictureObj;
+    const authorWoCommas = author.replace(/,/g, '');
+    const authorWoCommasArr = authorWoCommas.split(' ');
+    const [ authorName ] = authorWoCommasArr;
+    const beautifyName = authorName.charAt(0).toUpperCase() + authorName.slice(1).toLowerCase();
+    const fullName = (authorWoCommasArr.length > 1)
+      ? `${beautifyName} ${authorWoCommasArr[1]}`
+      : `${beautifyName}`;
+    return `${fullName} - ${name} (${year})`;
   },
 
 };

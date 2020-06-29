@@ -11,7 +11,6 @@ const EnglishPuzzle = {
   settings: {
     game: {}, /** { level, page, round } */
     tips: {}, /** { autosound, translate, audio, picture } */
-    nextRoundTips: {}, /** { autosound, translate, audio, picture } */
     words: [
       /** allWords: [ {id, group, page, word, translate, textExample, textExampleTranslate ...}]  */
       /** solvedWords: [] - слова (предложения), которые пользователь уже угадал*/
@@ -22,7 +21,13 @@ const EnglishPuzzle = {
       knowWords: [],
       idkWords: [],
     },
-    picture: {},
+    results: { // результат для вывода на странице результатов
+      knowWords: [],
+      idkWords: [],
+    },
+    picture: {}, /** {author, imageSrc, name, year, id, cut } */
+    taskPictureConfig: [],
+    isPageIsOver: false,
   },
 
   beforeRender: async () => {
@@ -33,7 +38,6 @@ const EnglishPuzzle = {
 
     EnglishPuzzle.settings.game = userSettings.progress;
     EnglishPuzzle.settings.tips = userSettings.tips;
-    EnglishPuzzle.settings.nextRoundTips = Object.assign({}, userSettings.tips);
     EnglishPuzzle.settings.localStat = userSettings.localStat;
 
     const { game: gameSettings } = EnglishPuzzle.settings;
@@ -53,17 +57,12 @@ const EnglishPuzzle = {
     const pictureObj = await Model.getPictureInfoFromGithub(gameSettings.level, gameSettings.page);
     EnglishPuzzle.settings.picture = pictureObj;
 
-    // const img = new Image();
-    // img.src = `${Config.api.githubPicturesData}${EnglishPuzzle.settings.picture.imageSrc}`;
-
-    // console.log(img);
-    // console.log('height for image:', img.height);
-    // EnglishPuzzle.settings.pictureHeight = img.height;
-
     // EnglishPuzzle.settings = await Model.getWordsFromGithub(1, 10, 10);
     // EnglishPuzzle.settings.words = await Model.getWordsFromBackend(1, 2);
     // EnglishPuzzle.settings.words = await Model.getWordsFromGithub(1);
   },
+
+
 
   clearHeaderAndFooter: () => {
     Utils.clearBlock(Config.containers.header);
@@ -72,7 +71,6 @@ const EnglishPuzzle = {
 
   render: async () => {
     await EnglishPuzzle.beforeRender();
-    console.log('words', EnglishPuzzle.settings.words);
     console.log('all settings', EnglishPuzzle.settings);
     const view = `
     <div class="englishPuzzle">
@@ -133,6 +131,11 @@ const EnglishPuzzle = {
     <div class="englishPuzzle__results englishPuzzle__block-hidden">
       <div class="englishPuzzle__resultsField">
 
+        <div class="englishPuzzle__pictureMinField">
+          <div class="pictureMin__img"></div>
+          <div class="pictureMin__desc"></div>      
+        </div>
+        
         <div class="englishPuzzle__results-fail">
           <div class="block__title fail__title">
             I don't know <span class="count__idk"></span>
@@ -155,6 +158,16 @@ const EnglishPuzzle = {
 
       </div>
     </div>
+    <div class="englishPuzzle__picture englishPuzzle__block-hidden">
+      <div class="englishPuzzle__pictureField">
+
+        <div class="picture__img"></div>
+        <div class="picture__desc"></div>
+        <div class="gameButtons__button gameButtons__button-res" data-button="res">Results</div>
+      
+      </div>
+    </div>
+
   </div>
       `;
     return view;
@@ -166,7 +179,20 @@ const EnglishPuzzle = {
 
     console.log('localStorage', JSON.parse(localStorage.getItem('EnglishPuzzleSettings')));
     console.log('localStat: ', EnglishPuzzle.settings.localStat);
-//
+  },
+
+  /** заполнить страницу */
+  fillGamePage() {
+    EnglishPuzzle.hideMenus();
+    EnglishPuzzle.fillLevelsPagesMenus(),
+    EnglishPuzzle.fillDonePhrases();
+    EnglishPuzzle.fillRoundPhrase();
+    EnglishPuzzle.fillTaskPhrase();
+    EnglishPuzzle.fillTaskPictureConfig();
+    // EnglishPuzzle.fillPictureInfo();
+    EnglishPuzzle.setButtons();
+    EnglishPuzzle.setTips();
+    EnglishPuzzle.setBlocksByTips();
   },
 
   /** спрятать оба меню - выбора уровня и раунда */
@@ -175,18 +201,6 @@ const EnglishPuzzle = {
     const pageMenu = document.querySelector(Config.containers.menus.dropDownClass.page);
 
     HtmlHelper.hideContainers([levelMenu, pageMenu]);
-  },
-
-  /** заполнить */
-  fillGamePage() {
-    EnglishPuzzle.hideMenus();
-    EnglishPuzzle.fillLevelsPagesMenus(),
-    EnglishPuzzle.fillDonePhrases();
-    EnglishPuzzle.fillRoundPhrase();
-    EnglishPuzzle.fillTaskPhrase();
-    EnglishPuzzle.setButtons();
-    EnglishPuzzle.setTips();
-    EnglishPuzzle.setBlocksByTips();
   },
 
   /** заполнить меню уровней и страниц */
@@ -247,15 +261,42 @@ const EnglishPuzzle = {
     const { tips, words } = this.settings;
     const translationContainer = document.querySelector(Config.containers.translation);
     const audioIconBlock = document.querySelector(Config.containers.audioIcon);
+    const taskPhraseContainer = Array.from(document.querySelectorAll(`${Config.containers.taskPhrase} .task__word`));
+    const roundPhraseContainer = Array.from(document.querySelectorAll(`${Config.containers.roundPhrase} ${Config.containers.roundWordsAll}`));
 
     translationContainer.innerHTML = (tips.translate)
-      ? words.currentWord.textExampleTranslate :
-      '';
+      ? words.currentWord.textExampleTranslate : '';
 
     if (tips.audio) {
       audioIconBlock.classList.remove(Config.cssStyles.soundIconDisabled); 
     } else {
       audioIconBlock.classList.add(Config.cssStyles.soundIconDisabled);
+    }
+
+    if (tips.picture) { // если включена подсказка "Картина"
+      // показать картины на всех НЕПУСТЫХ словах в блоке перемешанных
+      taskPhraseContainer.forEach((taskWord, i) => { 
+        if (taskWord.classList.contains('empty')) {
+          return;
+        }
+        const taskWordConfig = EnglishPuzzle.settings.taskPictureConfig[i];
+        taskWord.style.backgroundImage = taskWordConfig.bgImg;
+        taskWord.style.backgroundPosition = taskWordConfig.bgPos;
+      });
+
+      // показать картины на всех НЕПУСТЫХ словах в поле сбора
+      roundPhraseContainer.forEach((roundWord) => {
+        if (roundWord.classList.contains('empty')) {
+          return;
+        }
+        const order = roundWord.dataset.orderTask;
+        const picImg = EnglishPuzzle.settings.taskPictureConfig[order - 1];
+        roundWord.style.backgroundImage = picImg.bgImg;
+        roundWord.style.backgroundPosition = picImg.bgPos;
+      });
+    } else { // если отключена, убрать все картины из поля сбора и из поля перемешанных
+      taskPhraseContainer.forEach((taskWord) => taskWord.style.backgroundImage = 'none');
+      roundPhraseContainer.forEach((roundWord) => roundWord.style.backgroundImage = 'none');
     }
   },
 
@@ -267,16 +308,10 @@ const EnglishPuzzle = {
     donePhrases.forEach((phrase, i) => {
       const phraseBlock = Utils.createBlockInside('div', 'englishPuzzle__phrase');
       Utils.createBlockInside('div', 'phrase__number', phraseBlock, i + 1);
-      const phraseWordsBlock = Utils.createBlockInside('div', 'phrase__words', phraseBlock);
-      
-      // phraseWordsBlock.style.backgroundImage =EnglishPuzzle.settings.immmmmmmage;
-      phraseWordsBlock.style.backgroundImage = `url('${Config.api.githubPicturesData}${EnglishPuzzle.settings.picture.imageSrc}')`;
-      
-      // const height = EnglishPuzzle.settings.pictureHeight / 10;
-      // phraseWordsBlock.style.height = `${height}px`;
-      phraseWordsBlock.style.backgroundPosition = `0px ${-40 * i}px`;
-      
-      // phraseWordsBlock.style.backgroundPosition = `0px ${-40 * i}px`;
+      const phraseWordsBlock = Utils.createBlockInside('div', 'phrase__words', phraseBlock, '', {}, {}, {
+        backgroundImage: `url('${Config.api.githubPicturesData}${EnglishPuzzle.settings.picture.imageSrc}')`,
+        backgroundPosition: `0px ${Config.general.pictureOffset -40 * i}px`,
+      });
       
       const wordsArr = phrase.textExample.split(' ');
       wordsArr.forEach((word) => Utils
@@ -309,6 +344,50 @@ const EnglishPuzzle = {
       Utils
         .createBlockInside('div', 'task__word', taskPhraseContainer, word.text, {draggable: true}, { orderTask: word.order + 1 });
     });
+  },
+
+  /** конфиг для позиционирования куска картины на каждом паззле */
+  fillTaskPictureConfig() {
+    const { currentWord, solvedWords } = EnglishPuzzle.settings.words;
+    
+    const roundWord = currentWord.textExample;
+    const roundWordArr = roundWord.split(' ');
+    const verticalPos = solvedWords.length;
+
+    const taskPhraseContainer = Array.from(document.querySelectorAll(`${Config.containers.taskPhrase} .task__word`));
+    /** массив объектов с данными об элементах в поле с заданием */
+    const taskArr = taskPhraseContainer.map((word) => ({
+        element: word,
+        text: word.innerHTML,
+        wid: word.offsetWidth,
+        corPos: roundWordArr.indexOf(word.innerHTML) + 1,
+        bgImg: null,
+        bgPos: null,
+    }));
+
+    /** массив объектов со словами в ВЕРНОМ порядке */
+    const sortedArr = taskArr.slice().sort((a, b) => a.corPos - b.corPos);
+
+    taskArr.forEach((word) => {
+      let prevWid = 0; // смещение в пикселях каждого блока с паззлом относительно ВЕРНОГО
+      const arrBefore = sortedArr.slice(0, word.corPos - 1);
+      arrBefore.forEach((el) => prevWid += el.wid);
+      word.bgImg = `url('${Config.api.githubPicturesData}${EnglishPuzzle.settings.picture.imageSrc}')`;
+      word.bgPos = `-${prevWid}px ${Config.general.pictureOffset -40 * verticalPos}px`;
+    });
+
+    EnglishPuzzle.settings.taskPictureConfig = taskArr;
+  },
+
+  /** наполнить контейнер информацией о картине */
+  fillPictureInfo() {
+    const pictureContainer = document.querySelector(Config.containers.picture);
+    const pictureImg = pictureContainer.querySelector(Config.containers.pictureImg);
+    const pictureDesc = pictureContainer.querySelector(Config.containers.pictureDesc);
+
+    const { picture } = EnglishPuzzle.settings;
+    pictureImg.style.backgroundImage = `url('${Config.api.githubPicturesData}${picture.imageSrc}')`;
+    pictureDesc.innerHTML = HtmlHelper.beautifyAuthorText(picture);
   },
 
   /** повесить слушатели событий */
@@ -502,20 +581,24 @@ const EnglishPuzzle = {
   /** 
    * рендер слов в раунде на основании массива 
    * @param {Array} configArr - массив для рендера в формате:
-   * [null, ..., null, {order, text, width}, {order, text, width}, ..., null]
+   * [null, ..., null, {order, text, width, ...}, {order, text, width}, ..., null]
    * */
   renderRoundWordsFromArr(configArr) {
     const roundWordsContainer = document.querySelector(Config.containers.roundPhraseWords);
     HtmlHelper.clearContainers([roundWordsContainer]);
-    configArr.forEach((elem) => { /** elem: { width, order, text } */
-      if (!elem) {
+    configArr.forEach((elem) => { /** elem: { width, order, text, bgImg, bgPos } */
+      if (!elem) { // если null - рендер пустой строки
         Utils.createBlockInside('div', ['phrase__word', 'empty'], roundWordsContainer);
-      } else {
-        const word = Utils.createBlockInside('div', ['phrase__word'], roundWordsContainer, elem.text);
-        word.style.width = `${elem.width}px`;
-        word.style.flexGrow = '0';
-        word.dataset.orderTask = elem.order;
-        word.draggable = true;
+      } else { // иначе, рендер строки со словом и картиной
+        Utils.createBlockInside('div', ['phrase__word'], roundWordsContainer, elem.text, 
+          { draggable: true }, { orderTask: elem.order},
+          {
+            width: `${elem.width}px`,
+            flexGrow: '0',
+            backgroundImage: elem.bgImg,
+            backgroundPosition: elem.bgPos
+          }
+        );
       }
     });
   },
@@ -552,7 +635,7 @@ const EnglishPuzzle = {
       }
       EnglishPuzzle.processRoundWordClick({target: draggedEl});
     } catch (error) {
-      return
+      return;
     }
   },
 
@@ -639,28 +722,36 @@ const EnglishPuzzle = {
     // this.removeListeners();
   },
 
-  /** клик по кнопке Results */
-  processResClick: () => {
-    EnglishPuzzle.loadPage('results');
+  // /** клик по кнопке Results */
+  // processResClick: () => {
+  //   EnglishPuzzle.loadPage('results');
 
-    const { settings } = EnglishPuzzle;
-    const newGameSettings = EnglishPuzzle.getNewLevelPageRound(settings.game);
-    settings.game = Object.assign({}, newGameSettings);
-    Model.saveProgress(newGameSettings);
-    Model.saveTips(settings.nextRoundTips);
+  //   // const { settings } = EnglishPuzzle;
+  //   // const newGameSettings = EnglishPuzzle.getNewLevelPageRound(settings.game);
+  //   // settings.game = Object.assign({}, newGameSettings);
+  //   // Model.saveProgress(newGameSettings);
+  //   // Model.saveTips(settings.tips);
 
-    EnglishPuzzle.fillResults();
-  },
+  //   EnglishPuzzle.fillResults();
+  // },
 
   /** наполнить страницу результатами */
   fillResults() {
-    const { knowWords, idkWords } = this.settings.localStat;
+    const { knowWords, idkWords } = this.settings.results;
+    const { picture } = EnglishPuzzle.settings;
+
+    const pictureMinContainer = document.querySelector(Config.containers.pictureMin);
+    const pictureMinImg = pictureMinContainer.querySelector(Config.containers.pictureMinImg);
+    const pictureMinDesc = pictureMinContainer.querySelector(Config.containers.pictureMinDesc);
+
+    pictureMinImg.style.backgroundImage = `url('${Config.api.githubPicturesData}${picture.imageSrc}')`;
+    pictureMinDesc.innerHTML = HtmlHelper.beautifyAuthorText(picture);
 
     const failContainer = document.querySelector(Config.containers.resultsFail);
     const failCount = failContainer.querySelector(Config.containers.failCount);
     const failWordsContainer = failContainer.querySelector(Config.containers.failWords);
 
-    failCount.innerHTML = this.settings.localStat.idkWords.length;
+    failCount.innerHTML = this.settings.results.idkWords.length;
     idkWords.forEach((word, i) => {
       const failWordBlock = Utils.createBlockInside('div', ['block__word', 'fail__word'], failWordsContainer, '', {}, { sound: `fail-${i}` });
       Utils.createBlockInside('div', 'word__soundicon', failWordBlock);
@@ -671,14 +762,12 @@ const EnglishPuzzle = {
     const successCount = successContainer.querySelector(Config.containers.successCount);
     const successWordsContainer = successContainer.querySelector(Config.containers.successWords);
     
-    successCount.innerHTML = this.settings.localStat.knowWords.length;
+    successCount.innerHTML = this.settings.results.knowWords.length;
     knowWords.forEach((word, i) => {
       const successWordBlock = Utils.createBlockInside('div', ['block__word', 'success__word'], successWordsContainer, '', {}, { sound: `success-${i}` });
       Utils.createBlockInside('div', 'word__soundicon', successWordBlock);
       Utils.createBlockInside('div', 'word__text', successWordBlock, word.textExample);
     });
-
-    this.addListenersToResults();
   },
 
   addListenersToResults() {
@@ -696,7 +785,7 @@ const EnglishPuzzle = {
     if (!wordBlock) {
       return;
     }
-    const { knowWords, idkWords } = EnglishPuzzle.settings.localStat;
+    const { knowWords, idkWords } = EnglishPuzzle.settings.results;
 
     const id = wordBlock.dataset.sound;
     const idArr = id.split('-');
@@ -727,23 +816,31 @@ const EnglishPuzzle = {
     if (!target.classList.contains(Config.cssStyles.tipButton)) {
       return;
     }
-    const { tips, nextRoundTips } = EnglishPuzzle.settings;
+
+    const { tips } = EnglishPuzzle.settings;
     const dataTip = target.dataset.tip;
     target.classList.toggle(Config.cssStyles.tipPushed);
-    nextRoundTips[dataTip] = !nextRoundTips[dataTip];
+    tips[dataTip] = !tips[dataTip];
 
-    if (dataTip === 'autosound') {
-      tips.autosound = nextRoundTips.autosound;
-    }
+    EnglishPuzzle.setTips();
+    EnglishPuzzle.setBlocksByTips();
+  },
+
+  /** показать перевод и разрешить прослушать слово в конце раунда */
+  showTipsBlocksInRoundEnd: () => {
+    const translationContainer = document.querySelector(Config.containers.translation);
+    const audioIconBlock = document.querySelector(Config.containers.audioIcon);
+
+    translationContainer.innerHTML = EnglishPuzzle.settings.words.currentWord.textExampleTranslate;
+    audioIconBlock.classList.remove(Config.cssStyles.soundIconDisabled); 
   },
 
   /** клик на иконке аудио */
   processSoundClick: () => {
-    const { tips, words } = EnglishPuzzle.settings;
-    if (!tips.audio) {
-      return;
+    const audioIconBlock = document.querySelector(Config.containers.audioIcon);
+    if (!audioIconBlock.classList.contains(Config.cssStyles.soundIconDisabled)) {
+      EnglishPuzzle.processCurrentAudio();
     }
-    EnglishPuzzle.processCurrentAudio();
   },
 
   /** проиграть файл, поморгать иконкой */
@@ -793,7 +890,7 @@ const EnglishPuzzle = {
 
     EnglishPuzzle.clearGameField();
     Model.saveProgress(newGameSettings);
-    Model.saveTips(settings.nextRoundTips);
+    Model.saveTips(settings.tips);
 
     // так как уровень новый, стереть всю статистику
     EnglishPuzzle.settings.localStat = {
@@ -829,7 +926,7 @@ const EnglishPuzzle = {
 
     EnglishPuzzle.clearGameField();
     Model.saveProgress(newGameSettings);
-    Model.saveTips(settings.nextRoundTips);
+    Model.saveTips(settings.tips);
 
     // так как страница новая, стереть всю статистику
     EnglishPuzzle.settings.localStat = {
@@ -908,34 +1005,63 @@ const EnglishPuzzle = {
     HtmlHelper.clearGameField();
   },
 
+
+  /** показать картину без текста и границ + информацию о ней */
+  showFullPicture() {
+    const numbersBlocks = Array.from(document.querySelectorAll(Config.containers.roundNumbersAll));
+    const roundBlocks = Array.from(document.querySelectorAll(Config.containers.roundPhraseAll));
+    const allPhraseBlocks = Array.from(document.querySelectorAll(Config.containers.roundWordsAll));
+    const taskBlock = document.querySelector(Config.containers.taskPhraseAll);
+    const picInfoContainer = document.querySelector(Config.containers.pictureInfo);
+    const translateBlock = document.querySelector(Config.containers.translation);
+    const audioIconBlock = document.querySelector(Config.containers.audioIcon);
+
+    roundBlocks.forEach((round) => { // убрать обводки и рамки вокруг каждой строки
+      round.style.border = 'none';
+      round.style.boxShadow = 'none';
+    });
+    allPhraseBlocks.forEach((word) => { // убрать рамки и стереть текст вокруг каждого слова
+      word.innerHTML = '';
+      word.style.border = 'none';
+    });
+    numbersBlocks.forEach((number) => { 
+      number.innerHTML = '';
+      number.style.border = 'none';
+      number.style.boxShadow = 'none';
+    });
+    taskBlock.innerHTML = '';
+    translateBlock.innerHTML = '';
+    audioIconBlock.classList.add(Config.cssStyles.hidden);
+    picInfoContainer.classList.remove(Config.cssStyles.hidden);
+  },
+
   /** нажатие на кнопку "I don't know":
    * 1) вставить слова в правильном порядке в поле сбора,
    * 2) удалить все слова из поля с перемешанными словами,
-   * 3) снять слушатели кликов с поле сбора и перемешанных слов
+   * 3) снять слушатели кликов с поля сбора, перемешанных слов, подсказок
    * 4) показать кнопку "Continue"
    * 5) проигрывание предложения, если автопроизношение включено
-   * 6) если последний раунд, показать кнопку "Статистика"
    */
   processIdkClick: () => {
     const roundWordsContainer = document.querySelector(Config.containers.roundPhraseWords);
-    HtmlHelper.clearContainers([roundWordsContainer]);
+    const taskWordsContainer = document.querySelector(Config.containers.taskPhrase);
+    HtmlHelper.clearContainers([roundWordsContainer, taskWordsContainer]);
 
     const currentWordArr = EnglishPuzzle.settings.words.currentWord.textExample.split(' ');
-    currentWordArr.forEach((word) =>
-      Utils.createBlockInside('div', 'phrase__word', roundWordsContainer, word)
-    );
+    currentWordArr.forEach((word) => {
+      Utils.createBlockInside('div', 'phrase__word', roundWordsContainer, word);
+      Utils.createBlockInside('div', ['task__word', 'empty'], taskWordsContainer);
+    });
 
-    const taskWordsContainer = document.querySelector(Config.containers.taskPhrase);
-    HtmlHelper.clearContainers([taskWordsContainer]);
-
-    currentWordArr.forEach(() =>
-      Utils.createBlockInside('div', ['task__word', 'empty'], taskWordsContainer)
-    );
+    roundWordsContainer.style.backgroundImage = `url('${Config.api.githubPicturesData}${EnglishPuzzle.settings.picture.imageSrc}')`;
+    roundWordsContainer.style.backgroundPosition = `0px ${Config.general.pictureOffset -40 * (EnglishPuzzle.settings.words.solvedWords.length)}px`;
 
     const { tips } = EnglishPuzzle.settings;
     if (tips.autosound) {
       EnglishPuzzle.processCurrentAudio();
     }
+
+    EnglishPuzzle.showTipsBlocksInRoundEnd(); // показать перевод и иконку звука в конце раунда
 
     const { currentWord } = EnglishPuzzle.settings.words;
     EnglishPuzzle.settings.localStat.idkWords.push(currentWord);
@@ -948,10 +1074,12 @@ const EnglishPuzzle = {
     EnglishPuzzle.hideButton('check');
     EnglishPuzzle.showButton('cont');
 
-    const { round } = EnglishPuzzle.settings.game;
-    if (round === 9) {
-      EnglishPuzzle.showButton('res');
-    }
+    // const { round } = EnglishPuzzle.settings.game;
+    // if (round === 9) {
+    const tipsContainer = document.querySelector(Config.containers.tips);
+    tipsContainer.removeEventListener('click', EnglishPuzzle.processTipClick);
+      // EnglishPuzzle.isPageIsOver = true;
+    // }
   },
 
   /** нажатие на кнопку "Check" 
@@ -987,6 +1115,7 @@ const EnglishPuzzle = {
       if (tips.autosound) {
         EnglishPuzzle.processCurrentAudio();
       }
+      EnglishPuzzle.showTipsBlocksInRoundEnd();
 
       taskWordsContainer.removeEventListener('click', EnglishPuzzle.processTaskWordClick);
       roundWordsContainer.removeEventListener('click', EnglishPuzzle.processRoundWordClick);
@@ -996,10 +1125,12 @@ const EnglishPuzzle = {
       EnglishPuzzle.hideButton('check');
       EnglishPuzzle.showButton('cont');
 
-      const { round } = EnglishPuzzle.settings.game;
-      if (round === 9) {
-        EnglishPuzzle.showButton('res');
-      }
+      // const { round } = EnglishPuzzle.settings.game;
+      // if (round === 9) {
+      //   // EnglishPuzzle.hideButton('cont');
+      //   // EnglishPuzzle.showButton('res');
+      //   EnglishPuzzle.isPageIsOver = true;
+      // }
     }
   },
 
@@ -1010,35 +1141,61 @@ const EnglishPuzzle = {
    * 3) перерендерить всё
    */
   processContClick: async () => {
+    const tipsContainer = document.querySelector(Config.containers.tips);
+    tipsContainer.removeEventListener('click', EnglishPuzzle.processTipClick);
+
     const { settings } = EnglishPuzzle;
-
-    EnglishPuzzle.clearGameField();
-
     const newGameSettings = EnglishPuzzle.getNewLevelPageRound(settings.game);
     settings.game = Object.assign({}, newGameSettings);
     Model.saveProgress(newGameSettings);
-    Model.saveTips(settings.nextRoundTips);
+    Model.saveTips(settings.tips);
 
-    if (settings.game.round !== 0) { // не надо загружать новые слова
+    if (settings.game.round !== 0) { // собрано меньше 10 раундов - не надо загружать новые слова
+      EnglishPuzzle.clearGameField();
       EnglishPuzzle.updateWordsByRound(settings.game.round);
-      EnglishPuzzle.updateTipsByRound(settings.nextRoundTips);
-    } else { // загрузить новые 10 слов
+      EnglishPuzzle.afterRender();
+  
+    } else { // собрано все 10 раундов - загрузить картину
+      EnglishPuzzle.settings.results = Object.assign({}, EnglishPuzzle.settings.localStat);
       EnglishPuzzle.settings.localStat = {
         knowWords: [],
         idkWords: [],
       };
       Model.saveStats(EnglishPuzzle.settings.localStat);
-      await EnglishPuzzle.render();
+      EnglishPuzzle.loadPicture();
     }
-
-    EnglishPuzzle.afterRender();
-
   },
 
-  /** обновить конфигурацию подсказок */
-  updateTipsByRound(tipsObject) {
-    EnglishPuzzle.settings.tips = Object.assign({}, tipsObject);
+  /** загрузить страницу с картиной */
+  loadPicture() {
+    EnglishPuzzle.loadPage('picture');
+    EnglishPuzzle.fillPictureInfo('picture');
+    EnglishPuzzle.addListenersToPicture();
   },
+
+  /** загрузить страницу с результатами */
+  loadResults() {
+    EnglishPuzzle.loadPage('results');
+    EnglishPuzzle.fillResults();
+    EnglishPuzzle.addListenersToResults();
+  },
+ 
+  /** добавить слушатели на страницу с картиной */
+  addListenersToPicture () {
+    const pictureContainer = document.querySelector(Config.containers.picture);
+    const resultsButton = pictureContainer.querySelector(Config.buttons.resButton);
+    resultsButton.addEventListener('click', this.processPictureResClick);
+  },
+
+  /** нажатие на клик по результатам на странице картины */
+  processPictureResClick() {
+    EnglishPuzzle.loadResults();
+  },
+
+  // /** обновить конфигурацию подсказок */
+  // updateTipsByRound(tipsObject) {
+  //   EnglishPuzzle.settings.tips = Object.assign({}, tipsObject);
+  // },
 
   /** 
    * клик по слову в блоке с перемешанными словами:
@@ -1057,7 +1214,7 @@ const EnglishPuzzle = {
     const roundArr = EnglishPuzzle.getRoundArr();
     const firstNullInd = EnglishPuzzle.getFirstNullInd(roundArr);
     
-    /** clickedParams: { width, order, text } */
+    /** clickedParams: { width, order, text, bgImg, bgPos } */
     const clickedParams = EnglishPuzzle.getClickedElParams(target);
 
     /** поместить пустой элемент на месте, по которому кликнули */
@@ -1106,13 +1263,13 @@ const EnglishPuzzle = {
     if (target.classList.contains(Config.cssStyles.emptyWord)) {
       return;
     }
-    const { width, text, order } = EnglishPuzzle.getClickedElParams(target);
+    const { width, text, order, bgImg } = EnglishPuzzle.getClickedElParams(target);
 
     // сделать пустым элемент, по которому кликнули
     HtmlHelper.makeElementEmpty(target, width);
 
     const taskEmptyWord = document.querySelectorAll('.task__words .task__word')[order - 1];
-    EnglishPuzzle.updateElement(taskEmptyWord, text, width, order);
+    EnglishPuzzle.updateElement(taskEmptyWord, text, width, order, bgImg);
 
     EnglishPuzzle.deleteCheckingStyles();
 
@@ -1147,24 +1304,29 @@ const EnglishPuzzle = {
   },
 
   /**
-   * вернуть параметры кликнутого слова - ширину, текст, порядок
+   * вернуть параметры кликнутого слова - ширину, текст, порядок, задник и позиционирование
+   * @param {HTMLElement} element - html-элемент
    */
   getClickedElParams: (element) => {
     return {
       width: element.getBoundingClientRect().width,
       text: element.innerHTML,
       order: element.dataset.orderTask,
+      bgImg: element.style.backgroundImage,
+      bgPos: element.style.backgroundPosition,
     };
   },
 
   /** обновить слово - задать новые текст, ширину, порядок */
-  updateElement: (element, newText, newWidth, newOrder) => {
+  updateElement: (element, newText, newWidth, newOrder, newBgImg, newBgPos) => {
     element.innerHTML = newText;
     element.classList.remove('empty');
     element.style.width = `${newWidth}px`;
     element.style.flexGrow = '0';
     element.dataset.orderTask = newOrder;
     element.draggable = true;
+    element.style.backgroundImage = newBgImg;
+    element.style.backgroundPosition = newBgPos;
   }
 };
 

@@ -202,6 +202,7 @@ $imgCommonPath: '../../../../img/common/backgrounds/';
     text-align: center;
     margin-top: 10px;
     font-size: 18px;
+    height: 22px;
 }
 
 .englishPuzzle__phrases {
@@ -242,7 +243,8 @@ $imgCommonPath: '../../../../img/common/backgrounds/';
     border: 1px solid lightgrey;
     border-bottom: none;
     // color: white;
-    text-shadow: white 1px 1px 0px;
+    // text-shadow: white 1px 1px 0px;
+    text-shadow: -0 -1px 4px #FFFFFF, 0 -1px 4px #FFFFFF, -0 1px 4px #FFFFFF, 0 1px 4px #FFFFFF;
 }
 
 .phrase:last-child .phrase__words{
@@ -339,11 +341,13 @@ $imgCommonPath: '../../../../img/common/backgrounds/';
 }
 
 .phrase__word-incorrect {
-  background-color: indianred;
+  // background-color: indianred;
+  border-bottom: 2px solid indianred;
 }
 
 .phrase__word-correct {
-  background-color: lightgreen;
+  // background-color: lightgreen;
+  border-bottom: 2px solid lightgreen;
 }
 
 .task{
@@ -367,6 +371,8 @@ $imgCommonPath: '../../../../img/common/backgrounds/';
     line-height: 30px;
     flex-grow: 1;
     box-sizing: border-box;
+    // text-shadow: white 1px 1px 0px;
+    text-shadow: -0 -1px 4px #FFFFFF, 0 -1px 4px #FFFFFF, -0 1px 4px #FFFFFF, 0 1px 4px #FFFFFF;
 }
 
 .task__word:last-child{
@@ -378,6 +384,13 @@ $imgCommonPath: '../../../../img/common/backgrounds/';
     box-shadow: 0px 0px 4px -2px;  
     /* border: 1px solid black; */
     border: 1px solid darkgrey;
+}
+
+.task__word.empty:hover {
+    cursor: initial;
+    box-shadow: none;  
+    /* border: 1px solid black; */
+    border: none;
 }
 
 .task__word:active {
@@ -456,12 +469,36 @@ $imgCommonPath: '../../../../img/common/backgrounds/';
     }
   }
 
+.englishPuzzle__picture {
+  text-align: center;
+  font-size: 1.8rem;
+}
+
 .englishPuzzle__results {
   width: 100%;
-  padding-top: 300px;
+  // padding-top: 300px;
   box-sizing: border-box;
   color: black;
-  padding: 100px;
+  // padding: 100px;
+}
+
+.englishPuzzle__pictureMinField {
+  margin: 0 auto;
+  width: 320px;
+}
+
+.pictureMin__img {
+  height: 200px;
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center;
+  margin-bottom: 10px;
+  box-shadow: 0px 0px 5px -2px;
+}
+
+.pictureMin__desc {
+  margin-bottom: 20px;
+  text-align: center;
 }
 
 .englishPuzzle__block-hidden {
@@ -562,7 +599,6 @@ span.count__iknow{
   color: white;
   text-align: center;
   font-size: 1.8rem;
-  margin-left: 20px;
 }
 
 .results__button:hover{
@@ -583,4 +619,125 @@ span.count__iknow{
 
 .results__global:hover{
   background-color: blue;
+}
+
+.englishPuzzle__pictureField {
+  margin: 0 auto;
+  background-color: white;
+  border-radius: 7px;
+  padding: 30px;
+  font-size: 1.8rem;
+  box-sizing: border-box;
+}
+
+.picture__img {
+  height: 600px;
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center;
+  margin-bottom: 20px;
+  box-shadow: 0px 0px 5px -2px;
+}
+
+.picture__desc {
+  margin-bottom: 20px;
+}
+
+@media (max-width: 1020px) {
+  .englishPuzzle{
+    padding: 100px 20px;
+  }
+  .englishPuzzle__translation {
+    height: 40px;
+  }
+  .picture__img {
+    background-size: contain;
+    height: 500px;
+  }
+}
+
+@media (max-width: 850px) {
+  .phrase__number {
+    display: none;
+  }
+  .phrase__words {
+    margin-left: 0;
+    width: 100%;
+  }
+  .englishPuzzle__task {
+    margin-left: 0;
+  }
+}
+
+@media (max-width: 768px) {
+  .phrase__word, .task__word {
+    padding: 5px 2px;
+  }
+  .picture__img {
+    background-size: contain;
+    height: 400px;
+  }
+  .block__word {
+    font-size: 1.5rem;
+  }
+}
+
+@media (max-width: 620px) {
+  .phrase__words, .task__words {
+    font-size: 1.0rem;
+  }
+  .englishPuzzle__translation {
+    height: 60px;
+  }
+  .picture__img {
+    height: 300px;
+  }
+  .block__word {
+    flex-direction: column;
+    align-items: center;
+  }
+  .word__text {
+    line-height: 20px;
+    text-align: center;
+  }
+
+}
+
+@media (max-width: 480px) {
+  .englishPuzzle {
+    padding: 100px 0px;
+  }
+  .englishPuzzle__field {
+    padding: 5px;
+  }
+  .phrase__word {
+    padding: 5px 1px;
+  }
+  .englishPuzzle__translation {
+    font-size: 1.5rem;
+    height: 60px;
+  }
+  .englishPuzzle__menu {
+    flex-direction: column;
+    align-items: center;
+  }
+  .englishPuzzle__controls {
+    margin-bottom: 10px;
+  }
+  .picture__img {
+    height: 200px;
+  }
+  .englishPuzzle__pictureMinField {
+    width: 250px;
+  }
+  .pictureMin__img {
+    background-size: contain;
+    height: 150px;
+  }
+}
+
+@media (max-width: 380px) {
+  .phrase__words, .task__words {
+    font-size: 0.8rem;
+  }
 }
