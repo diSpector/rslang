@@ -157,9 +157,11 @@
         padding-left: 10px;
     }
 
-    &:hover {
-        cursor: pointer;
-        background-color: rgba(yellow, 0.3);
+    @media (hover: hover) {
+        &:hover {
+            cursor: pointer;
+            background-color: rgba(yellow, 0.3);
+        }
     }
 }
 
@@ -269,8 +271,11 @@
     height: 20px;
     cursor: pointer;
 
-    &:hover {
-        opacity: 0.7;
+    
+    @media (hover: hover) {
+        &:hover {
+            opacity: 0.7;
+        }
     }
 }
 

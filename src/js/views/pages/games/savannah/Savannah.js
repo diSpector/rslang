@@ -412,7 +412,7 @@ const Savannah = {
 
       if (Savannah.difficulty && Savannah.round && isNewWords) {
         const data = await Savannah.model.getSetOfWordsAndTranslations(Savannah.difficulty,
-          Savannah.round, Savannah.gameRoundsCount, 3);
+          Savannah.round - 1, Savannah.gameRoundsCount, 3);
         Savannah.data = Savannah.reformat(data);
       } else {
         // заменить на уже изученные слова
