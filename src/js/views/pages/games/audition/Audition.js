@@ -367,7 +367,7 @@ const Audition = {
     Game.startGame(Audition.generateNextWordSlide);
     Audition.generateProgressBar();
     Audition.addStartMenuClickHandler();
-    Audition.settings.model.getSetOfWordsAndTranslations(1, 0, 10, 4)
+    Audition.settings.model.getSetOfWordsAndTranslations(1, 0, 30, 1)
       .then((data) => console.log(data));
   },
 };
