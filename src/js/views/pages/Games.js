@@ -1,7 +1,7 @@
 import Utils from '../../services/Utils';
 // import Audition from './games/english-puzzle/Audition';
 import EnglishPuzzle from './games/english-puzzle/EnglishPuzzle';
-// import SpeakIt from './games/english-puzzle/SpeakIt';
+import SpeakIt from './games/speakit/SpeakIt';
 import Savannah from './games/savannah/Savannah';
 // import Sprint from './games/english-puzzle/Sprint';
 // import Square from './games/english-puzzle/Square';
@@ -10,7 +10,7 @@ import Error404 from './Error404';
 const gameList = {
   // 'audition'        : Audition,
   'english-puzzle': EnglishPuzzle,
-  // 'speakit'         : SpeakIt,
+  speakit: SpeakIt,
   savannah: Savannah,
   // 'sprint'          : Sprint,
   // 'square'          : Square,
