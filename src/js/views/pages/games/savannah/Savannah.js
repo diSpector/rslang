@@ -12,6 +12,7 @@ function shuffle(array) {
 }
 
 const Savannah = {
+  model: null,
   difficulty: 1,
   round: 1,
   gameRoundsCount: 10,
@@ -22,10 +23,6 @@ const Savannah = {
   isAnswerSelected: false,
   correctAnswers: [],
   wrongAnswers: [],
-
-  beforeRender() {
-    this.clearHeaderAndFooter();
-  },
 
   clearHeaderAndFooter: () => {
     Utils.clearBlock('.header');
@@ -45,86 +42,6 @@ const Savannah = {
 
       return temp;
     });
-  },
-
-  render: async (model) => {
-    Savannah.beforeRender();
-    const data = await model.getSetOfWordsAndTranslations(Savannah.difficulty,
-      Savannah.round, Savannah.gameRoundsCount, 3);
-    Savannah.data = Savannah.reformat(data);
-
-    const view = `
-    <div class="savannah  allGames">
-        <section class="allGames__startScreen">
-            <h1 class="allGames__heading">Саванна</h1>
-            <p class="allGames__description">Тренировка Саванна развивает словарный запас.</p>
-            <button class="allGames__startBtn  savannah--btn">Начать</button>
-        </section>
-
-        <section class="allGames__timerScreen  allGames__timerScreen-hidden">
-            <div class="allGames__timer">3</div>
-            <div class="allGames__tip">Используй клавиши 1, 2, 3 и 4, чтобы дать быстрый ответ</div>
-        </section>
-
-        <section class="savannah--playScreen  allGames__playScreen  allGames__playScreen-hidden">
-            <div class="savannah--controls">
-                <div class="savannah--sound"></div>
-                <div class="savannah--stars">
-                    <div class="savannah--stars__item"></div>
-                    <div class="savannah--stars__item"></div>
-                    <div class="savannah--stars__item"></div>
-                    <div class="savannah--stars__item"></div>
-                    <div class="savannah--stars__item"></div>
-                </div>
-            </div>
-            <div class="savannah--game">
-                <div class="savannah--game__question">word</div>
-                <div class="savannah--game__answersList">
-                    <div class="savannah--game__answer">неправильно</div>
-                    <div class="savannah--game__answer">правильно</div>
-                    <div class="savannah--game__answer">неправильно</div>
-                    <div class="savannah--game__answer">неправильно</div>
-                </div>
-            </div>
-
-            <div class="savannah--stat  savannah--stat-hidden">
-                <h2 class="savannah--stat__heading">Статистика тренировки</h2>
-                <div class="savannah--stat__answers">
-                    <div class="savannah--stat__errors">
-                        <h3 class="savannah--stat__errorsHeading">Ошибок: <span>1</span></h3>
-                        <ul class="savannah--stat__list">
-                            <li class="savannah--stat__listItem">
-                                <div class="savannah--stat__audio"></div>
-                                <span><b>слово</b> - перевод<span>
-                            </li>
-                            <li class="savannah--stat__listItem">
-                                <div class="savannah--stat__audio"></div>
-                                <span><b>слово</b> - перевод<span>
-                            </li>
-                        </ul>
-                    </div>
-                    <div class="savannah--stat__correct">
-                        <h3 class="savannah--stat__correctHeading">Знаю: <span>1</span></h3>
-                        <ul class="savannah--stat__list">
-                            <li class="savannah--stat__listItem">
-                                <div class="savannah--stat__audio"></div>
-                                <span><b>слово</b> - перевод<span>
-                            </li>
-                        </ul>
-                    </div>
-                </div>
-                <button class="savannah--btn  savannah--btn-continue" onclick="document.location.reload()">Продолжить тренировку</button>
-                <a class="savannah--link" href="/#/statistic">Смотреть статистику по всем играм</a>
-                <a class="savannah--link" href="/">На главную</a>
-            </div>
-
-        </section>
-
-        <audio id="savannah-audio"></audio>
-    </div>
-    `;
-
-    return view;
   },
 
   removeWords() {
@@ -358,7 +275,153 @@ const Savannah = {
     this.checkAnswer(roundIndex);
   },
 
+  beforeRender() {
+    this.clearHeaderAndFooter();
+  },
+
+  render: async (model) => {
+    Savannah.beforeRender();
+
+    Savannah.model = model;
+    // const data = await model.getSetOfWordsAndTranslations(1, 0, Savannah.gameRoundsCount, 3);
+    // Savannah.data = Savannah.reformat(data);
+
+    const view = `
+    <div class="savannah  allGames">
+        <section class="allGames__startScreen">
+            <h1 class="allGames__heading">Саванна</h1>
+            <p class="allGames__description">Тренировка Саванна развивает словарный запас.</p>
+
+            <div class="allGames__choice">
+                <p class="allGames__choice_learn select">Игра с изученными словами</p>
+                <p class="allGames__choice_new">Игра с новыми словами</p>
+                <div class="allGames__choice_levels hidden">
+                    <label>Уровень:</label>
+                    <select name="levels" id="levels">
+                    disabled selected
+                        <option value="1">1</option>
+                        <option value="2">2</option>
+                        <option value="3">3</option>
+                        <option value="4">4</option>
+                        <option value="5">5</option>
+                    </select>
+                    <label>Раунд:</label>
+                    <select name="pages" id="pages" size="0">
+                        <option value="1">1</option>
+                        <option value="2">2</option>
+                        <option value="3">3</option>
+                        <option value="3">4</option>
+                        <option value="3">5</option>
+                        <option value="3">6</option>
+                        <option value="3">7</option>
+                        <option value="3">8</option>
+                        <option value="3">9</option>
+                        <option value="3">10</option>
+                        <option value="3">11</option>
+                        <option value="3">12</option>
+                        <option value="3">13</option>
+                        <option value="3">14</option>
+                        <option value="3">15</option>
+                        <option value="3">16</option>
+                        <option value="3">17</option>
+                        <option value="3">18</option>
+                        <option value="3">19</option>
+                        <option value="3">20</option>
+                    </select>
+                </div>
+            </div>
+
+            <button class="allGames__startBtn  savannah--btn">Начать</button>
+        </section>
+
+        <section class="allGames__timerScreen  allGames__timerScreen-hidden">
+            <div class="allGames__timer">3</div>
+            <div class="allGames__tip">Используй клавиши 1, 2, 3 и 4, чтобы дать быстрый ответ</div>
+        </section>
+
+        <section class="savannah--playScreen  allGames__playScreen  allGames__playScreen-hidden">
+            <div class="savannah--controls">
+                <div class="savannah--sound"></div>
+                <div class="savannah--stars">
+                    <div class="savannah--stars__item"></div>
+                    <div class="savannah--stars__item"></div>
+                    <div class="savannah--stars__item"></div>
+                    <div class="savannah--stars__item"></div>
+                    <div class="savannah--stars__item"></div>
+                </div>
+            </div>
+            <div class="savannah--game">
+                <div class="savannah--game__question">word</div>
+                <div class="savannah--game__answersList">
+                    <div class="savannah--game__answer">неправильно</div>
+                    <div class="savannah--game__answer">правильно</div>
+                    <div class="savannah--game__answer">неправильно</div>
+                    <div class="savannah--game__answer">неправильно</div>
+                </div>
+            </div>
+
+            <div class="savannah--stat  savannah--stat-hidden">
+                <h2 class="savannah--stat__heading">Статистика тренировки</h2>
+                <div class="savannah--stat__answers">
+                    <div class="savannah--stat__errors">
+                        <h3 class="savannah--stat__errorsHeading">Ошибок: <span>1</span></h3>
+                        <ul class="savannah--stat__list">
+                            <li class="savannah--stat__listItem">
+                                <div class="savannah--stat__audio"></div>
+                                <span><b>слово</b> - перевод<span>
+                            </li>
+                            <li class="savannah--stat__listItem">
+                                <div class="savannah--stat__audio"></div>
+                                <span><b>слово</b> - перевод<span>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="savannah--stat__correct">
+                        <h3 class="savannah--stat__correctHeading">Знаю: <span>1</span></h3>
+                        <ul class="savannah--stat__list">
+                            <li class="savannah--stat__listItem">
+                                <div class="savannah--stat__audio"></div>
+                                <span><b>слово</b> - перевод<span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+                <button class="savannah--btn  savannah--btn-continue" onclick="document.location.reload()">Продолжить тренировку</button>
+                <a class="savannah--link" href="/#/statistic">Смотреть статистику по всем играм</a>
+                <a class="savannah--link" href="/">На главную</a>
+            </div>
+
+        </section>
+
+        <audio id="savannah-audio"></audio>
+    </div>
+    `;
+
+    return view;
+  },
+
   afterRender: async () => {
+    Game.initStartScreen();
+
+    const startBtn = document.querySelector('.allGames__startBtn');
+    startBtn.addEventListener('click', async () => {
+      const isNewWords = document.querySelector('.allGames__choice_new').classList.contains('select');
+
+      Savannah.difficulty = document.getElementById('levels').value;
+      Savannah.round = document.getElementById('pages').value;
+
+      if (Savannah.difficulty && Savannah.round && isNewWords) {
+        const data = await Savannah.model.getSetOfWordsAndTranslations(Savannah.difficulty,
+          Savannah.round, Savannah.gameRoundsCount, 3);
+        Savannah.data = Savannah.reformat(data);
+      } else {
+        // заменить на уже изученные слова
+        console.log('изученные слова');
+        const data = await Savannah.model.getSetOfWordsAndTranslations(1, 0, Savannah.gameRoundsCount, 3);
+        Savannah.data = Savannah.reformat(data);
+      }
+    });
+
     const roundIndex = 0;
     Savannah.toggleSound();
     Game.startGame(() => Savannah.play(roundIndex));

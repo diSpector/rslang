@@ -1,6 +1,8 @@
+  @import '../../../css/abstract/constants.scss';
+@import '../../../css/abstract/mixins.scss';
+
 .allGames {
     font-size: 2rem;
-    // color: white;
 }
 
 .allGames__startScreen {
@@ -19,19 +21,76 @@
     }
 }
 
-.allGames__heading {
-
-}
-
 .allGames__description {
     text-align: center;
     text-shadow: #fff 1px 1px 0;
 }
 
-.allGames__startBtn {
-
+.allGames__choice {
+    width: 500px;
+    height: 70px;
+    text-align: center;
+    display: flex;
+    flex-wrap: wrap;
+    p {
+      text-shadow: 
+          -0   -1px 4px #FFFFFF,
+           0   -1px 4px #FFFFFF,
+          -0    1px 4px #FFFFFF,
+           0    1px 4px #FFFFFF;
+      margin: 0 auto auto;
+      cursor: pointer;
+      text-align: center;
+      width: 220px;
+      padding: 8px;
+      border: 1px solid transparent;
+      border-radius: 6px;
+      &.select {
+        border: 1px solid #90d890;
+      }
+      &:hover {
+        background: rgba($color: #90d890, $alpha: 0.3);
+      }
+    }
+    @include media-tablet {
+      width: 300px;
+      height: 110px;
+    }
+    @include media-mobile-big {
+      width: 95%;
+    }
 }
 
+.allGames__choice_levels{
+    transition: 0.2s ease-in-out;
+    width: 100%;
+    &.hidden{
+        transition: 0.2s ease-in-out;
+        display: none;
+    }
+}
+
+.allGames__startBtn {
+    cursor: pointer;
+    width: 90px;
+    margin: 10px;
+    height: 35px;
+    border: 0;
+    outline: none;
+    border-radius: 3px;
+    transition: 0.1s;
+    font-size: 2rem;
+    font-family: 'Neucha', cursive;
+    background: #fde28e;
+    box-shadow: -3px -3px #e2c774 inset;
+    &:active{
+      background: #efc74d;
+      box-shadow: 3px 3px #caa433 inset;
+    }
+    &:hover{
+      background: #ffe9a6;
+    }
+}
 
 .allGames__timerScreen {
     position: relative;
