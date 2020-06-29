@@ -17,7 +17,7 @@ const letterSquare = {
     Utils.clearBlock('.footer');
   },
 
-  render: (model) => {
+  render: () => {
     letterSquare.beforeRender();
 
     const view = gamePageRendering();

@@ -1,6 +1,5 @@
 import words from '../model/words';
 import wordFilling from './addingWordsToTable';
-import addingWords from './addingWords';
 import startTimer from './timer';
 
 export default function drawPlayField() {
@@ -35,6 +34,16 @@ export default function drawPlayField() {
     const alphabet = 'abcdefghijklmnopqrstuvwxyz';
     while (cellValue.length < 1) { cellValue += alphabet[Math.random() * alphabet.length | 0]; }
     tableCell.innerHTML = cellValue;
+  }
+
+  function addingWords(selector, words) {
+    const list = document.querySelector(`${selector}`);
+    for (let i = 0; i < words.length; i += 1) {
+      const listItem = document.createElement('div');
+      listItem.setAttribute('class', 'letterSquare--wordList__itemList');
+      listItem.innerHTML = words[i];
+      list.appendChild(listItem);
+    }
   }
 
   for (let r = 0; r < playField.rows.length; r += 1) {

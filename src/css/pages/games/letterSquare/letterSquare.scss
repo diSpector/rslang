@@ -6,12 +6,35 @@ html, body{
 }
 
 .letterSquare {
+  font-family: Neucha, sans-serif;;
   margin:0;
   padding: 0;
   height: 100vh;
   background-size: 100vw 100vh;
   background-image: url('../../../../img/common/backgrounds/background6.jpg');
 }
+
+.letterSquare--btn__startBtn {
+  font-family: Neucha, sans-serif;;
+  font-size: 1.5em;
+  border: 0px;
+  outline: none;
+  border-radius: 3px;
+  transition: 0.1s;
+  width: 150px;
+  margin-top: 25px;
+  margin-left: 0px;
+  height: 30px;
+  color: white;
+  cursor: pointer;
+  background: rgb(105, 190, 98);
+  box-shadow: -3px -3px rgb(93, 173, 90) inset;
+  &:active{
+    background: rgb(55, 134, 59);
+    box-shadow: 3px 3px #3faf52 inset;
+  }
+}
+
   
 .letterSquare--container {
   display: flex;
@@ -22,20 +45,20 @@ html, body{
 }
   
 .letterSquare--wordList {
-  margin-top: 19em;
+  margin-top: 120px;
   text-align: center;
   background-color: white;
   border-radius: 16px;
   box-shadow: 5px 5px 5px darkgrey;
   overflow: hidden;
-  width: 200px;
-  height: 340px;
+  width: 240px;
+  height: 420px;
   margin-left: 8em;
 }
   
 .letterSquare--wordList__titleList {
   height: 60px;
-  width: 200px;
+  width: 240px;
   border-radius: 16px 16px 0 0;
   background: linear-gradient(to top, #f8b278, #fc8b4a);
   text-decoration: none;
@@ -46,14 +69,16 @@ html, body{
   display: inline-block;
   position: relative;
   font-weight: bold;
-  margin-top: 1em;
-  font-size: 15px;
+  margin-top: 0.8em;
+  font-size: 2em;
   text-decoration: none;
   text-align: center;
   color: white;
 }
   
 .letterSquare--wordList__itemList {
+  font-size: 1.5em;
+  font-weight: bold;
   margin-top: 0.8em;
   text-decoration: none;
   text-align: center;
@@ -79,6 +104,11 @@ html, body{
   font-size: 5em;
   color: rgb(0, 0, 0);
 }
+
+.letterSquare--wordList__foundWord {
+  text-decoration: line-through;
+  color: #cfcccc;
+}
   
 table {
   margin-top: 5em;
@@ -93,19 +123,19 @@ td {
   cursor: pointer;
   margin-left: 14px;
   font-weight: bold;
-  font-size: 20px;
+  font-size: 3em;
   color: #fff;
   text-decoration: none;
   text-align: center;
   text-shadow: 0 -1px rgba(0,0,0,.5);
   user-select: none;
-  border: 1px solid #1b362d;
+  border: 1px solid #266e32;
   border-radius: 5px;
   outline: none;
-  background: #517b6d linear-gradient(#436e5f, #60be9d 80%);
+  background: rgb(105, 190, 98);
   }
 td:hover {
-  background: #517b6d linear-gradient(#65ac93, #85d4b8 80%);
+  background: rgb(136, 245, 126);
 }
 
 .td_active {
@@ -115,7 +145,7 @@ td:hover {
   cursor: pointer;
   margin-left: 14px;
   font-weight: bold;
-  font-size: 20px;
+  font-size: 3em;
   color: #fff;
   text-decoration: none;
   text-align: center;
@@ -128,7 +158,7 @@ td:hover {
 }
 
 .td_active:hover {
-  background: #ff853f linear-gradient(#fc9856, #ff9252 80%);
+  background: #faa777 linear-gradient(#fc9856, #ff9252 80%);
 }
 
 .td_guessed {
@@ -138,23 +168,25 @@ td:hover {
   cursor: pointer;
   margin-left: 14px;
   font-weight: bold;
-  font-size: 20px;
+  font-size: 3em;
   color: #fff;
   text-decoration: none;
   text-align: center;
   text-shadow: 0 -1px rgba(0,0,0,.5);
   user-select: none;
-  border: 1px solid #ad4f01;
+  border: 1px solid #4e4e4e;
   border-radius: 5px;
   outline: none;
-  background: #e7cd3b linear-gradient(#ffda37, #ccaa3c 80%);
+  background: #bdbcbc;
 }
 
 .td_guessed:hover {
-  background: #ffea70 linear-gradient(#d8cd6d, #dbce59 80%);
+  background: #d1d1d1;
 }
 
-.letterSquare---wordList__btnCheck {
+.letterSquare--wordList__btnCheck {
+  font-family: Neucha, sans-serif;;
+  font-size: 1.5em;
   border: 0px;
   outline: none;
   border-radius: 3px;
@@ -173,7 +205,9 @@ td:hover {
   }
 }
 
-.letterSquare---wordList__btnRemove {
+.letterSquare--wordList__btnRemove {
+  font-family: Neucha, sans-serif;;
+  font-size: 1.5em;
   border: 0px;
   outline: none;
   border-radius: 3px;
@@ -192,39 +226,41 @@ td:hover {
   }
 }
 
-.statistic__card {
+.letterSquare--statistic__card {
+  justify-content: center;
   display: inline-block;
   position: absolute;
     top: 20%;
     left: 40%;
-  width: 300px;
-  height: 400px;
+  width: 330px;
+  height: 450px;
   border-radius: 16px;
   text-align: center;
   background-color: white;
   box-shadow: 6px 6px 6px darkgrey;
 }
 
-.statistic__numberWordsFound {
+.letterSquare--statistic__numberWordsFound {
   margin-top: 10px;
   font-weight: bold;
 }
 
-.statistic__numberWordsNotFound {
+.letterSquare--statistic__numberWordsNotFound {
   margin-top: 15px;
   font-weight: bold;
 }
 
-.statistic__title {
+.letterSquare--statistic__title {
+  font-size: 2em;
   height: 60px;
-  width: 300px;
+  width: 330px;
   border-radius: 16px 16px 0 0;
   background: linear-gradient(to top, #faa159, #fd8844);
   text-decoration: none;
   text-align: center;
 }
 
-.statistic__button--next {
+.letterSquare--statistic__button--next {
   border: 0px;
   outline: none;
   border-radius: 3px;
@@ -243,7 +279,7 @@ td:hover {
   }
 }
 
-.statistic__button--back {
+.letterSquare--statistic__button--back {
   border: 0px;
   outline: none;
   border-radius: 3px;
