@@ -23,7 +23,7 @@ export default class AppModel {
       sprint: {},
       square: {},
     };
-    this.defaultUserEmail = '66group@gmail.com';
+    this.defaultUserEmail = '66group@ .com';
     this.defaultUserPassword = 'Gfhjkm_123';
     this.defaultUserId = '5ef6f4c5f3e215001785d617';
     this.emailValidator = /^[-.\w]+@(?:[a-z\d]{2,}\.)+[a-z]{2,6}$/;
@@ -339,6 +339,12 @@ export default class AppModel {
     }
     return finalArray;
   }
+
+  /*   async getSetOfLearnedWordsAndTranslations(difficulty, round, roundLength, numberOfTranslations) {
+    if (roundLength * (round + 1) * difficulty > this.learnedWordsCounter) {
+      return null;
+    }
+  } */
 
   // выдает рандомный массив выученных слов заданной длины
   async getSetOfLearnedWords(numberOfWords) {
