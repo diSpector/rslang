@@ -275,6 +275,13 @@ const Savannah = {
     this.checkAnswer(roundIndex);
   },
 
+  clearGameVariables() {
+    this.mistakesCount = 0;
+    this.correctAnswersCount = 0;
+    this.correctAnswers = [];
+    this.wrongAnswers = [];
+  },
+
   beforeRender() {
     this.clearHeaderAndFooter();
   },
@@ -422,6 +429,8 @@ const Savannah = {
         Savannah.data = Savannah.reformat(data);
       }
     });
+
+    Savannah.clearGameVariables();
 
     const roundIndex = 0;
     Savannah.toggleSound();
