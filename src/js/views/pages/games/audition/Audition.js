@@ -53,9 +53,16 @@ const setAnswer = (wordData) => {
 };
 
 const showAnswer = () => {
-  document.querySelector('.wordScreen__image').classList.add('show');
-  document.querySelector('.wordScreen__speaker').classList.add('show');
-  document.querySelector('.wordScreen__word').classList.add('show');
+  const wordImage = document.querySelectorAll('.wordScreen__image');
+  if (wordImage[1] === undefined) {
+    document.querySelector('.wordScreen__image').classList.add('show');
+    document.querySelector('.wordScreen__speaker').classList.add('show');
+    document.querySelector('.wordScreen__word').classList.add('show');
+  } else {
+    document.querySelectorAll('.wordScreen__image')[1].classList.add('show');
+    document.querySelectorAll('.wordScreen__speaker')[1].classList.add('show');
+    document.querySelectorAll('.wordScreen__word')[1].classList.add('show');
+  }
 };
 
 const generateWordSlideHTML = () => {
@@ -253,10 +260,11 @@ const addGameClickHandler = (wordAudio, correctWord) => {
       } else if (!targetWord.innerHTML.includes(correctWord.wordTranslate) && isGameActive) {
         targetWord.classList.add('checked');
         wrongAnswers.push(correctWord);
+        setCorrectWordButton(correctWord.wordTranslate);
         errorAudio.play();
       }
       showAnswer();
-      Utils.clearBlock('.wordScreen__button');
+      button.innerText = '';
       button.classList.add('correct');
       isGameActive = false;
       currentWordCounter += 1;
@@ -279,6 +287,19 @@ const addGameClickHandler = (wordAudio, correctWord) => {
       wrongAnswers.push(correctWord);
     }
   });
+};
+
+const addStartMenuClickHandler = () => {
+  document.querySelector('.allGames__choice_learn').onclick = () => {
+    document.querySelector('.allGames__choice_learn').classList.add('select');
+    document.querySelector('.allGames__choice_new').classList.remove('select');
+    document.querySelector('.allGames__choice_levels').classList.add('hidden');
+  };
+  document.querySelector('.allGames__choice_new').onclick = () => {
+    document.querySelector('.allGames__choice_new').classList.add('select');
+    document.querySelector('.allGames__choice_learn').classList.remove('select');
+    document.querySelector('.allGames__choice_levels').classList.remove('hidden');
+  };
 };
 
 const Audition = {
@@ -306,6 +327,26 @@ const Audition = {
           <h1 class="allGames__heading">Аудиовызов</h1>
           <p class="allGames__description">В этой игре вы улучшите восприятие английской речи на слух. <br>Чем больше слов ты
               знаешь, тем больше очков опыта получишь.</p>
+          <div class="allGames__choice">
+            <p class="allGames__choice_learn select">Игра с изученными словами</p>
+            <p class="allGames__choice_new">Игра с новыми словами</p>
+            <div class="allGames__choice_levels hidden">
+              <label>Уровень:</label>
+              <select name="levels" id="levels">
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="3">3</option>
+                <option value="4">4</option>
+                <option value="5">5</option>
+              </select>
+              <label>Раунд:</label>
+              <select name="pages" id="pages">
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="3">3</option>
+              </select>
+            </div>
+          </div>
           <button class="allGames__startBtn  btn">Начать</button>
           <div class="allGames__tip">Используй клавиши 1, 2, 3, 4 и 5 чтобы дать быстрый ответ, Enter для перехода к следующему слову.</div>
       </section>
@@ -321,6 +362,7 @@ const Audition = {
   afterRender: async () => {
     Game.startGame(generateNextWordSlide);
     generateProgressBar();
+    addStartMenuClickHandler();
   },
 };
 
