@@ -1,5 +1,18 @@
 const Game = {
-  startGame: () => {
+  initStartScreen: () => {
+    document.querySelector('.allGames__choice_learn').onclick = () => {
+      document.querySelector('.allGames__choice_learn').classList.add('select');
+      document.querySelector('.allGames__choice_new').classList.remove('select');
+      document.querySelector('.allGames__choice_levels').classList.add('hidden');
+    };
+    document.querySelector('.allGames__choice_new').onclick = () => {
+      document.querySelector('.allGames__choice_new').classList.add('select');
+      document.querySelector('.allGames__choice_learn').classList.remove('select');
+      document.querySelector('.allGames__choice_levels').classList.remove('hidden');
+    };
+  },
+
+  startGame: (cb) => {
     const startScreen = document.querySelector('.allGames__startScreen');
     const timerScreen = document.querySelector('.allGames__timerScreen');
     const playScreen = document.querySelector('.allGames__playScreen');
@@ -27,13 +40,10 @@ const Game = {
       setTimeout(() => {
         timerScreen.classList.add('allGames__timerScreen-hidden');
         playScreen.classList.remove('allGames__playScreen-hidden');
+        if (cb) cb();
       }, 3000);
     });
   },
-
-  stopGame: () => { },
-
-  showStatistics: () => { },
 };
 
 export default Game;
