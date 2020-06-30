@@ -2,6 +2,7 @@
 export default class AppModel {
   constructor() {
     this.searchString = 'https://afternoon-falls-25894.herokuapp.com/words?';
+    this.contentBookURL = 'https://raw.githubusercontent.com/dispector/rslang-data/master/data/book';
     this.contentURL = 'https://raw.githubusercontent.com/dispector/rslang-data/master/';
     this.userName = 'defaultUser';
     this.maxDictionaryLength = 3600;
