@@ -15,7 +15,8 @@ const EnglishPuzzleConfig = {
   },
 
   pages: {
-    // start: '',
+    start: 'startScreen',
+    timer: 'timerScreen',
     game: 'gameField',
     results: 'resultsField',
     picture: 'pictureField',
@@ -26,13 +27,21 @@ const EnglishPuzzleConfig = {
     header: '.header',
     footer: '.footer',
 
+    startScreen: '.englishPuzzle__startScreen',
+    timerScreen: '.englishPuzzle__timerScreen',
     gameField: '.englishPuzzle__field',
     resultsField: '.englishPuzzle__results',
     pictureField: '.englishPuzzle__picture',
 
+    
+    start: {
+      ids: { // селекты выбора уровня и страницы
+        level: 'level',
+        page: 'pages',
+      },
+    },
+
     // game
-    // currentLevel: '.menu__level .level__current',
-    // currentPage: '.menu__page .page__current',
     menus: {
       current: {
         level: '.menu__level .level__current',
@@ -47,10 +56,6 @@ const EnglishPuzzleConfig = {
         page: '.page__list',
       }
     },
-    // levelDropDownMenu: '.level__menu.dropdown__menu',
-    // pageDropDownMenu: '.page__menu.dropdown__menu',
-    // levelMenuTitle: '.level__list',
-    // pageMenuTitle: '.page__list',
 
     gameButtons: '.englishPuzzle__buttons.gameButtons',
     tips: '.menu__tips.tips',
@@ -93,6 +98,10 @@ const EnglishPuzzleConfig = {
     pictureImg: '.picture__img',
     pictureDesc: '.picture__desc',
 
+  },
+
+  startButtons: {
+    start: '.allGames__startBtn',
   },
 
   buttons: {

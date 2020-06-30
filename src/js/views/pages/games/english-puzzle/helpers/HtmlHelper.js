@@ -10,6 +10,8 @@ const HtmlHelper = {
 
   /** очистить и скрыть все поля (игра, статистика) */
   clearAll() {
+    // this.clearStartScreen(); // нечего удалять
+    // this.clearTimerScreen(); // нечего удалять
     this.clearGameField();
     this.clearResults();
     this.clearPicture();

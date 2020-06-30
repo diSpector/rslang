@@ -7,6 +7,7 @@ $imgCommonPath: '../../../../img/common/backgrounds/';
     box-sizing: border-box;
     color: black;
     padding: 100px;
+    font-family: 'Neucha', sans-serif;
 }
 
 .englishPuzzle__background{
@@ -24,13 +25,13 @@ $imgCommonPath: '../../../../img/common/backgrounds/';
     z-index: -1;
 }
 
-.englishPuzzle__logout {
-  display: flex;
-  justify-content: flex-end;
-  color: black;
-  margin-bottom: 20px;
-  font-size: 2.0rem;
-}
+// .englishPuzzle__logout {
+//   display: flex;
+//   justify-content: flex-end;
+//   color: black;
+//   margin-bottom: 20px;
+//   font-size: 2.0rem;
+// }
 
 .logout__button {
   width: 55px;
@@ -55,7 +56,7 @@ $imgCommonPath: '../../../../img/common/backgrounds/';
     background-color: white;
     border-radius: 7px;
     padding: 20px;
-    font-size: 1.4rem;
+    font-size: 1.8rem;
     box-sizing: border-box;
 }
 
@@ -201,7 +202,8 @@ $imgCommonPath: '../../../../img/common/backgrounds/';
 .englishPuzzle__translation{
     text-align: center;
     margin-top: 10px;
-    font-size: 18px;
+    // font-size: 18px;
+    font-size: 2.0rem;
     height: 22px;
 }
 
@@ -471,7 +473,7 @@ $imgCommonPath: '../../../../img/common/backgrounds/';
 
 .englishPuzzle__picture {
   text-align: center;
-  font-size: 1.8rem;
+  font-size: 2.0rem;
 }
 
 .englishPuzzle__results {
@@ -522,7 +524,7 @@ $imgCommonPath: '../../../../img/common/backgrounds/';
   background-color: white;
   border-radius: 7px;
   padding: 30px;
-  font-size: 1.4rem;
+  font-size: 1.8rem;
   box-sizing: border-box;
 }
 
@@ -532,7 +534,7 @@ $imgCommonPath: '../../../../img/common/backgrounds/';
 
 .block__title{
   text-align: center;
-  font-size: 2.0rem;
+  font-size: 2.5rem;
 }
 
 .block__title span {
@@ -553,7 +555,7 @@ span.count__iknow{
 
 
 .block__words {
-  font-size: 1.8rem;
+  font-size: 2.0rem;
   margin-top: 15px;
 }
 
@@ -626,7 +628,7 @@ span.count__iknow{
   background-color: white;
   border-radius: 7px;
   padding: 30px;
-  font-size: 1.8rem;
+  font-size: 2.0rem;
   box-sizing: border-box;
 }
 
@@ -678,13 +680,13 @@ span.count__iknow{
     height: 400px;
   }
   .block__word {
-    font-size: 1.5rem;
+    font-size: 1.8rem;
   }
 }
 
 @media (max-width: 620px) {
   .phrase__words, .task__words {
-    font-size: 1.0rem;
+    font-size: 1.4rem;
   }
   .englishPuzzle__translation {
     height: 60px;
@@ -714,7 +716,7 @@ span.count__iknow{
     padding: 5px 1px;
   }
   .englishPuzzle__translation {
-    font-size: 1.5rem;
+    font-size: 1.6rem;
     height: 60px;
   }
   .englishPuzzle__menu {
@@ -738,6 +740,6 @@ span.count__iknow{
 
 @media (max-width: 380px) {
   .phrase__words, .task__words {
-    font-size: 0.8rem;
+    font-size: 1rem;
   }
 }

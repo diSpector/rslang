@@ -5,6 +5,7 @@ import WordsHelper from './helpers/WordsHelper';
 import HtmlHelper from './helpers/HtmlHelper';
 import ArrayHelper from './helpers/ArrayHelper'
 import Config from './settings/gameConfig';
+import Game from '../Game';
 
 const EnglishPuzzle = {
 
@@ -75,7 +76,43 @@ const EnglishPuzzle = {
     const view = `
     <div class="englishPuzzle">
     <div class="englishPuzzle__background"></div>
-    <div class="englishPuzzle__field">
+    <div class="englishPuzzle__startScreen allGames__startScreen">
+      <h1 class="englishPuzzle__heading allGames__heading">English Puzzle</h1>
+      <p class="englishPuzzle__description allGames__description">
+        Тебе предстоит собирать предложения из слов-фрагментов.<br>
+        Чтобы поставить слово на нужное место, кликни по нему или перетащи мышкой.<br>
+        В одном раунде - 10 предложений, каждому раунду соответствует шедевр живописи.<br>
+        Попробуй открыть их все!
+      </p>
+      <div class="englishPuzzle__choice allGames__choice">
+        <p class="allGames__choice_learn select">Игра с изученными словами</p>
+        <p class="allGames__choice_new">Игра с новыми словами</p>
+        <div class="allGames__choice_levels hidden">
+          <label>Уровень:</label>
+          <select name="levels" id="levels">
+            disabled selected
+            <option value="1">1</option>
+            <option value="2">2</option>
+            <option value="3">3</option>
+          </select>
+          <label>Раунд:</label>
+          <select name="pages" id="pages" size="0">
+            <option value="1">1</option>
+            <option value="2">2</option>
+            <option value="3">3</option>
+            <option value="4">4</option>
+            <option value="5">5</option>
+          </select>
+        </div>
+      </div>
+      <button class="allGames__startBtn">Начать</button>
+    </div>
+    <div class="englishPuzzle__timerScreen allGames__timerScreen  allGames__timerScreen-hidden">
+      <div class="allGames__timer">3</div>
+      <div class="allGames__tip">Используй подсказки "Перевод", "Произношение" и "Фоновый рисунок", если нужна помощь
+      </div>
+    </div>
+    <div class="englishPuzzle__field englishPuzzle__block-hidden">
       <div class="englishPuzzle__menu menu">
         <div class="englishPuzzle__controls controls">
           <div class="menu__level">
@@ -174,11 +211,53 @@ const EnglishPuzzle = {
   },
 
   afterRender: () => {
-    EnglishPuzzle.fillGamePage();
-    EnglishPuzzle.addListeners();
+    EnglishPuzzle.loadStart();
+
+    // EnglishPuzzle.fillGamePage();
+    // EnglishPuzzle.addListeners();
 
     console.log('localStorage', JSON.parse(localStorage.getItem('EnglishPuzzleSettings')));
     console.log('localStat: ', EnglishPuzzle.settings.localStat);
+  },
+
+  /** загрузить стартовую страницу */
+  loadStart() {
+    EnglishPuzzle.loadPage('start');
+
+    // Game.initStartScreen();
+
+    EnglishPuzzle.addListenersToStart();
+
+    // Game.startGame(() => EnglishPuzzle.loadGame(.....));
+  },
+
+  /** повесить слушатели на нажатие кнопки "Start" и выбор уровня */
+  addListenersToStart() {
+    const startButton = document.querySelector(Config.startButtons.start);
+    startButton.addEventListener('click', EnglishPuzzle.processStartClick);
+  },
+
+  loadGame() {
+    EnglishPuzzle.loadPage('game');
+    EnglishPuzzle.fillGamePage();
+    EnglishPuzzle.addListeners();
+  },
+
+  /** нажатие на кнопку "Start" на стартовом экране */
+  processStartClick: () => {
+    const { level, page } = EnglishPuzzle.getStartLevelPage(); 
+    console.log('level', level);
+    console.log('page', page);
+  },
+
+  getStartLevelPage() {
+    const levelSelect = document.getElementById(Config.containers.start.ids.level);
+    const pageSelect = document.querySelector(Config.containers.start.ids.page);
+
+    return {
+      level: levelSelect.value,
+      page: pageSelect.value,
+    };
   },
 
   /** заполнить страницу */
