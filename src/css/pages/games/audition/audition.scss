@@ -195,6 +195,7 @@
     padding: 10px;
     cursor: pointer;
     background-color: white;
+    outline: none;
     &:hover {
       background-color: rgba(0, 0, 0,0.2);
     }
@@ -214,6 +215,10 @@
     &::-webkit-scrollbar-thumb {
       border-radius: 10px;
       background-color: rgba(0, 0, 0, 0.2); 
+    }
+    &.less {
+      height: 25px;
+      overflow: auto;
     }
     @include media-mobile-big {
       height: 165px;

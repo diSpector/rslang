@@ -206,15 +206,17 @@ const Audition = {
   generateStatisticHTML() {
     const gameArea = document.querySelector('.audition--game');
     const gameTime = new Date(Date.now() - Audition.startTime);
+    const numberOfCorrectAnswers = Audition.correctAnswers.length;
+    const numberOfWrongAnswers = Audition.wrongAnswers.length;
     const statistic = `
     <section class="audition--statistic hidden">
       <div class="statistic__title">Статистика игры</div>
-      <div class="statistic__Answers">
-        <div class="Answers__title_correct">Верных ответов: <div>${Audition.correctAnswers.length}</div></div>
+      <div class="statistic__Answers ${numberOfCorrectAnswers === 0 ? 'less' : ''}">
+        <div class="Answers__title_correct">Верных ответов: <div>${numberOfCorrectAnswers}</div></div>
       </div>
       <hr>
-      <div class="statistic__Answers">
-        <div class="Answers__title_wrong">Неверных ответов: <div>${Audition.wrongAnswers.length}</div></div>
+      <div class="statistic__Answers ${numberOfWrongAnswers === 0 ? 'less' : ''}">
+        <div class="Answers__title_wrong">Неверных ответов: <div>${numberOfWrongAnswers}</div></div>
       </div>
       <hr>
       <div class="statistic__time">Время игры: ${gameTime.getMinutes()}:${gameTime.getSeconds()}</div>
@@ -377,7 +379,6 @@ const Audition = {
       Audition.settings.round = document.getElementById('pages').value;
 
       if (Audition.settings.difficulty && Audition.settings.round && isNewWords) {
-        console.log('newWords');
         Audition.data = await Audition.settings.model.getSetOfWordsAndTranslations(
           Audition.settings.difficulty,
           Audition.settings.round - 1,
@@ -385,8 +386,9 @@ const Audition = {
           4,
         );
       } else {
-        Audition.data = await Audition.settings.model.getLearnedWords();
-        console.log(Audition.data, 'изученные слова');
+        Audition.data = await Audition.settings.model.getSetOfLearnedWordsAndTranslations(
+          Audition.settings.wordsInGame, 4,
+        );
       }
     });
 
