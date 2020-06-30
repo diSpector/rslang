@@ -437,7 +437,7 @@ const SpeakIt = {
     const results = () => { // страница "Результаты"
       showPage('resultsPage');
       gameInProcess = false;
-      
+
       recognition.onsoundstart = null;
       renderResults();
     };
@@ -453,7 +453,6 @@ const SpeakIt = {
       resetSpeak();
       clearWords();
       renderWords();
-      
     }
 
 
@@ -576,7 +575,7 @@ const SpeakIt = {
 
 
     const startButtonClick = async () => { // обработчик нажатия на "Start"
-    translateContainer.style.width = 'auto';
+      translateContainer.style.width = 'auto';
       if (mode === 'repeat') {
         words = await getRepeatWords();
         if (words.length < 10) {
@@ -728,17 +727,12 @@ const changeLevelClick = (e) => { // обработчик выбора уров�
         localStorage.setItem('speakItlevel', JSON.stringify({ levels: level, pages: page }));
       };
     }
-    function start() { // страница "Старт"
-      // document.querySelector('.allGames__startScreen-hidden').classList.remove('allGames__startScreen-hidden');
-      document.querySelector('.allGames__timer').textContent = 3;
-      showPage('startPage');
-    }
     function startScreen() {
       document.querySelector('.allGames__startScreen-hidden').classList.remove('allGames__startScreen-hidden');
       document.querySelector('.allGames__playScreen').classList.add('allGames__playScreen-hidden');
       document.querySelector('.allGames__timer').textContent = 3;
       showPage('startPage');
-      if(recognition) recognition.onsoundstart = null;
+      if (recognition) recognition.onsoundstart = null;
     }
 
 
