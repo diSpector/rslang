@@ -23,7 +23,7 @@ export default class AppModel {
       sprint: {},
       square: {},
     };
-    this.defaultUserEmail = '66group@gmail.com';
+    this.defaultUserEmail = '66group@ .com';
     this.defaultUserPassword = 'Gfhjkm_123';
     this.defaultUserId = '5ef6f4c5f3e215001785d617';
     this.emailValidator = /^[-.\w]+@(?:[a-z\d]{2,}\.)+[a-z]{2,6}$/;
@@ -338,6 +338,37 @@ export default class AppModel {
       finalArray.push({ correct: correctResults[i], incorrect: incorrectTranslationsSubArray });
     }
     return finalArray;
+  }
+
+  async getSetOfLearnedWordsAndTranslations(numberOfWords, numberOfTranslations) {
+    if (numberOfWords > this.learnedWordsCounter) {
+      return null;
+    }
+    // выбираем случайное число от 0 до this.learnedWordsCounter чтобы выбрать сложность
+    const randomSeed = Math.floor(Math.random() * (this.learnedWordsCounter - numberOfWords));
+    let randomDifficulty = Math.floor(randomSeed / this.wordSetLength) + 1;
+    // находим начальный индекс сложности, из которой мы будем брать слова
+    // если в данной сложности слов нехватает для запроса, опускаемся на одну ниже
+    let startIndex = (randomDifficulty - 1) * this.wordSetLength;
+    if (this.learnedWordsCounter - startIndex < numberOfWords) {
+      randomDifficulty -= 1;
+      startIndex -= this.wordSetLength;
+    }
+    // находим количество слов в массиве, из которого мы будем брать слова
+    // это будет или 600 или разница  this.learnedWordsCounter - startIndex
+    let sourceArrAmount;
+    if (this.learnedWordsCounter - startIndex > this.wordSetLength) {
+      sourceArrAmount = this.wordSetLength;
+    } else {
+      sourceArrAmount = this.learnedWordsCounter - startIndex;
+    }
+    // находим количество возможных раундов, которые могут уместиться в этом массиве
+    const numberOfPossibleRounds = sourceArrAmount / numberOfWords;
+    // выбираем случайный раунд
+    const indexOfRandomRound = Math.floor(Math.random() * numberOfPossibleRounds);
+    // вызываем функцию getSetOfWordsAndTranslations с найденными параметрами
+    const result = await this.getSetOfWordsAndTranslations(randomDifficulty, indexOfRandomRound, numberOfWords, numberOfTranslations);
+    return result;
   }
 
   // выдает рандомный массив выученных слов заданной длины
