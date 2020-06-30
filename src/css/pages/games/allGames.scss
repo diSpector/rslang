@@ -2,6 +2,7 @@
 @import '../../../css/abstract/mixins.scss';
 
 .allGames {
+    font-family: 'Neucha', cursive;
     font-size: 2rem;
     color: black;
 }
@@ -19,12 +20,9 @@
     }
 }
 
-.allGames__heading {
-
-}
-
 .allGames__description {
     text-align: center;
+    text-shadow: #fff 1px 1px 0;
 }
 
 .allGames__choice {
@@ -92,6 +90,26 @@
     }
 }
 
+.allGames__startBtn {
+    cursor: pointer;
+    margin: 10px;
+    padding: 6px 20px;
+    border: 0;
+    outline: none;
+    border-radius: 3px;
+    transition: 0.1s;
+    font-size: inherit;
+    font-family: inherit;
+    background: #fde28e;
+    box-shadow: -3px -3px #e2c774 inset;
+    &:active{
+      background: #efc74d;
+      box-shadow: 3px 3px #caa433 inset;
+    }
+    &:hover{
+      background: #ffe9a6;
+    }
+}
 
 .allGames__timerScreen {
     position: relative;
@@ -114,6 +132,7 @@
     position: absolute;
     bottom: 30px;
     text-align: center;
+    text-shadow: #fff 1px 1px 0;
 }
 
 .allGames__playScreen {

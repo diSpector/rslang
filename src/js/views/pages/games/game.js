@@ -44,10 +44,6 @@ const Game = {
       }, 3000);
     });
   },
-
-  stopGame: () => { },
-
-  showStatistics: () => { },
 };
 
 export default Game;
