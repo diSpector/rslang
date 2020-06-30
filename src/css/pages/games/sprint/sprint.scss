@@ -36,6 +36,11 @@
 
 }
 .allGames__choice_levels{
+  text-shadow: 
+    -0   -1px 4px #FFFFFF,
+     0   -1px 4px #FFFFFF,
+    -0    1px 4px #FFFFFF,
+     0    1px 4px #FFFFFF;
   transition: 0.2s ease-in-out;
   width: 100%;
   &.hidden{

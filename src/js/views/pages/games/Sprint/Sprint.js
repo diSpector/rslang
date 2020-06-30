@@ -1,7 +1,7 @@
 import '../../../../../css/pages/games/Sprint/Sprint.scss';
 import '../../../../../css/pages/games/allGames.scss';
 import Utils from '../../../../services/Utils';
-import { game, timerw } from './SprintGame';
+import { generateWord, timerw } from './SprintGame';
 import Game from '../game';
 
 const Sprint = {
@@ -121,7 +121,8 @@ const Sprint = {
       localStorage.setItem('data', JSON.stringify(data));
       data = JSON.parse(localStorage.getItem('data'));
     }
-    game(model);
+    
+    generateWord(model, 0);
   },
 };
 
