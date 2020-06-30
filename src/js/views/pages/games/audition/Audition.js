@@ -227,7 +227,6 @@ const Audition = {
   },
 
   generateProgressBar() {
-    console.log(Audition.data);
     const gameArea = document.querySelector('.audition--game');
     const progressBar = Utils.createBlockInside('section', 'audition--progressBar', '', '', { style: 'width: 0vw;' });
     gameArea.prepend(progressBar);
@@ -370,12 +369,27 @@ const Audition = {
   },
 
   afterRender: async () => {
-    Audition.data = await Audition.settings.model.getSetOfWordsAndTranslations(
-      Audition.settings.difficulty,
-      Audition.settings.round - 1,
-      Audition.settings.wordsInGame,
-      4,
-    );
+    const startBtn = document.querySelector('.allGames__startBtn');
+    startBtn.addEventListener('click', async () => {
+      const isNewWords = document.querySelector('.allGames__choice_new').classList.contains('select');
+
+      Audition.settings.difficulty = document.getElementById('levels').value;
+      Audition.settings.round = document.getElementById('pages').value;
+
+      if (Audition.settings.difficulty && Audition.settings.round && isNewWords) {
+        console.log('newWords');
+        Audition.data = await Audition.settings.model.getSetOfWordsAndTranslations(
+          Audition.settings.difficulty,
+          Audition.settings.round - 1,
+          Audition.settings.wordsInGame,
+          4,
+        );
+      } else {
+        Audition.data = await Audition.settings.model.getLearnedWords();
+        console.log(Audition.data, 'изученные слова');
+      }
+    });
+
     Game.initStartScreen();
     Game.startGame(Audition.generateNextWordSlide);
     Audition.generateProgressBar();
