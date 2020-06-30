@@ -2,7 +2,8 @@
 export default class AppModel {
   constructor() {
     this.searchString = 'https://afternoon-falls-25894.herokuapp.com/words?';
-    this.contentURL = 'https://raw.githubusercontent.com/dispector/rslang-data/master/data/book';
+    this.contentBookURL = 'https://raw.githubusercontent.com/dispector/rslang-data/master/data/book';
+    this.contentURL = 'https://raw.githubusercontent.com/dispector/rslang-data/master/';
     this.userName = 'defaultUser';
     this.maxDictionaryLength = 3600;
     this.learnedWordsCounter = 100;
@@ -22,6 +23,11 @@ export default class AppModel {
       sprint: {},
       square: {},
     };
+    this.defaultUserEmail = '66group@ .com';
+    this.defaultUserPassword = 'Gfhjkm_123';
+    this.defaultUserId = '5ef6f4c5f3e215001785d617';
+    this.emailValidator = /^[-.\w]+@(?:[a-z\d]{2,}\.)+[a-z]{2,6}$/;
+    this.passwordValidator = /^(?=.*[A-Z])(?=.*[a-z])(?=.*[0-9])(?=.*[+\-_@$!%*?&#.,;:[\]{}])[\S]{8,}$/;
   }
 
   // change current user to new one
@@ -163,6 +169,7 @@ export default class AppModel {
       audioExample: `${this.contentURL}${wordData.audioExample}`,
       image: `${this.contentURL}${wordData.image}`,
       difficulty: wordData.group,
+      // wordsPerExampleSentence: wordData.wordsPerExampleSentence,
     };
   }
 
@@ -175,6 +182,7 @@ export default class AppModel {
     const url = `https://afternoon-falls-25894.herokuapp.com/words?group=${group}&page=${page}`;
     const responce = await fetch(url);
     const data = await responce.json();
+    console.log(data);
     const result = this.reformatWordData(data[wordIndex]);
     return result;
   }
@@ -288,7 +296,7 @@ export default class AppModel {
 
   // служебная функция, записывающая массив слов данной сложности из гитхаба в модель
   async getWordsDataFromGithub(difficulty) {
-    const url = `${this.contentURL}${difficulty}.json`;
+    const url = `${this.contentBookURL}${difficulty}.json`;
     const responce = await fetch(url);
     const data = await responce.json();
     this.currentWordSet = await data;
@@ -312,7 +320,7 @@ export default class AppModel {
     const finalArray = [];
     const totalNumberOfRounds = this.wordSetLength / roundLength;
     await this.getWordsDataFromGithub(difficulty);
-    const correctResults = this.getRoundDataFromModel(round, roundLength);
+    const correctResults = this.getRoundDataFromModel(round, roundLength).map((x) => this.reformatWordData(x));
     do {
       numberOfCurrentRound = Math.floor(Math.random() * totalNumberOfRounds);
       if (!incorrectTranslationsRounds.includes(numberOfCurrentRound) && numberOfCurrentRound !== round) {
@@ -332,6 +340,37 @@ export default class AppModel {
     return finalArray;
   }
 
+  async getSetOfLearnedWordsAndTranslations(numberOfWords, numberOfTranslations) {
+    if (numberOfWords > this.learnedWordsCounter) {
+      return null;
+    }
+    // выбираем случайное число от 0 до this.learnedWordsCounter чтобы выбрать сложность
+    const randomSeed = Math.floor(Math.random() * (this.learnedWordsCounter - numberOfWords));
+    let randomDifficulty = Math.floor(randomSeed / this.wordSetLength) + 1;
+    // находим начальный индекс сложности, из которой мы будем брать слова
+    // если в данной сложности слов нехватает для запроса, опускаемся на одну ниже
+    let startIndex = (randomDifficulty - 1) * this.wordSetLength;
+    if (this.learnedWordsCounter - startIndex < numberOfWords) {
+      randomDifficulty -= 1;
+      startIndex -= this.wordSetLength;
+    }
+    // находим количество слов в массиве, из которого мы будем брать слова
+    // это будет или 600 или разница  this.learnedWordsCounter - startIndex
+    let sourceArrAmount;
+    if (this.learnedWordsCounter - startIndex > this.wordSetLength) {
+      sourceArrAmount = this.wordSetLength;
+    } else {
+      sourceArrAmount = this.learnedWordsCounter - startIndex;
+    }
+    // находим количество возможных раундов, которые могут уместиться в этом массиве
+    const numberOfPossibleRounds = sourceArrAmount / numberOfWords;
+    // выбираем случайный раунд
+    const indexOfRandomRound = Math.floor(Math.random() * numberOfPossibleRounds);
+    // вызываем функцию getSetOfWordsAndTranslations с найденными параметрами
+    const result = await this.getSetOfWordsAndTranslations(randomDifficulty, indexOfRandomRound, numberOfWords, numberOfTranslations);
+    return result;
+  }
+
   // выдает рандомный массив выученных слов заданной длины
   async getSetOfLearnedWords(numberOfWords) {
     let startIndex = 0;
@@ -342,6 +381,51 @@ export default class AppModel {
     const randomDifficulty = Math.floor(randomSeed / this.wordSetLength) + 1;
     await this.getWordsDataFromGithub(randomDifficulty);
     startIndex = randomSeed - randomDifficulty * this.wordSetLength;
-    return this.currentWordSet.slice(startIndex, startIndex + numberOfWords);
+    return this.currentWordSet.slice(startIndex, startIndex + numberOfWords).map((x) => this.reformatWordData(x));
+  }
+
+  async createUser(user) {
+    const validation = this.validateUserData(user);
+    if (validation.valid) {
+      const rawResponse = await fetch('https://afternoon-falls-25894.herokuapp.com/users', {
+        method: 'POST',
+        headers: {
+          Accept: 'application/json',
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(user),
+      });
+      const content = await rawResponse.json();
+      return { data: content, error: false, errorText: '' };
+    }
+    return { data: null, error: validation.error, errorText: validation.errorText };
+  }
+
+  async loginUser(user) {
+    const validation = this.validateUserData(user);
+    if (validation.valid) {
+      const rawResponse = await fetch('https://afternoon-falls-25894.herokuapp.com/signin', {
+        method: 'POST',
+        headers: {
+          Accept: 'application/json',
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(user),
+      });
+      const content = await rawResponse.json();
+      console.log(content);
+      return { data: content, error: false, errorText: '' };
+    }
+    return { data: null, error: validation.error, errorText: validation.errorText };
+  }
+
+  validateUserData(user) {
+    if (!user.email || !this.emailValidator.test(user.email)) {
+      return { error: true, errorText: 'Enter correct email please', valid: false };
+    }
+    if (!user.password || !this.passwordValidator.test(user.password)) {
+      return { error: true, errorText: 'Enter correct password please', valid: false };
+    }
+    return { error: false, errorText: '', valid: true };
   }
 }
