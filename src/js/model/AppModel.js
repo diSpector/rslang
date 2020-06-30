@@ -1,3 +1,4 @@
+/* eslint-disable quote-props */
 /* eslint-disable max-len */
 export default class AppModel {
   constructor() {
@@ -26,6 +27,8 @@ export default class AppModel {
     this.defaultUserEmail = '66group@ .com';
     this.defaultUserPassword = 'Gfhjkm_123';
     this.defaultUserId = '5ef6f4c5f3e215001785d617';
+    this.authToken = null;
+    this.userId = null;
     this.emailValidator = /^[-.\w]+@(?:[a-z\d]{2,}\.)+[a-z]{2,6}$/;
     this.passwordValidator = /^(?=.*[A-Z])(?=.*[a-z])(?=.*[0-9])(?=.*[+\-_@$!%*?&#.,;:[\]{}])[\S]{8,}$/;
   }
@@ -414,6 +417,8 @@ export default class AppModel {
       });
       const content = await rawResponse.json();
       console.log(content);
+      this.authToken = content.token;
+      this.userId = content.userId;
       return { data: content, error: false, errorText: '' };
     }
     return { data: null, error: validation.error, errorText: validation.errorText };
@@ -427,5 +432,33 @@ export default class AppModel {
       return { error: true, errorText: 'Enter correct password please', valid: false };
     }
     return { error: false, errorText: '', valid: true };
+  }
+
+  async saveStats(stats) {
+    const rawResponse = await fetch(`https://afternoon-falls-25894.herokuapp.com/users/${this.userId}/statistics`, {
+      method: 'PUT',
+      withCredentials: true,
+      headers: {
+        'Authorization': `Bearer ${this.authToken}`,
+        'Accept': 'application/json',
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(stats),
+    });
+    const content = await rawResponse.json();
+    console.log(content);
+  }
+
+  async getStats() {
+    const rawResponse = await fetch(`https://afternoon-falls-25894.herokuapp.com/users/${this.userId}/statistics`, {
+      method: 'GET',
+      withCredentials: true,
+      headers: {
+        'Authorization': `Bearer ${this.authToken}`,
+        'Accept': 'application/json',
+      },
+    });
+    const content = await rawResponse.json();
+    console.log(content);
   }
 }
