@@ -2,7 +2,7 @@
 /* @import '~normalize.css'; */ /* тильда означает, что пакет нужно искать в node_modules */
 
 .speak__container{
-    font-family: 'Neucha', serif;
+    
     color: black;
     font-size: 18px;
     width: 100%;
@@ -466,6 +466,9 @@
     }
     
     @media (max-width: 510px){
+        .pic__translate{
+            height: 42px;
+        }
         .results__words{
             font-size: 1rem;
             margin: 5px auto;

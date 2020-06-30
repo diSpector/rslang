@@ -30,7 +30,7 @@ const SpeakIt = {
             <div class="allGames__choice">
               <p class="allGames__choice_learn select">Игра с изученными словами</p>
               <p class="allGames__choice_new">Игра с новыми словами</p>
-              <div class="allGames__choice_levels"></div>
+              <div class="allGames__choice_levels hidden"></div>
           </div>
           <button class="allGames__startBtn  btn">Начать</button>
            
@@ -40,7 +40,7 @@ const SpeakIt = {
             <div class="allGames__timer">3</div>
             <div class="allGames__tip">Прослушай слова для повторения и нажми «Начать&#160игру»</div>
         </div>   
-        <div class="game allGames__playScreen allGames__playScreen-hidden">
+        <div class="game allGames__playScreen allGames__playScreen-hidden hidden">
             
             
             <div class="pic__container">
@@ -157,6 +157,7 @@ const SpeakIt = {
     const errorAudio = new Audio('./src/audio/error.mp3');
     const model = new AppModel();
     const translateContainer = document.querySelector('.pic__translate');
+    const levelsContainer = document.querySelector('.allGames__choice_levels');
 
     const objToMap = ((obj) => {
       const map = new Map();
@@ -615,9 +616,11 @@ const SpeakIt = {
         mode = 'repeat';
         repeatTarget.classList.add('select');
         learnTarget.classList.remove('select');
+        levelsContainer.classList.add('hidden');
       }
       if (e.target.closest('.allGames__choice_new')) {
         mode = 'level';
+        levelsContainer.classList.remove('hidden');
         repeatTarget.classList.remove('select');
         learnTarget.classList.add('select');
       }
@@ -684,7 +687,6 @@ const changeLevelClick = (e) => { // обработчик выбора уров�
 
 
     function createLevels() {
-      const levelsContainer = document.querySelector('.allGames__choice_levels');
       levels = document.createElement('select');
       levels.name = 'levels';
       levels.id = 'levels';
@@ -733,10 +735,10 @@ const changeLevelClick = (e) => { // обработчик выбора уров�
     }
     function startScreen() {
       document.querySelector('.allGames__startScreen-hidden').classList.remove('allGames__startScreen-hidden');
-      document.querySelector('.allGames__playScreen').classList.add('.allGames__playScreen');
+      document.querySelector('.allGames__playScreen').classList.add('allGames__playScreen-hidden');
       document.querySelector('.allGames__timer').textContent = 3;
       showPage('startPage');
-      recognition.onsoundstart = null;
+      if(recognition) recognition.onsoundstart = null;
     }
 
 
