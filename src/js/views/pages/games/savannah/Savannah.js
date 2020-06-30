@@ -181,16 +181,16 @@ const Savannah = {
     // смена раунда или конец игры еще через секунду
     const timerChangeRound = this.goToNextRound(roundIndex, 6500);
 
-    answersList.addEventListener('click', (e) => {
+    answersList.addEventListener('click', ({ target }) => {
       // клик по переводу
-      if (e.target.classList.contains('savannah--game__answer') && !this.isAnswerSelected) {
+      if (target.classList.contains('savannah--game__answer') && !this.isAnswerSelected) {
         // удаляем таймеры, которые используются при отсутвии ответа
         clearTimeout(timerShowCorrectTranslation);
         clearTimeout(timerChangeRound);
 
-        if (e.target.classList.contains('fl-correct')) {
+        if (target.classList.contains('fl-correct')) {
           // если правильно
-          e.target.classList.add('savannah--game__answer-correct');
+          target.classList.add('savannah--game__answer-correct');
           question.classList.remove('savannah--game__question-fall');
 
           this.correctAnswersCount += 1;
@@ -202,7 +202,7 @@ const Savannah = {
           this.isAnswerSelected = true;
         } else {
           // неправильно
-          e.target.classList.add('savannah--game__answer-wrong');
+          target.classList.add('savannah--game__answer-wrong');
           Utils.clearBlock('.savannah--game__question');
 
           const correct = document.querySelector('.fl-correct');
@@ -425,7 +425,8 @@ const Savannah = {
       } else {
         // заменить на уже изученные слова
         console.log('изученные слова');
-        const data = await Savannah.model.getSetOfWordsAndTranslations(1, 0, Savannah.gameRoundsCount, 3);
+        const data = await Savannah.model.getSetOfWordsAndTranslations(1, 0,
+          Savannah.gameRoundsCount, 3);
         Savannah.data = Savannah.reformat(data);
       }
     });

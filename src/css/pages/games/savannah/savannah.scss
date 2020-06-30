@@ -3,7 +3,6 @@
 
 .savannah {
     margin-top: -71px;
-    font-family: Neucha, sans-serif;;
     background-image: url(../../../../img/common/backgrounds/background3.jpg);
     background-position: center;
     background-size: cover;
@@ -11,12 +10,12 @@
 
 .savannah--btn {
     cursor: pointer;
-    padding: 5px 20px;
+    padding: 6px 20px;
     border: 0;
     outline: none;
     border-radius: 3px;
     transition: .1s;
-    font-size: 2rem;
+    font-size: inherit;
     font-family: inherit;
     background: #fde28e;
     box-shadow: inset -3px -3px #e2c774;
@@ -41,7 +40,6 @@
     position: absolute;
     width: 100%;
     display: flex;
-    // justify-content: space-between;
     justify-content: center;
     padding: 15px;
 }
