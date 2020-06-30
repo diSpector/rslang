@@ -2,19 +2,34 @@
 /* @import '~normalize.css'; */ /* тильда означает, что пакет нужно искать в node_modules */
 
 .speak__container{
+    font-family: 'Neucha', serif;
+    color: black;
     font-size: 18px;
     width: 100%;
    height: 100%;
-    margin: 0 auto;
+    margin: -71px auto 0 auto;
     background-image: url('../../../../img/common/backgrounds/background5.jpg');
     background-size: cover;
+    overflow:hidden;
    
     background-repeat:no-repeat;
     background-position: center;
 }
 
 .speak__container {
+    & > div {
+        overflow-y:scroll;
+        height: 100vh;
+        scrollbar-width: none;
     
+    }
+    & > div::-webkit-scrollbar {
+    width: 0;
+    }
+    
+    .allGames__playScreen-hidden {
+        display: none !important;
+    }
     h1 {
         text-align: center;
     }
@@ -26,7 +41,7 @@
     .start{
        
         width: 100%;
-        height: 100%;
+        
         padding: 100px;
         padding-top: 20%;
         box-sizing: border-box;
@@ -104,7 +119,7 @@
     
     .game{
         width: 100%;
-        height: 100%;
+        
         padding: 30px;
         box-sizing: border-box;
        
@@ -165,10 +180,12 @@
     
     .pic__translate{
         
-        font-size: 1.8rem;
+        font-size: 18px;
+        height: 28px;
         text-align: center;
         width: 250px;
-        margin: 20px auto;
+        margin: 15px auto 40px auto;
+        box-sizing: border-box;
     }
     
     .translation-correct{
@@ -182,7 +199,7 @@
     .words__container{
         width: 100%;
         display: flex;
-        justify-content: space-between;
+        justify-content: center;
         flex-wrap: wrap;
     }
     
@@ -247,7 +264,7 @@
         color: white;
         font-size: 2.0rem;
         text-align: center;
-        margin-bottom: 20px;
+       
     }
     
     .button{
@@ -306,7 +323,7 @@
     .results{
         width: 100%;
         margin: 0 auto;
-        padding: 50px;
+        padding: 30px;
         box-sizing: border-box;
         text-align: center;
     }
@@ -318,7 +335,7 @@
         color: white;
         font-size: 2.0rem;
         text-align: center;
-        margin-bottom: 20px;
+        
     }
     
     .button__global{
@@ -378,7 +395,7 @@
         margin: 0 auto;
         padding: 50px;
         box-sizing: border-box;
-        height: 100vh;
+        
     }
     
     .global__header{
@@ -428,27 +445,14 @@
         text-align: center;
         margin-bottom: 20px;
     }
-    .allGames__timerScreen, .allGames__startScreen {
-            height: 100vh;
-        }
-    .allGames__playScreen {
-        height: 100vh;
-    }
+    
     
    .button__stats{
         flex-grow: 1;
     }
-    @media (max-width: 1120px) {
-        .allGames__playScreen {
-            height: 100%;
-        }
+    .word {
+        margin: 5px;
     }
-    @media (max-width: 1120px) {
-        .allGames__playScreen {
-            height: 100%;
-        }
-    }
-
     
     
     @media (max-width: 768px){
@@ -482,12 +486,10 @@
             width: 80%;
         }
     
-        .words__container{
-            justify-content: center;
-        }
-    
+         
         .word{
             width: 100%;
+             
         }
     }
 }

@@ -22,27 +22,23 @@ const SpeakIt = {
     const view = `
     
     
-    <div class="speak__container">
+    <div class="speak__container allGames">
         
         <div class="allGames__startScreen start">
             <h1 class="allGames__heading">Speak It!</h1>
             <p class="allGames__description">Тренировка произношения слов</p>
-            <div class="allGames__playMods">
-              <div>
-                <h2>Игра с новыми словами</h2>
-                <div class="levels__container"></div>
-                <button class="allGames__startBtn level__start__button">Начать</button>
-              </div>
-              <div>
-                <h2>Игра с изученными словами</h2>
-                <button class="allGames__startBtn start__button">Начать</button>
-              </div>
-            </div>
+            <div class="allGames__choice">
+              <p class="allGames__choice_learn select">Игра с изученными словами</p>
+              <p class="allGames__choice_new">Игра с новыми словами</p>
+              <div class="allGames__choice_levels"></div>
+          </div>
+          <button class="allGames__startBtn  btn">Начать</button>
+           
             
         </div>
         <div class="allGames__timerScreen allGames__timerScreen-hidden">
             <div class="allGames__timer">3</div>
-            <div class="allGames__tip">Нажми «Начать игру» и произноси поочередно слова в произвольном порядке</div>
+            <div class="allGames__tip">Прослушай слова для повторения и нажми «Начать&#160игру»</div>
         </div>   
         <div class="game allGames__playScreen allGames__playScreen-hidden">
             
@@ -167,6 +163,7 @@ const SpeakIt = {
       Object.keys(obj).forEach((key) => { map.set(key, obj[key]); });
       return map;
     });
+
 
     function clearContainer(container) { // очистить переданный контейнер
       const cont = container;
@@ -439,6 +436,8 @@ const SpeakIt = {
     const results = () => { // страница "Результаты"
       showPage('resultsPage');
       gameInProcess = false;
+      
+      recognition.onsoundstart = null;
       renderResults();
     };
     async function game(words = null) { // страница "Игра"
@@ -453,6 +452,7 @@ const SpeakIt = {
       resetSpeak();
       clearWords();
       renderWords();
+      
     }
 
 
@@ -478,7 +478,8 @@ const SpeakIt = {
       speakButton.classList.add('activated');
       const resultsButton = document.querySelector('.button__results');
       resultsButton.style.display = 'block';
-
+      translateContainer.style.width = '';
+      translateContainer.textContent = 'Можешь произносить слова в произвольном порядке';
       gameInProcess = true;
       correctWords = [];
       unCorrectWords = [];
@@ -499,6 +500,38 @@ const SpeakIt = {
         recognition = new webkitSpeechRecognition();
         recognition.lang = 'en-US';
         recognition.maxAlternatives = 5;
+        recognition.onsoundstart = () => {
+          translateContainer.classList.remove('translation-correct');
+          translateContainer.classList.remove('translation-error');
+          translateContainer.innerHTML = `
+          <svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+             width="24px" height="30px" viewBox="0 0 24 30" style="enable-background:new 0 0 50 50;" xml:space="preserve">
+            <rect x="0" y="13" width="4" height="5" fill="#333">
+              <animate attributeName="height" attributeType="XML"
+                values="5;21;5" 
+                begin="0s" dur="0.6s" repeatCount="indefinite" />
+              <animate attributeName="y" attributeType="XML"
+                values="13; 5; 13"
+                begin="0s" dur="0.6s" repeatCount="indefinite" />
+            </rect>
+            <rect x="10" y="13" width="4" height="5" fill="#333">
+              <animate attributeName="height" attributeType="XML"
+                values="5;21;5" 
+                begin="0.15s" dur="0.6s" repeatCount="indefinite" />
+              <animate attributeName="y" attributeType="XML"
+                values="13; 5; 13"
+                begin="0.15s" dur="0.6s" repeatCount="indefinite" />
+            </rect>
+            <rect x="20" y="13" width="4" height="5" fill="#333">
+              <animate attributeName="height" attributeType="XML"
+                values="5;21;5" 
+                begin="0.3s" dur="0.6s" repeatCount="indefinite" />
+              <animate attributeName="y" attributeType="XML"
+                values="13; 5; 13"
+                begin="0.3s" dur="0.6s" repeatCount="indefinite" />
+            </rect>
+          </svg>`;
+        };
 
         recognition.addEventListener('result', (event) => {
           if (gameInProcess === true) {
@@ -508,6 +541,7 @@ const SpeakIt = {
               translateContainer.classList.remove('translation-correct');
               translateContainer.classList.remove('translation-error');
               translateContainer.innerText = speakedWord;
+
 
               if (wordsArr.includes(speakedWord)) {
                 const speakedWordDiv = wordsContainer.querySelector(`[data-word='${speakedWord}']`);
@@ -540,23 +574,22 @@ const SpeakIt = {
     };
 
 
-    const levelStartButtonClick = async () => {
-      mode = 'level';
-      await game();
-      translateContainer.textContent = 'Прослушай новые слова и нажми «Начать&#160игру»';
-    };
     const startButtonClick = async () => { // обработчик нажатия на "Start"
-      mode = 'repeat';
-      words = await getRepeatWords();
-
-      if (words.length < 10) {
-        words = null;
-        mode = 'level';
-        await game();
-        translateContainer.textContent = 'Недостаточно слов для повторения, игра идет с новыми словами';
+    translateContainer.style.width = 'auto';
+      if (mode === 'repeat') {
+        words = await getRepeatWords();
+        if (words.length < 10) {
+          words = null;
+          mode = 'level';
+          await game();
+          translateContainer.innerHTML = 'Недостаточно слов для повторения, игра идёт с новыми словами';
+        } else {
+          await game(words);
+          translateContainer.innerHTML = 'Нажми на любое слово, чтобы прослушать его произношение. <br> Когда будешь готов произнести слова, нажми «Начать&#160игру»';
+        }
       } else {
-        await game(words);
-        translateContainer.innerHTML = 'Прослушай слова для повторения и нажми «Начать&#160игру»';
+        await game();
+        translateContainer.innerHTML = 'Нажми на любое слово, чтобы прослушать его произношение. <br> Когда будешь готов произнести слова, нажми «Начать&#160игру»';
       }
     };
     function renderGlobalResults() {
@@ -575,6 +608,21 @@ const SpeakIt = {
       globalStats();
     };
 
+    const setPlayMod = (e) => {
+      const repeatTarget = document.querySelector('.allGames__choice_learn');
+      const learnTarget = document.querySelector('.allGames__choice_new');
+      if (e.target.closest('.allGames__choice_learn')) {
+        mode = 'repeat';
+        repeatTarget.classList.add('select');
+        learnTarget.classList.remove('select');
+      }
+      if (e.target.closest('.allGames__choice_new')) {
+        mode = 'level';
+        repeatTarget.classList.remove('select');
+        learnTarget.classList.add('select');
+      }
+    };
+
 
     function setImage(image) { // установить картинку
       const imgContainer = document.querySelector('.pic__image img');
@@ -582,7 +630,7 @@ const SpeakIt = {
     }
 
     async function setTranslate(word) { // получить перевод слова и вставить его на страницу
-      const url = `${config.YaTranslateApiUrl} text = ${word}& lang=en - ru`;
+      const url = `${config.YaTranslateApiUrl}text=${word}&lang=en-ru`;
       const translationObj = await fetch(url);
       const json = await translationObj.json();
       const translation = json.text[0];
@@ -620,23 +668,23 @@ const SpeakIt = {
 
 
     /*
-    const changeLevelClick = (e) => { // обработчик выбора уровня сложности
-      const { target } = e;
-      if (!target.classList.contains('lev')) {
-        return;
-      }
-      const levs = document.querySelectorAll('.levels__container .lev');
-      levs.forEach((lev) => lev.classList.remove('active'));
+const changeLevelClick = (e) => { // обработчик выбора уровня сложности
+  const { target } = e;
+  if (!target.classList.contains('lev')) {
+    return;
+  }
+  const levs = document.querySelectorAll('.levels__container .lev');
+  levs.forEach((lev) => lev.classList.remove('active'));
 
-      target.classList.add('active');
-      level = target.dataset.lev;
-      game();
-    };
-    */
+  target.classList.add('active');
+  level = target.dataset.lev;
+  game();
+};
+*/
 
 
     function createLevels() {
-      const levelsContainer = document.querySelector('.levels__container');
+      const levelsContainer = document.querySelector('.allGames__choice_levels');
       levels = document.createElement('select');
       levels.name = 'levels';
       levels.id = 'levels';
@@ -679,25 +727,32 @@ const SpeakIt = {
       };
     }
     function start() { // страница "Старт"
-      document.querySelector('.allGames__startScreen-hidden').classList.remove('allGames__startScreen-hidden');
+      // document.querySelector('.allGames__startScreen-hidden').classList.remove('allGames__startScreen-hidden');
       document.querySelector('.allGames__timer').textContent = 3;
       showPage('startPage');
+    }
+    function startScreen() {
+      document.querySelector('.allGames__startScreen-hidden').classList.remove('allGames__startScreen-hidden');
+      document.querySelector('.allGames__playScreen').classList.add('.allGames__playScreen');
+      document.querySelector('.allGames__timer').textContent = 3;
+      showPage('startPage');
+      recognition.onsoundstart = null;
     }
 
 
     function addListeners() { // повесить слушатели событий
       // нажатие на "Старт"
-      const startButton = document.querySelector('.start__button');
+      const startButton = document.querySelector('.allGames__startBtn');
       startButton.addEventListener('click', startButtonClick);
 
 
       const startScreenButton = document.querySelector('.button__startScreen');
-      startScreenButton.addEventListener('click', start);
+      startScreenButton.addEventListener('click', startScreen);
       const startScreenButton2 = document.querySelector('.button__startScreen2');
-      startScreenButton2.addEventListener('click', start);
+      startScreenButton2.addEventListener('click', startScreen);
 
-      const levelStartButton = document.querySelector('.level__start__button');
-      levelStartButton.addEventListener('click', levelStartButtonClick);
+      const choicePlayMode = document.querySelector('.allGames__choice');
+      choicePlayMode.addEventListener('click', setPlayMod);
 
 
       // переключение уровня сложности
