@@ -9,7 +9,11 @@ let timer;
 let time = 60;
 let wordNumber = 0;
 let arrayWord;
-let round = 0;
+let round;
+let level;
+const lengthWord = 30;
+const lengthRound = 30;
+const lengthLevel = 6;
 
 
 const generate = (words) => {
@@ -157,8 +161,23 @@ const timerw = () => {
   }
 };
 
+const nextWord = (model) => {
+  wordNumber += 1;
+  wordNumber = 0;
+  round += 1;
+  if (round > lengthRound) {
+    round = 0;
+    level += 1;
+    if (level > lengthLevel) {
+      level = lengthLevel;
+    }
+  }
+  wordNumber = 0;
+  generateWord(model, round, level);
+};
+
 const game = (model, data) => {
-  console.log(data, wordNumber);
+  console.log(data, wordNumber, round, level);
   const dataCor = data.correct;
   const dataErr = data.incorrect[0].wordTranslate;
   let count = generate([dataCor.word, dataCor.wordTranslate, dataErr, dataCor.audio]);
@@ -166,10 +185,8 @@ const game = (model, data) => {
     count += 1;
     check(count);
     wordNumber += 1;
-    if (wordNumber === 30) {
-      wordNumber = 0;
-      round += 1;
-      generateWord(model, round)
+    if (wordNumber === lengthWord) {
+      nextWord(model);
     } else {
       game(model, arrayWord[wordNumber]);
     }
@@ -178,10 +195,8 @@ const game = (model, data) => {
     count += 0;
     check(count);
     wordNumber += 1;
-    if(wordNumber === 30) {
-      wordNumber = 0;
-      round += 1;
-      generateWord(model, round)
+    if (wordNumber === lengthWord) {
+      nextWord(model);
     } else {
       game(model, arrayWord[wordNumber]);
     }
@@ -190,19 +205,18 @@ const game = (model, data) => {
     if (time < 60) {
       if (event.code === 'ArrowLeft') {
         count += 1;
-        check(count);
         document.querySelector('.sprint--game__arrow_left').classList.add('click');
         setTimeout(() => {
           document.querySelector('.sprint--game__arrow_left').classList.remove('click');
-          wordNumber += 1;
-          if(wordNumber === 30) {
-            wordNumber = 0;
-            round += 1;
-            generateWord(model, round);
-          } else {
-            game(model, arrayWord[wordNumber]);
-          }
         }, 100);
+
+        check(count);
+        wordNumber += 1;
+        if (wordNumber === lengthWord) {
+          nextWord(model);
+        } else {
+          game(model, arrayWord[wordNumber]);
+        }
       }
       if (event.code === 'ArrowRight') {
         count += 0;
@@ -211,34 +225,25 @@ const game = (model, data) => {
         setTimeout(() => {
           document.querySelector('.sprint--game__arrow_right').classList.remove('click');
           wordNumber += 1;
-          if(wordNumber === 30) {
-            wordNumber = 0;
-            round += 1;
-            generateWord(model, round)
+          if (wordNumber === lengthWord) {
+            nextWord(model);
           } else {
             game(model, arrayWord[wordNumber]);
           }
         }, 100);
-      }  
+      }
     }
-  };
-  document.querySelector('.allGames__choice_learn').onclick = () => {
-    document.querySelector('.allGames__choice_learn').classList.add('select');
-    document.querySelector('.allGames__choice_new').classList.remove('select');
-    document.querySelector('.allGames__choice_levels').classList.add('hidden');
-  };
-  document.querySelector('.allGames__choice_new').onclick = () => {
-    document.querySelector('.allGames__choice_new').classList.add('select');
-    document.querySelector('.allGames__choice_learn').classList.remove('select');
-    document.querySelector('.allGames__choice_levels').classList.remove('hidden');
   };
 };
 
-const generateWord = (model, round) => {
-  model.getSetOfWordsAndTranslations(1, round, 30, 1).then((data) => {
+const generateWord = (model, choiseRound, choiseLevel) => {
+  round = choiseRound;
+  level = choiseLevel;
+  console.log(round, level);
+  model.getSetOfWordsAndTranslations(level, round, 30, 1).then((data) => {
     arrayWord = data;
-    game(model, arrayWord[wordNumber])
-  })
-}
+    game(model, arrayWord[wordNumber]);
+  });
+};
 
 export { generateWord, timerw };
