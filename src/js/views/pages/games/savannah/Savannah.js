@@ -15,7 +15,7 @@ const Savannah = {
   model: null,
   difficulty: 1,
   round: 1,
-  gameRoundsCount: 10,
+  gameRoundsCount: 10, // количество слов за всю игру
   data: null,
   mistakesCount: 0,
   maxMistakesCount: 5,
@@ -311,6 +311,7 @@ const Savannah = {
                         <option value="3">3</option>
                         <option value="4">4</option>
                         <option value="5">5</option>
+                        <option value="6">6</option>
                     </select>
                     <label>Раунд:</label>
                     <select name="pages" id="pages" size="0">
@@ -393,7 +394,7 @@ const Savannah = {
                         </ul>
                     </div>
                 </div>
-                <button class="savannah--btn  savannah--btn-continue" onclick="document.location.reload()">Продолжить тренировку</button>
+                <button class="savannah--btn  savannah--btn-continue" onclick="document.location.reload()">Играть еще раз</button>
                 <a class="savannah--link" href="/#/statistic">Смотреть статистику по всем играм</a>
                 <a class="savannah--link" href="/">На главную</a>
             </div>
@@ -417,17 +418,20 @@ const Savannah = {
       Savannah.difficulty = document.getElementById('levels').value;
       Savannah.round = document.getElementById('pages').value;
 
+      // если выбрана игра с новыми словами
       if (Savannah.difficulty && Savannah.round && isNewWords) {
         const data = await Savannah.model.getSetOfWordsAndTranslations(Savannah.difficulty,
           Savannah.round - 1, Savannah.gameRoundsCount, 3);
         Savannah.data = Savannah.reformat(data);
         console.log(Savannah.data);
       } else {
-        // заменить на уже изученные слова
-        console.log('изученные слова');
-        const data = await Savannah.model.getSetOfWordsAndTranslations(1, 0,
-          Savannah.gameRoundsCount, 3);
+        // если изученных слов не хватает для игры, берем слова из раунда 1.1
+        const data = (Savannah.model.learnedWordsCounter >= Savannah.gameRoundsCount)
+          ? await Savannah.model.getSetOfLearnedWordsAndTranslations(Savannah.gameRoundsCount, 3)
+          : await Savannah.model.getSetOfWordsAndTranslations(1, 0, Savannah.gameRoundsCount, 3);
+
         Savannah.data = Savannah.reformat(data);
+        console.log(Savannah.data);
       }
     });
 
