@@ -35,6 +35,16 @@
     height: 100vh;
 }
 
+.savannah--progressBar {
+    height: 7px;
+    width: 0px;
+    position: absolute;
+    top: 0;
+    left: 0;
+    background-color: #efc74d;
+    transition: ease 1s;
+}
+
 .savannah--controls {
     box-sizing: border-box;
     position: absolute;

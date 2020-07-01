@@ -108,6 +108,7 @@ const Savannah = {
       if (roundIndex < (this.gameRoundsCount - 1) && this.mistakesCount < this.maxMistakesCount) {
         this.play(roundIndex + 1);
       } else {
+        Utils.removeBlock('.savannah--progressBar');
         Utils.clearBlock('.savannah--controls');
         Utils.clearBlock('.savannah--game');
         this.showStatistics();
@@ -186,6 +187,8 @@ const Savannah = {
       question.classList.add('savannah--game__question-explode');
 
       this.isAnswerSelected = true;
+
+      this.changeProgressBar();
     }, 5500);
 
     // смена раунда или конец игры еще через секунду
@@ -197,6 +200,8 @@ const Savannah = {
         // удаляем таймеры, которые используются при отсутвии ответа
         clearTimeout(timerShowCorrectTranslation);
         clearTimeout(timerChangeRound);
+
+        this.changeProgressBar();
 
         if (target.classList.contains('fl-correct')) {
           // если правильно
@@ -248,6 +253,8 @@ const Savannah = {
         const answers = document.querySelectorAll('.savannah--game__answer');
         const correct = document.querySelector('.fl-correct');
         const translationNumber = correct.getAttribute('data-key');
+
+        this.changeProgressBar();
 
         if (key === translationNumber) {
           // правильно
@@ -302,16 +309,18 @@ const Savannah = {
     this.wrongAnswers = [];
   },
 
+  changeProgressBar() {
+    const progressBar = document.querySelector('.savannah--progressBar');
+    progressBar.style.width = `${Number(progressBar.style.width.slice(0, -2)) + 100 / this.gameRoundsCount}vw`;
+  },
+
   beforeRender() {
     this.clearHeaderAndFooter();
   },
 
   render: async (model) => {
     Savannah.beforeRender();
-
     Savannah.model = model;
-    // const data = await model.getSetOfWordsAndTranslations(1, 0, Savannah.gameRoundsCount, 3);
-    // Savannah.data = Savannah.reformat(data);
 
     const view = `
     <div class="savannah  allGames">
@@ -368,6 +377,7 @@ const Savannah = {
         </section>
 
         <section class="savannah--playScreen  allGames__playScreen  allGames__playScreen-hidden">
+            <div class="savannah--progressBar"></div>
             <div class="savannah--controls">
                 <div class="savannah--sound"></div>
                 <div class="savannah--stars">
