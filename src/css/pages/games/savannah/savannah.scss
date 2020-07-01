@@ -179,6 +179,33 @@
     }
 }
 
+.savannah--game__flower {
+    position: absolute;
+    bottom: 10vh;
+    background-image: url('../../../../img/games/savannah/lotus.svg');
+    background-size: contain;
+    width: 100px;
+    height: 100px;
+    animation: fly 2s ease-in-out infinite;
+    transition: all 0.5s;
+
+    @include media-tablet {
+        bottom: 3vh;
+    }
+}
+
+@keyframes fly {
+    0% {
+        transform: translateY(0);
+    }
+    50% {
+        transform: translateY(10px);
+    }
+    100% {
+        transform: translateY(0);
+    }
+  }
+
 .savannah--stat {
     box-sizing: border-box;
     position: absolute;

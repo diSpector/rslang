@@ -15,7 +15,7 @@ const Savannah = {
   model: null,
   difficulty: 1,
   round: 1,
-  gameRoundsCount: 10, // количество слов за всю игру
+  gameRoundsCount: 30, // количество слов за всю игру
   data: null,
   mistakesCount: 0,
   maxMistakesCount: 5,
@@ -55,6 +55,7 @@ const Savannah = {
     // console.log('words', words);
 
     Utils.createBlockInside('div', ['savannah--game__question', 'savannah--game__question-fall'], game, words[0].word);
+    // Utils.createBlockInside('div', 'savannah--game__question', game, words[0].word);
     const answersList = Utils.createBlockInside('div', 'savannah--game__answersList', game);
 
     const shuffledWords = shuffle(words);
@@ -93,13 +94,22 @@ const Savannah = {
     });
   },
 
+  zoomFlower() {
+    const flower = document.querySelector('.savannah--game__flower');
+    const currentWidth = Number(getComputedStyle(flower).width.slice(0, -2));
+    const currentHeight = Number(getComputedStyle(flower).height.slice(0, -2));
+
+    flower.style.width = `${currentWidth + 10}px`;
+    flower.style.height = `${currentHeight + 10}px`;
+  },
+
   goToNextRound(roundIndex, delay) {
     return setTimeout(() => {
       if (roundIndex < (this.gameRoundsCount - 1) && this.mistakesCount < this.maxMistakesCount) {
         this.play(roundIndex + 1);
       } else {
-        Utils.clearBlock('.savannah--game__question');
-        Utils.clearBlock('.savannah--game__answersList');
+        Utils.clearBlock('.savannah--controls');
+        Utils.clearBlock('.savannah--game');
         this.showStatistics();
       }
     }, delay);
@@ -197,6 +207,11 @@ const Savannah = {
 
           this.correctAnswers.push(this.data[roundIndex][0]);
 
+          if ((this.correctAnswersCount - 1) % 3 === 0 && this.correctAnswersCount !== 1) {
+            this.zoomFlower();
+            const audio = new Audio('src/audio/win.mp3');
+            audio.play();
+          }
           this.playAudio('correct');
 
           this.isAnswerSelected = true;
@@ -243,6 +258,11 @@ const Savannah = {
 
           this.correctAnswers.push(this.data[roundIndex][0]);
 
+          if ((this.correctAnswersCount - 1) % 3 === 0 && this.correctAnswersCount !== 1) {
+            this.zoomFlower();
+            const audio = new Audio('src/audio/win.mp3');
+            audio.play();
+          }
           this.playAudio('correct');
 
           this.isAnswerSelected = true;
@@ -366,6 +386,7 @@ const Savannah = {
                     <div class="savannah--game__answer">неправильно</div>
                     <div class="savannah--game__answer">неправильно</div>
                 </div>
+                <div class="savannah--game__flower"></div>
             </div>
 
             <div class="savannah--stat  savannah--stat-hidden">
