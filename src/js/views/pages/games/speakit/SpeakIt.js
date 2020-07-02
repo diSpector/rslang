@@ -129,7 +129,7 @@ const SpeakIt = {
     const config = {
       wordsApiUrl: 'https://afternoon-falls-25894.herokuapp.com/words?',
       apiMaxPage: 29,
-      repoUrl: 'https://raw.githubusercontent.com/irinainina/rslang-data/master/',
+      repoUrl: 'https://raw.githubusercontent.com/dispector/rslang-data/master/',
       YaTranslateApiUrl: 'https://translate.yandex.net/api/v1.5/tr.json/translate?key=trnsl.1.1.20200322T155651Z.de98a60e6a99185e.089aea4237b51c6db082c966f27a7895cd1e8b44&',
       pages: {
         startPage: 'start',
@@ -153,6 +153,7 @@ const SpeakIt = {
     let errors = 0;
     let page = 0;
     let mode = 'repeat';
+    let endListener = null;
     const correctAudio = new Audio('./src/audio/correct.mp3');
     const errorAudio = new Audio('./src/audio/error.mp3');
     const model = new AppModel();
@@ -188,7 +189,7 @@ const SpeakIt = {
       return repeatWords;
     }
     function playSound(sound) { // проиграть слово
-      const soundPath = config.repoUrl + sound;
+      const soundPath =sound;
 
       const audio = new Audio(soundPath);
       audio.play();
@@ -439,6 +440,10 @@ const SpeakIt = {
       gameInProcess = false;
 
       recognition.onsoundstart = null;
+       recognition.removeEventListener('end', recognition.start);
+     
+      recognition.abort();
+      recognition.stop();
       renderResults();
     };
     async function game(words = null) { // страница "Игра"
@@ -463,7 +468,7 @@ const SpeakIt = {
     const next = async () => {
       if (mode === 'level') {
         if (page < 59) localStorage.setItem('speakItlevel', JSON.stringify({ levels: level, pages: Number(page) + 1 }));
-        else localStorage.setItem('speakItlevel', JSON.stringify({ levels: Number(level) + 1, pages: 0 }));
+        else if (level !== 5) { localStorage.setItem('speakItlevel', JSON.stringify({ levels: 0, pages: 0 })); } else localStorage.setItem('speakItlevel', JSON.stringify({ levels: Number(level) + 1, pages: 0 }));
       }
       game();
     };
@@ -550,7 +555,7 @@ const SpeakIt = {
                 translateContainer.classList.add('translation-correct');
                 const { image } = words.filter((e) => e.word.toLowerCase() === speakedWord)[0];
                 correctAudio.play();
-                imgContainer.src = config.repoUrl + image;
+                imgContainer.src = image;
                 corrects += 1;
                 if (isGameIsEnd()) {
                   saveGameToLocalStorage();
@@ -566,6 +571,7 @@ const SpeakIt = {
         });
 
         recognition.addEventListener('end', recognition.start);
+       
 
         recognition.start();
       } else {
@@ -628,7 +634,7 @@ const SpeakIt = {
 
     function setImage(image) { // установить картинку
       const imgContainer = document.querySelector('.pic__image img');
-      imgContainer.src = config.repoUrl + image;
+      imgContainer.src = image;
     }
 
     async function setTranslate(word) { // получить перевод слова и вставить его на страницу
@@ -690,7 +696,7 @@ const changeLevelClick = (e) => { // обработчик выбора уров�
       levels.name = 'levels';
       levels.id = 'levels';
       const levelsLable = document.createElement('label');
-      levelsLable.textContent = 'Уровень:';
+      levelsLable.textContent = 'Уровень: ';
       levelsLable.for = 'levels';
       for (let i = 0; i < 6; i += 1) {
         const lev = document.createElement('option');
@@ -711,7 +717,7 @@ const changeLevelClick = (e) => { // обработчик выбора уров�
       }
       pages.id = 'pages';
       const pagesLable = document.createElement('label');
-      pagesLable.textContent = 'Раунд:';
+      pagesLable.textContent = ' Раунд: ';
       pagesLable.for = 'pages';
       levelsContainer.append(pagesLable);
       levelsContainer.append(pages);
