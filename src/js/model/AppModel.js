@@ -227,8 +227,8 @@ export default class AppModel {
     return result;
   }
 
-  async getSetOfWordsCustomLength(group, page, wordsPerPage) {
-    const url = `${this.searchString}group=${group}&page=${page}&wordsPerExampleSentenceLTE=${this.maxWordsPerExampleSentence}&wordsPerPage=${wordsPerPage}`;
+  async getSetOfWordsCustomLength(group, page, wordsPerPage = 10, wordsPerExampleSentenceLTE = this.maxWordsPerExampleSentence) {
+    const url = `${this.searchString}group=${group}&page=${page}&wordsPerExampleSentenceLTE=${wordsPerExampleSentenceLTE}&wordsPerPage=${wordsPerPage}`;
     const responce = await fetch(url);
     const data = await responce.json();
     const result = data.map((x) => this.reformatWordData(x));

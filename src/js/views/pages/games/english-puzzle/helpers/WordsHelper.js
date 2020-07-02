@@ -3,7 +3,8 @@ const WordsHelper = {
   /**
    * вернуть массив слов с удаленными тегами <b>
    *
-   * @param {Object[]} words - массив объектов со словами [ {id, group, page, word, translate, textExample, textExampleTranslate ...}] 
+   * @param {Object[]} words - массив объектов со словами:
+   * [ {id, group, page, word, translate, textExample, textExampleTranslate ...}]
    *
    * @return {Object[]} - массив объектов со словами без тегов <br>
    */
@@ -15,20 +16,20 @@ const WordsHelper = {
 
   /**
    * удалить теги <b> из строки
-   * @param {string} phrase 
-   * 
+   * @param {string} phrase
+   *
    * @return {string} строка без тегов <b>
    */
-  replaceTags(phrase) { // 
+  replaceTags(phrase) { //
     const regExp = /<b>(.+)<\/b>/;
     return phrase.replace(regExp, '$1');
   },
 
   /**
    * вернуть массив из угаданных слов из текущего раунда и страницы
-   * @param {Object[]} allWords - все слова раунда 
-   * @param {Object[]} round - текущий раунд 
-   * 
+   * @param {Object[]} allWords - все слова раунда
+   * @param {Object[]} round - текущий раунд
+   *
    * @return [] - массив хар-ками одного слова
    */
   getSolvedBySettings(allWords, round) {
@@ -36,10 +37,10 @@ const WordsHelper = {
   },
 
   /**
-   * вернуть объект слова для текущего раунда 
-   * @param {Object[]} allWords - все слова раунда 
-   * @param {Object[]} round - текущий раунд 
-   * 
+   * вернуть объект слова для текущего раунда
+   * @param {Object[]} allWords - все слова раунда
+   * @param {Object[]} round - текущий раунд
+   *
    * @return [] - массив хар-ками одного слова
    */
   getCurrentBySettings(allWords, round) {
@@ -58,16 +59,17 @@ const WordsHelper = {
     return shuffledWordObjArr;
   },
 
-  /** 
-   * перемешать слова в предложении (алгоритм Фишера-Ейтса) 
+  /**
+   * перемешать слова в предложении (алгоритм Фишера-Ейтса)
    * */
   shuffleArray(wordsArr) {
-    for (let i = wordsArr.length - 1; i > 0; i -= 1) {
+    const newArr = wordsArr; // чтобы избежать "no-param-reassign" eslint
+    for (let i = newArr.length - 1; i > 0; i -= 1) {
       const j = Math.floor(Math.random() * (i + 1));
-      [wordsArr[i], wordsArr[j]] = [wordsArr[j], wordsArr[i]];
+      [newArr[i], newArr[j]] = [newArr[j], newArr[i]];
     }
-    return wordsArr;
-  }
+    return newArr;
+  },
 };
 
 export default WordsHelper;

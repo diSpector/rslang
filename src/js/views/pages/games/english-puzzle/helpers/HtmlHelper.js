@@ -1,7 +1,7 @@
 import Config from '../settings/gameConfig';
 
 const HtmlHelper = {
-  
+
   /** удалить весь динамический контент, спрятать все блоки (игра, результаты) */
   clearAndHideAll() {
     this.clearAll();
@@ -10,11 +10,25 @@ const HtmlHelper = {
 
   /** очистить и скрыть все поля (игра, статистика) */
   clearAll() {
-    // this.clearStartScreen(); // нечего удалять
+    this.clearStartScreen();
     // this.clearTimerScreen(); // нечего удалять
     this.clearGameField();
     this.clearResults();
     this.clearPicture();
+    this.clearStats();
+  },
+
+  /** очистить меню на стартовом экране */
+  clearStartScreen() {
+    const menuLevelContainer = document.getElementById(Config.containers.start.menus.ids.level);
+    const menuPageContainer = document.getElementById(Config.containers.start.menus.ids.page);
+
+    const containers = [
+      menuLevelContainer,
+      menuPageContainer,
+    ];
+
+    this.clearContainers(containers);
   },
 
   /** очистить игровое поле - собранные слова, поле сбора, перемеш. слова и т.д. */
@@ -22,16 +36,12 @@ const HtmlHelper = {
     const donePhrasesContainer = document.querySelector(Config.containers.donePhrases);
     const roundPhraseContainer = document.querySelector(Config.containers.roundPhrase);
     const taskPhraseContainer = document.querySelector(Config.containers.taskPhrase);
-    const menuLevelContainer = document.querySelector(Config.containers.menus.dropDownClass.level);
-    const menuPageContainer = document.querySelector(Config.containers.menus.dropDownClass.page);
     const translationContainer = document.querySelector(Config.containers.translation);
 
     const containers = [
       donePhrasesContainer,
       roundPhraseContainer,
       taskPhraseContainer,
-      menuLevelContainer,
-      menuPageContainer,
       translationContainer,
     ];
 
@@ -42,7 +52,7 @@ const HtmlHelper = {
   clearResults() {
     const failContainer = document.querySelector(Config.containers.resultsFail);
     const failCount = failContainer.querySelector(Config.containers.failCount);
-    const failWordsContainer = failContainer.querySelector(Config.containers.failWords);  
+    const failWordsContainer = failContainer.querySelector(Config.containers.failWords);
     const successContainer = document.querySelector(Config.containers.resultsSuccess);
     const successCount = successContainer.querySelector(Config.containers.successCount);
     const successWordsContainer = successContainer.querySelector(Config.containers.successWords);
@@ -66,6 +76,14 @@ const HtmlHelper = {
     pictureDesc.innerHTML = '';
   },
 
+  /** очистить таблицу со статистикой */
+  clearStats() {
+    const statsTable = document.querySelector(Config.containers.statsTable);
+    const trs = Array.from(statsTable.querySelectorAll('tr'));
+    const trsWithData = trs.slice(1);
+    trsWithData.forEach((tr) => tr.remove());
+  },
+
   /** спрятать все контейнеры (добавить класс) - игра, статистика */
   hideAll() {
     const { pages, containers } = Config;
@@ -80,7 +98,15 @@ const HtmlHelper = {
 
   /** очистить переданные контейнеры (стереть контент) */
   clearContainers(containersArr) {
-    containersArr.forEach((container) => container.innerHTML = '');
+    // containersArr.forEach((container) => container.innerHTML = '');
+    const copyConts = containersArr;
+    copyConts.forEach((container) => this.clearContainer(container));
+  },
+
+  /** очистить один контейнер (стереть контент) */
+  clearContainer(container) {
+    const copyCont = container;
+    copyCont.innerHTML = '';
   },
 
   /** спрятать контейнеры */
@@ -89,44 +115,64 @@ const HtmlHelper = {
       if (!container.classList.contains(Config.cssStyles.hidden)) {
         container.classList.add(Config.cssStyles.hidden);
       }
-    })
+      return true;
+    });
   },
 
   /** показать страницу (удалить спрятанный класс у нее) */
   showPage(selectorStyle) {
     const page = document.querySelector(selectorStyle);
     page.classList.remove(Config.cssStyles.hidden);
+    page.classList.remove(Config.cssStyles.hiddenAll);
   },
 
-  /** 
-   * сделать элемент пустым - серый цвет, фикс ширина, flex-grow = 0; 
-   * 
+  /**
+   * сделать элемент пустым - серый цвет, фикс ширина, flex-grow = 0;
+   *
    * @param {HTMLElement} elem - элемент, который нужно сделать пустым
    * @param {float} width - ширина, которую нужно назначить пустому элементу
    * */
   makeElementEmpty(elem, width) {
-    elem.classList.add(Config.cssStyles.emptyWord);
-    elem.innerHTML = '';
-    elem.style.width = `${width}px`;
-    elem.style.flexGrow = '0';
-    elem.draggable = false;
-    elem.style.backgroundImage = 'none';
+    // elem.classList.add(Config.cssStyles.emptyWord);
+    // elem.innerHTML = '';
+    // elem.style.width = `${width}px`;
+    // elem.style.flexGrow = '0';
+    // elem.draggable = false;
+    // elem.style.backgroundImage = 'none';
+    const copyEl = elem;
+    copyEl.classList.add(Config.cssStyles.emptyWord);
+    copyEl.innerHTML = '';
+    copyEl.style.width = `${width}px`;
+    copyEl.style.flexGrow = '0';
+    copyEl.draggable = false;
+    copyEl.style.backgroundImage = 'none';
   },
 
-  /** получить название картины для вывода (автор - название (год)) 
+  /** получить название картины для вывода (автор - название (год))
    * @param {Object} pictureObj - объект картины { author, name, year }
-   * @return {String} 
+   * @return {String}
    */
   beautifyAuthorText(pictureObj) {
-    const { author, name, year} = pictureObj;
+    const { author, name, year } = pictureObj;
     const authorWoCommas = author.replace(/,/g, '');
     const authorWoCommasArr = authorWoCommas.split(' ');
-    const [ authorName ] = authorWoCommasArr;
+    const [authorName] = authorWoCommasArr;
     const beautifyName = authorName.charAt(0).toUpperCase() + authorName.slice(1).toLowerCase();
     const fullName = (authorWoCommasArr.length > 1)
       ? `${beautifyName} ${authorWoCommasArr[1]}`
       : `${beautifyName}`;
     return `${fullName} - ${name} (${year})`;
+  },
+
+  /** привести тайстамп к формату ДД-ММ-ГГГГ ЧЧ:MM:CC */
+  beautifyUnixDate(timestamp) {
+    const date = new Date(timestamp);
+    const hours = date.getHours();
+    const minutes = `${date.getMinutes()}`;
+    const seconds = `${date.getSeconds()}`;
+    const formattedTime = `${hours}:${minutes}:${seconds}`;
+    // const formattedTime = `${hours}:${minutes.substr(-2)}:${seconds.substr(-2)}`;
+    return formattedTime;
   },
 
 };

@@ -1,6 +1,7 @@
+import Config from '../settings/gameConfig';
+
 const apiBackAddr = 'https://afternoon-falls-25894.herokuapp.com/words';
 const apiGithubAddr = 'https://raw.githubusercontent.com/dispector/rslang-data/master/data/';
-import Config from '../settings/gameConfig';
 
 const Model = {
   getWordsFromBackend: async (group, page) => {
@@ -49,7 +50,7 @@ const Model = {
 
   /**
    * получить из хранилища текущий level, page, round
-   * 
+   *
    * @return {Object} объект с настройками
    */
   getCurrentLevelPageRound: async () => {
@@ -73,7 +74,7 @@ const Model = {
     localStorage.setItem('EnglishPuzzleSettings', JSON.stringify(gameSettingsObj));
   },
 
-  getUserSettings: async() => {
+  getUserSettings: async () => {
     let userSettings = localStorage.getItem('EnglishPuzzleSettings');
     if (!userSettings) {
       userSettings = {
@@ -102,28 +103,28 @@ const Model = {
   },
 
   /** сохранить целиком весь объект настроек */
-  saveUserSettings: async(gameSettingsObj) => {
+  saveUserSettings: async (gameSettingsObj) => {
     localStorage.setItem('EnglishPuzzleSettings', JSON.stringify(gameSettingsObj));
   },
 
   /** сохранить прогресс {level, page, round} */
-  saveProgress: async(progressObj) => {
-    let userSettings = JSON.parse(localStorage.getItem('EnglishPuzzleSettings'));
-    userSettings.progress = Object.assign({}, progressObj);
+  saveProgress: async (progressObj) => {
+    const userSettings = JSON.parse(localStorage.getItem('EnglishPuzzleSettings'));
+    userSettings.progress = { ...progressObj };
     localStorage.setItem('EnglishPuzzleSettings', JSON.stringify(userSettings));
   },
 
   /** сохранить конфиг с подсказками */
-  saveTips: async(tipsObj) => {
-    let userSettings = JSON.parse(localStorage.getItem('EnglishPuzzleSettings'));
-    userSettings.tips = Object.assign({}, tipsObj);
+  saveTips: async (tipsObj) => {
+    const userSettings = JSON.parse(localStorage.getItem('EnglishPuzzleSettings'));
+    userSettings.tips = { ...tipsObj };
     localStorage.setItem('EnglishPuzzleSettings', JSON.stringify(userSettings));
   },
 
   /** сохранить конфиг с подсказками */
   saveStats: async (statsObj) => {
-    let userSettings = JSON.parse(localStorage.getItem('EnglishPuzzleSettings'));
-    userSettings.localStat = Object.assign({}, statsObj);
+    const userSettings = JSON.parse(localStorage.getItem('EnglishPuzzleSettings'));
+    userSettings.localStat = { ...statsObj };
     localStorage.setItem('EnglishPuzzleSettings', JSON.stringify(userSettings));
   },
 
@@ -147,7 +148,50 @@ const Model = {
     }
   },
 
+  /**
+   * получить статистику по конкретной игре с сервера
+   * @param {String} gameName - название игры, для которой нужна статистика
+   * @return {Object[]} массив объектов, каждый из которых содержит следующие ключи:
+   *  {
+   *    'date': (timestamp) integer, // таймстамп даты/времени игры
+   *    'knowCount': integer, // кол-во угаданных слов
+   *    'dontKnowCount': integer, // кол-во неугаданных слов
+   *  }
+   * */
+  getGlobalStats(gameName = 'english-puzzle') {
+    console.log('gameName', gameName);
+    return [
+      {
+        // date: '01-01-2020 05:10:25',
+        date: 1593573947363,
+        knowCount: 5,
+        dontKnowCount: 5,
+      },
+      {
+        // date: '04-06-2020 18:20:25',
+        date: 1593573103475,
+        knowCount: 3,
+        dontKnowCount: 7,
+      },
+    ];
+  },
 
+  /**
+   * сохранить результат игры в глобальную статистику
+   * @param {Object} gameObj - объект с результатом игры
+   * @return {Bool} - успешно ли прошло сохранение
+   *
+   * формат gameObj:
+   *  {
+   *    gameName: string, // название игры (например, 'sprint'),
+   *    date: (timestamp), // результат вызова функции Date.now(),
+   *    knowCount: integer, // кол-во угаданных слов
+   *    dontKnowCount: integer, // кол-во неугаданных слов
+   *  }
+   * */
+  saveGameToGlobalStat(gameObj) {
+    console.log('gameObj', gameObj);
+  },
 };
 
 export default Model;

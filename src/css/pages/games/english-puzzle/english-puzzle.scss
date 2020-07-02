@@ -3,16 +3,15 @@ $imgCommonPath: '../../../../img/common/backgrounds/';
 
 .englishPuzzle {
     width: 100%;
-    padding-top: 300px;
     box-sizing: border-box;
     color: black;
-    padding: 100px;
     font-family: 'Neucha', sans-serif;
+    margin-top: -71px;
+    padding: 0 10px;
 }
 
 .englishPuzzle__background{
     background-image: url($imgCommonPath + 'background4.jpg');
-    // background-image: url($imgPath + 'back_game.jpg');
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
@@ -25,13 +24,17 @@ $imgCommonPath: '../../../../img/common/backgrounds/';
     z-index: -1;
 }
 
-// .englishPuzzle__logout {
-//   display: flex;
-//   justify-content: flex-end;
-//   color: black;
-//   margin-bottom: 20px;
-//   font-size: 2.0rem;
-// }
+.englishPuzzle__startScreen{
+  font-size: 2.0rem;
+}
+
+.englishPuzzle__description{
+  line-height: 30px;
+}
+
+.timerScreen__tip {
+  font-size: 2.0rem;
+}
 
 .logout__button {
   width: 55px;
@@ -54,10 +57,15 @@ $imgCommonPath: '../../../../img/common/backgrounds/';
 
 .englishPuzzle__field {
     background-color: white;
-    border-radius: 7px;
     padding: 20px;
     font-size: 1.8rem;
     box-sizing: border-box;
+    box-shadow: 0 2px 5px 0 rgba(0,0,0,.16), 0 2px 10px 0 rgba(0,0,0,.12);
+    border-radius: 10px;
+}
+
+.englishPuzzle__field, .englishPuzzle__results, .englishPuzzle__picture, .englishPuzzle__stats {
+  margin-top: 200px;
 }
 
 .level__title, .level__current, .page__title, .page__current {
@@ -66,7 +74,7 @@ $imgCommonPath: '../../../../img/common/backgrounds/';
 
 .englishPuzzle__menu {
     display: flex;
-    justify-content: space-between;
+    justify-content: center;
 }
 
 .englishPuzzle__controls {
@@ -113,10 +121,7 @@ $imgCommonPath: '../../../../img/common/backgrounds/';
     position: absolute;
     width: 58px;
     text-align: center;
-    /* border: 1px solid black; */
     border: 1px solid darkgrey;
-
-    /* display: none; */
     background-color: white;
     z-index: 2;
     box-shadow: 0px 0px 5px -2px;
@@ -142,21 +147,24 @@ $imgCommonPath: '../../../../img/common/backgrounds/';
 .tips__button {
     width: 32px;
     height: 32px;
-    background-color: darkgrey;
     margin-left: 10px;
     background-size: 25px 25px;
     background-position: center;
     background-repeat: no-repeat;
     border-radius: 7px;
-}
+    background-color: lightgrey;
 
-.tips__button:hover {
-    /* background-color: rebeccapurple; */
-    cursor: pointer;
+    &:hover {
+      cursor: pointer;
+      box-shadow: 0 0 2px 2px #4ac588;
+    }
+    &:active {
+      background-color: #40c781;
+    }
 }
 
 .tips__button-pushed {
-    background-color: purple;
+    background-color: #40c781;
 }
 
 .tips__button-autosound {
@@ -217,19 +225,11 @@ $imgCommonPath: '../../../../img/common/backgrounds/';
     line-height: 30px; 
 }
 
-.englishPuzzle__phrases-done {
-  // background-image: url('https://raw.githubusercontent.com/jules0802/rslang_data_paintings/master/level1/9th_wave.jpg');
-  // background-position: center;
-  // background-repeat: no-repeat;
-  // box-sizing: border-box;
-}
-
 .phrase__number {
     width: 35px;
     height: 35px;
     border-radius: 50%;
     border: 1px solid grey;
-    /* border: 1px solid black; */
     text-align: center;
     box-shadow: 0px 0px 4px -2px;
     line-height: 34px; 
@@ -244,20 +244,13 @@ $imgCommonPath: '../../../../img/common/backgrounds/';
     box-shadow: 0px 0px 4px -2px;  
     border: 1px solid lightgrey;
     border-bottom: none;
-    // color: white;
-    // text-shadow: white 1px 1px 0px;
     text-shadow: -0 -1px 4px #FFFFFF, 0 -1px 4px #FFFFFF, -0 1px 4px #FFFFFF, 0 1px 4px #FFFFFF;
-}
-
-.phrase:last-child .phrase__words{
-    /* border-bottom: 1px solid black; */
 }
 
 .phrase__word{
     text-align: center;
     padding: 5px 10px;
     flex-grow: 1;
-    /* border-right: 1px solid rgb(156, 144, 144); */
     border-right: 1px solid lightgray;
     position: relative;
     box-sizing: border-box;
@@ -334,21 +327,17 @@ $imgCommonPath: '../../../../img/common/backgrounds/';
 .phrase__words.empty .phrase__word:hover {
     cursor: pointer;
     border: 1px solid darkgrey;
-    /* border: 1px solid black; */
 }
-
 
 .phrase__words.empty.round__done:hover{
     cursor: unset;
 }
 
 .phrase__word-incorrect {
-  // background-color: indianred;
   border-bottom: 2px solid indianred;
 }
 
 .phrase__word-correct {
-  // background-color: lightgreen;
   border-bottom: 2px solid lightgreen;
 }
 
@@ -373,7 +362,6 @@ $imgCommonPath: '../../../../img/common/backgrounds/';
     line-height: 30px;
     flex-grow: 1;
     box-sizing: border-box;
-    // text-shadow: white 1px 1px 0px;
     text-shadow: -0 -1px 4px #FFFFFF, 0 -1px 4px #FFFFFF, -0 1px 4px #FFFFFF, 0 1px 4px #FFFFFF;
 }
 
@@ -384,30 +372,23 @@ $imgCommonPath: '../../../../img/common/backgrounds/';
 .task__word:hover {
     cursor: pointer;
     box-shadow: 0px 0px 4px -2px;  
-    /* border: 1px solid black; */
     border: 1px solid darkgrey;
 }
 
 .task__word.empty:hover {
     cursor: initial;
     box-shadow: none;  
-    /* border: 1px solid black; */
     border: none;
 }
 
 .task__word:active {
-  // opacity: 1;
-  // border: 1px solid green;
   cursor: pointer;
 }
 .task__word-dragged {
-  // opacity: 1;
-  // border: 1px solid green;
   cursor: pointer;
 }
 
 .englishPuzzle__area-underDrag {
-  // border: 1px solid red;
   box-shadow: 0px 0px 4px 1px green;  
 }
 
@@ -415,36 +396,119 @@ $imgCommonPath: '../../../../img/common/backgrounds/';
     margin: 30px auto;
     display: flex;
     justify-content: center;
+    font-size: 1.8rem;
 }
 
 .gameButtons__button{ 
-    background-color: darkslateblue;
+    cursor: pointer;
     color: white;
-    padding: 10px 20px;
+    padding: 6px 20px;
     box-sizing: border-box;
     margin: 0 10px;
+    border: 0;
+    outline: none;
+    border-radius: 3px;
+    transition: 0.1s;
+    background: #fde28e;
+    box-shadow: -3px -3px #e2c774 inset;
+    &:active{
+      background: #efc74d;
+      box-shadow: 3px 3px #caa433 inset;
+    }
+    &:hover{
+      background: #ffe9a6;
+    }
 }
 
 
 .gameButtons__button-idk{
-    background-color: mediumvioletred;
+    background-color: #ef5f5f;
+    box-shadow: inset -3px -3px #c34040;
+
+    &:hover {
+      background-color: lighten( #ef5f5f, 10% );
+    }
+    &:active {
+      background-color: #ef5f5f;
+      box-shadow: 3px 3px darken(#ef5f5f, 10%) inset;
+    }
 }
 
-.gameButtons__button-idk:hover {
-    background-color: purple;
+.gameButtons__button-check {
+    background: #40c781;
+    box-shadow: inset -3px -3px #35a76e;
+    &:hover {
+      background-color: lighten( #40c781, 10% );
+    }
+    &:active {
+      background: #40c781;
+      box-shadow: 3px 3px darken(#35a76e, 10%) inset;
+    }
 }
 
 .gameButtons__button-cont{
-    background-color: green;
-}
-
-.gameButtons__button-cont:hover {
-    background-color: darkgreen;
-}
-
-.gameButtons__button:hover{
     background-color: rebeccapurple;
-    cursor: pointer;
+    box-shadow: inset -3px -3px darken( rebeccapurple, 10% );
+
+    &:hover {
+      background-color: lighten( rebeccapurple, 10% );
+    }
+    &:active {
+      background-color: rebeccapurple;
+      box-shadow: 3px 3px darken(rebeccapurple, 10%) inset;
+    }
+}
+
+.gameButtons__button-res{
+  background-color: darkslateblue;
+  box-shadow: inset -3px -3px darken( darkslateblue, 10% );
+
+  &:hover {
+    background-color: lighten( darkslateblue, 10% );
+  }
+  &:active {
+    background-color: darken( darkslateblue, 20% );
+    box-shadow: 3px 3px lighten(darkslateblue, 10%) inset;
+  }
+}
+
+.gameButtons__button-resCont{
+  background-color: darkslateblue;
+  box-shadow: inset -3px -3px darken( darkslateblue, 10% );
+
+  &:hover {
+    background-color: lighten( darkslateblue, 10% );
+  }
+  &:active {
+    background-color: darken( darkslateblue, 20% );
+    box-shadow: 3px 3px lighten(darkslateblue, 10%) inset;
+  }
+}
+
+.gameButtons__button-repeat {
+  background-color: orange;
+  box-shadow: inset -3px -3px darken( orange, 10% );
+
+  &:hover {
+    background-color: lighten( orange, 10% );
+  }
+  &:active {
+    background-color: darken( orange, 20% );
+    box-shadow: 3px 3px lighten(orange, 10%) inset;
+  }
+}
+
+.gameButtons__button-stats {
+  background-color: lightseagreen;
+  box-shadow: inset -3px -3px darken( lightseagreen, 10% );
+
+  &:hover {
+    background-color: lighten( lightseagreen, 10% );
+  }
+  &:active {
+    background-color: darken( lightseagreen, 20% );
+    box-shadow: 3px 3px lighten(lightseagreen, 10%) inset;
+  }
 }
 
 .gameButtons__button-hidden {
@@ -474,14 +538,18 @@ $imgCommonPath: '../../../../img/common/backgrounds/';
 .englishPuzzle__picture {
   text-align: center;
   font-size: 2.0rem;
+  box-shadow: 0 2px 5px 0 rgba(0,0,0,.16), 0 2px 10px 0 rgba(0,0,0,.12);
+  border-radius: 10px;
 }
 
 .englishPuzzle__results {
-  width: 100%;
-  // padding-top: 300px;
+  width: 600px;
+  margin-left: auto;
+  margin-right: auto;
   box-sizing: border-box;
   color: black;
-  // padding: 100px;
+  box-shadow: 0 2px 5px 0 rgba(0,0,0,.16), 0 2px 10px 0 rgba(0,0,0,.12);
+  border-radius: 10px;
 }
 
 .englishPuzzle__pictureMinField {
@@ -591,13 +659,13 @@ span.count__iknow{
 }
 
 .results__buttons{
-  margin-top: 20px auto;
+  margin-top: 10px auto;
   display: flex;
   justify-content: center;
 }
 
 .results__button {
-  padding: 10px 20px;
+  padding: 6px 20px;
   color: white;
   text-align: center;
   font-size: 1.8rem;
@@ -623,6 +691,22 @@ span.count__iknow{
   background-color: blue;
 }
 
+
+.englishPuzzle__link {
+  width: 100px;
+  text-decoration: underline;
+  margin: 0 auto;
+  text-align: center;
+
+  &:hover{
+    cursor: pointer;
+  }
+}
+
+.englishPuzzle__link-stats {
+  margin-bottom: 10px;
+}
+
 .englishPuzzle__pictureField {
   margin: 0 auto;
   background-color: white;
@@ -645,10 +729,55 @@ span.count__iknow{
   margin-bottom: 20px;
 }
 
+.englishPuzzle__stats {
+  width: 100%;
+  box-sizing: border-box;
+  color: black;
+  box-shadow: 0 2px 5px 0 rgba(0,0,0,.16), 0 2px 10px 0 rgba(0,0,0,.12);
+  border-radius: 10px;
+}
+
+.englishPuzzle__statsField {
+  margin: 0 auto;
+  background-color: white;
+  border-radius: 7px;
+  padding: 30px;
+  font-size: 1.8rem;
+  box-sizing: border-box;
+}
+
+.englishPuzzle__statsTable {
+  width: 100%;
+  border-collapse: collapse;
+
+  & th:last-child {
+    width: 55%;
+  }
+
+  & th {
+    width: 15%;
+    text-align: center;
+    border-bottom: 1px solid lightgray;
+  }
+
+  & td:last-child {
+    width: 55%;
+  }
+
+  & td {
+    width: 15%;
+    text-align: center;
+  }
+}
+
 @media (max-width: 1020px) {
   .englishPuzzle{
-    padding: 100px 20px;
+    padding: 5px 20px;
   }
+  .englishPuzzle__field, .englishPuzzle__results, .englishPuzzle__picture, .englishPuzzle__stats {
+    margin-top: 60px;
+  }
+
   .englishPuzzle__translation {
     height: 40px;
   }
@@ -672,6 +801,9 @@ span.count__iknow{
 }
 
 @media (max-width: 768px) {
+  .englishPuzzle__results {
+    width: 100%;
+  }
   .phrase__word, .task__word {
     padding: 5px 2px;
   }
@@ -707,10 +839,10 @@ span.count__iknow{
 
 @media (max-width: 480px) {
   .englishPuzzle {
-    padding: 100px 0px;
+    padding: 2px 0px;
   }
   .englishPuzzle__field {
-    padding: 5px;
+    padding: 20px 5px;
   }
   .phrase__word {
     padding: 5px 1px;
@@ -735,6 +867,12 @@ span.count__iknow{
   .pictureMin__img {
     background-size: contain;
     height: 150px;
+  }
+  .results__buttons {
+    flex-direction: column;
+    & .results__button {
+      margin-bottom: 10px;
+    }
   }
 }
 

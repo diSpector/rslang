@@ -7,6 +7,13 @@ const EnglishPuzzleConfig = {
       page: 20,
     },
     pictureOffset: -200,
+    timerSeconds: 3,
+    modes: {
+      learn: 'learn',
+      new: 'new',
+    },
+    wordsPerPage: 10,
+    wordsPerSentenceLTE: 10,
   },
 
   api: {
@@ -20,6 +27,7 @@ const EnglishPuzzleConfig = {
     game: 'gameField',
     results: 'resultsField',
     picture: 'pictureField',
+    stats: 'statsField',
   },
 
   containers: {
@@ -32,14 +40,22 @@ const EnglishPuzzleConfig = {
     gameField: '.englishPuzzle__field',
     resultsField: '.englishPuzzle__results',
     pictureField: '.englishPuzzle__picture',
+    statsField: '.englishPuzzle__stats',
 
-    
+    // start
     start: {
-      ids: { // селекты выбора уровня и страницы
-        level: 'level',
-        page: 'pages',
+      menus: {
+        ids: { // селекты выбора уровня и страницы
+          level: 'levels',
+          page: 'pages',
+        },
       },
     },
+
+    learnMode: '.allGames__choice_learn',
+
+    // timer
+    timer: '.allGames__timer',
 
     // game
     menus: {
@@ -54,7 +70,7 @@ const EnglishPuzzleConfig = {
       menuTitle: {
         level: '.level__list',
         page: '.page__list',
-      }
+      },
     },
 
     gameButtons: '.englishPuzzle__buttons.gameButtons',
@@ -73,7 +89,12 @@ const EnglishPuzzleConfig = {
 
     taskPhrase: '.englishPuzzle__task .task__words',
     taskPhraseAll: '.task__words',
-    
+
+    // picture
+    picture: '.englishPuzzle__picture',
+    pictureImg: '.picture__img',
+    pictureDesc: '.picture__desc',
+
     // results
 
     pictureMin: '.englishPuzzle__pictureMinField',
@@ -81,7 +102,7 @@ const EnglishPuzzleConfig = {
     pictureMinDesc: '.pictureMin__desc',
 
     wholeResultsField: '.englishPuzzle__resultsField',
-    
+
     resultsWord: '.block__word',
 
     resultsFail: '.englishPuzzle__results-fail',
@@ -91,12 +112,16 @@ const EnglishPuzzleConfig = {
     resultsSuccess: '.englishPuzzle__results-success',
     successCount: '.count__iknow',
     successWords: '.success__words',
-    
-    resultsButtons: '.englishPuzzle__results .results__buttons',
 
-    picture: '.englishPuzzle__picture',
-    pictureImg: '.picture__img',
-    pictureDesc: '.picture__desc',
+    resultsButtons: '.englishPuzzle__results .results__buttons',
+    resultLinkToMain: '.englishPuzzle__link-start',
+    resultLinkToStats: '.englishPuzzle__link-stats',
+
+    // stats
+
+    statsTable: '.englishPuzzle__statsTable',
+    statsButtons: '.englishPuzzle__statsButtons',
+    statsLink: '.englishPuzzle__stats .englishPuzzle__link-start',
 
   },
 
@@ -113,16 +138,27 @@ const EnglishPuzzleConfig = {
   },
 
   resultsButtons: {
-    continue: '.results__continue',
+    continue: '.gameButtons__button-resCont',
+    repeat: '.gameButtons__button-repeat',
+    stats: '.gameButtons__button-stats',
+  },
+
+  statsButtons: {
+    continue: '.gameButtons__button-resCont',
+    repeat: '.gameButtons__button-repeat',
   },
 
   cssStyles: {
+
+    modeSelected: 'select',
+
     menuItem: 'menu__item',
     hidden: 'englishPuzzle__block-hidden',
+    hiddenAll: 'allGames__startScreen-hidden',
 
     tipButton: 'tips__button',
     tipPushed: 'tips__button-pushed',
-    
+
     roundWord: 'phrase__word',
     roundWordCorrect: 'phrase__word-correct',
     roundWordIncorrect: 'phrase__word-incorrect',
@@ -130,7 +166,7 @@ const EnglishPuzzleConfig = {
     taskWord: 'task__word',
 
     emptyWord: 'empty',
-    
+
     soundIconDisabled: 'sound__icon-disabled',
     soundIconBlink: 'sound__icon-blink',
 
