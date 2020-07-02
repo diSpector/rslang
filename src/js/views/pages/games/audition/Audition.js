@@ -13,8 +13,8 @@ const Audition = {
   settings: {
     model: null,
     wordsInGame: 10,
-    difficulty: 1,
-    round: 1,
+    difficulty: null,
+    round: null,
   },
 
   beforeRender() {
@@ -391,7 +391,6 @@ const Audition = {
         );
       }
     });
-
     Game.initStartScreen();
     Game.startGame(Audition.generateNextWordSlide);
     Audition.generateProgressBar();

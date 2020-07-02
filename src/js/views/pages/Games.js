@@ -5,6 +5,7 @@ import SpeakIt from './games/speakit/SpeakIt';
 import Savannah from './games/savannah/Savannah';
 // import Sprint from './games/english-puzzle/Sprint';
 // import Square from './games/english-puzzle/Square';
+import AllGames from './AllGames';
 import Error404 from './Error404';
 
 const gameList = {
@@ -14,6 +15,7 @@ const gameList = {
   savannah: Savannah,
   // 'sprint'          : Sprint,
   // 'square'          : Square,
+  all: AllGames,
 };
 
 const Games = {

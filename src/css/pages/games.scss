@@ -1,0 +1,100 @@
+.allGames__title {
+  text-align: center;
+}
+
+.allGames__cards {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.allGames__gameCard {
+  position: relative;
+  margin: 10px;
+  color: white;
+  box-sizing: border-box;
+  padding: 16px;
+  width: 480px;
+  height: 144px;
+  background-position: 100% 100%;
+  background-repeat: no-repeat;
+  background-size: contain;
+  border-radius: 10px;
+  box-shadow: 0 0 5px 1px rgba(0, 0, 0, 0.5);
+  cursor: pointer;
+  overflow: hidden;
+  &.audition {
+    background-color: rgb(143, 86, 113);
+    background-image: url(../../img/games/allGames/banners/audition-banner.svg);  
+  }
+  &.sprint {
+    background-color: rgb(88, 97, 135);
+    background-image: url(../../img/games/allGames/banners/sprint-banner.svg);  
+  }
+}
+
+.gameCard__icon {
+  background-image: url(.././../img/games/allGames/icons/information.svg);
+  background-size: 100%;
+  background-repeat: no-repeat;
+  height: 16px;
+  width: 16px;
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  cursor: pointer;
+  opacity: 0.5;
+  transition: opacity 0.2s ease;
+  z-index: 4;
+  &:hover {
+    opacity: 1;
+  }
+}
+
+.gameCard__hint {
+  position: absolute;
+  box-sizing: border-box;
+  width: 100%;
+  height: 100%;
+  padding: 12px 32px 12px 12px;
+  top: 0;
+  left: 0;
+  border-top-left-radius: 8px;
+  border-bottom-left-radius: 8px;
+  z-index: -1;
+  opacity: 0;
+  transform: translateY(-100%);
+  transition: transform .2s ease,opacity .2s ease;
+  &.audition {
+    background-color: rgb(143, 86, 113);
+  }
+  &.sprint {
+    background-color: rgb(88, 97, 135);
+  }
+  &.visible {
+    z-index: 3;
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.gameCard__hint-skills {
+  display: flex;
+  position: absolute;
+  bottom: 20px;
+}
+
+.gameCard__hint-icon {
+  width: 28px;
+  height: 25px;
+  background-repeat: no-repeat;
+  &.listening {
+    background-image: url(../../img/games/allGames/icons/listening.svg);
+  }
+  &.vocabulary {
+    background-image: url(../../img/games/allGames/icons/vocabulary.svg);
+  }
+  &.writing {
+    background-image: url(../../img/games/allGames/icons/writing.svg);
+  }
+}
