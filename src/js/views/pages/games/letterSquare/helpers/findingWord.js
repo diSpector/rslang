@@ -1,4 +1,5 @@
 import words from '../model/words';
+import generateStatistic from './generateStatistic';
 
 let word = '';
 let counterWord = 8;
@@ -7,17 +8,6 @@ const correctAudio = new Audio('src/audio/correct.mp3');
 const errorAudio = new Audio('src/audio/error.mp3');
 
 export default function findingWord() {
-
-  function generateStatistic(guessedWords) {
-    document.querySelector('.letterSquare__game').classList.add('letterSquare-hidden');
-    document.querySelector('.letterSquare__statistic').classList.remove('letterSquare-hidden');
-    addingWords('.letterSquare--statistic__numberWordsFound', guessedWords);
-    words = words.filter((x) => {
-      return guessedWords.indexOf(x) < 0;
-    });
-    addingWords('.letterSquare--statistic__numberWordsNotFound', words);
-  }
-
   function checkWord(letter) {
     word += String(letter);
     const btnCheck = document.querySelector('.letterSquare--wordList__btnCheck');
@@ -29,6 +19,7 @@ export default function findingWord() {
       });
       word = '';
     };
+
     btnCheck.onclick = () => {
       for (let i = 0; i < words.length; i += 1) {
         if (words[i] === word) {
@@ -40,13 +31,14 @@ export default function findingWord() {
           const worList = document.querySelectorAll('.letterSquare--wordList__itemList');
           worList.forEach((item) => {
             if (item.innerHTML === word) {
+              item.classList.remove('letterSquare--wordList__itemList');
               item.classList.add('letterSquare--wordList__foundWord');
             }
           });
           guessedWords.push(word);
           counterWord -= 1;
           if (counterWord === 0) {
-            generateStatistic(guessedWords);
+            generateStatistic();
           }
           break;
         } else if (words[i] !== word && i === words.length - 1) {

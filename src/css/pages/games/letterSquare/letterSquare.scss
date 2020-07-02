@@ -1,3 +1,6 @@
+@import '../../../abstract/mixins.scss';
+@import '../../../abstract/constants.scss';
+
 html, body{
   margin:0;
   padding: 0;
@@ -12,6 +15,24 @@ html, body{
   height: 100vh;
   background-size: 100vw 100vh;
   background-image: url('../../../../img/common/backgrounds/background6.jpg');
+  background-position: center;
+  background-size: cover;
+}
+
+.letterSquare__startScreen {
+  
+}
+
+.letterSquare--description {
+  text-align: center;
+  padding: 0 15px 0 15px;
+  font-size:  3vh;
+}
+
+.letterSquare__heading {
+  padding: 0 15px 0 15px;
+  text-align: center;
+  font-size: 8vh;
 }
 
 .letterSquare--btn__startBtn {
@@ -32,6 +53,9 @@ html, body{
   &:active{
     background: rgb(55, 134, 59);
     box-shadow: 3px 3px #3faf52 inset;
+  }
+  &:hover{
+    background: rgb(143, 207, 137);
   }
 }
 
@@ -93,7 +117,7 @@ html, body{
   display: none;
 }
 
-#timer {
+.letterSquare--game__time {
   position: absolute;
   top: 3%;
   right: 4%;
@@ -106,6 +130,11 @@ html, body{
 }
 
 .letterSquare--wordList__foundWord {
+  font-size: 1.5em;
+  font-weight: bold;
+  margin-top: 0.8em;
+  text-decoration: none;
+  text-align: center;
   text-decoration: line-through;
   color: #cfcccc;
 }
@@ -230,10 +259,10 @@ td:hover {
   justify-content: center;
   display: inline-block;
   position: absolute;
-    top: 20%;
+    top: 18%;
     left: 40%;
   width: 330px;
-  height: 450px;
+  height: 470px;
   border-radius: 16px;
   text-align: center;
   background-color: white;
@@ -241,18 +270,24 @@ td:hover {
 }
 
 .letterSquare--statistic__numberWordsFound {
-  margin-top: 10px;
+  font-size: 1.7em;
   font-weight: bold;
+  margin-top: 0.8em;
+  text-decoration: none;
+  text-align: center;
 }
 
 .letterSquare--statistic__numberWordsNotFound {
-  margin-top: 15px;
+  font-size: 1.7em;
   font-weight: bold;
+  margin-top: 0.8em;
+  text-decoration: none;
+  text-align: center;
 }
 
 .letterSquare--statistic__title {
-  font-size: 2em;
-  height: 60px;
+  font-size: 1.5em;
+  height: 90px;
   width: 330px;
   border-radius: 16px 16px 0 0;
   background: linear-gradient(to top, #faa159, #fd8844);
@@ -261,6 +296,7 @@ td:hover {
 }
 
 .letterSquare--statistic__button--next {
+  font-family: Neucha, sans-serif;;
   border: 0px;
   outline: none;
   border-radius: 3px;
@@ -280,6 +316,7 @@ td:hover {
 }
 
 .letterSquare--statistic__button--back {
+  font-family: Neucha, sans-serif;;
   border: 0px;
   outline: none;
   border-radius: 3px;
@@ -296,4 +333,12 @@ td:hover {
     background: rgb(253, 65, 51);
     box-shadow: 3px 3px #fc2424 inset;
   }
+}
+
+.letterSquare--statistic__wordList__itemList {
+  font-size: 0.8em;
+  font-weight: bold;
+  margin-top: 0.3em;
+  text-decoration: none;
+  text-align: center;
 }

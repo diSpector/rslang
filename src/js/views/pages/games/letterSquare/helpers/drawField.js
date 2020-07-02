@@ -1,15 +1,15 @@
 import words from '../model/words';
 import wordFilling from './addingWordsToTable';
-import startTimer from './timer';
+import timerw from './timer';
 
 export default function drawPlayField() {
   const startBtn = document.querySelector('.letterSquare--btn__startBtn');
 
-  startBtn.onclick = () => {
+  startBtn.addEventListener('click', ({ target }) => {
     document.querySelector('.allGames__startScreen').classList.add('letterSquare-hidden');
     document.querySelector('.letterSquare__game').classList.remove('letterSquare-hidden');
-    startTimer();
-  };
+    timerw();
+  });
 
   const numberСell = 10;
   const playField = document.createElement('table');
@@ -28,14 +28,6 @@ export default function drawPlayField() {
     wordFilling(words[i]);
   }
 
-  function FillCellsRandomLetters(cell) {
-    const tableCell = cell;
-    let cellValue = '';
-    const alphabet = 'abcdefghijklmnopqrstuvwxyz';
-    while (cellValue.length < 1) { cellValue += alphabet[Math.random() * alphabet.length | 0]; }
-    tableCell.innerHTML = cellValue;
-  }
-
   function addingWords(selector, words) {
     const list = document.querySelector(`${selector}`);
     for (let i = 0; i < words.length; i += 1) {
@@ -49,7 +41,10 @@ export default function drawPlayField() {
   for (let r = 0; r < playField.rows.length; r += 1) {
     for (let c = 0; c < playField.rows[r].cells.length; c += 1) {
       if (playField.rows[r].cells[c].innerHTML === '') {
-        FillCellsRandomLetters(playField.rows[r].cells[c]);
+        let cellValue = '';
+        const alphabet = 'abcdefghijklmnopqrstuvwxyz';
+        while (cellValue.length < 1) { cellValue += alphabet[Math.random() * alphabet.length | 0]; }
+        playField.rows[r].cells[c].innerHTML = cellValue;
       }
     }
   }

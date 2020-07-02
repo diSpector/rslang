@@ -1,16 +1,13 @@
 const Game = {
-  startGame: () => {
+  startGame: (cb) => {
     const startScreen = document.querySelector('.allGames__startScreen');
     const timerScreen = document.querySelector('.allGames__timerScreen');
     const playScreen = document.querySelector('.allGames__playScreen');
+    const startBtn = document.querySelector('.allGames__startBtn');
     const timer = document.querySelector('.allGames__timer');
 
     // отображаем таймер при клике
-    startScreen.addEventListener('click', ({ target }) => {
-      if (!target.classList.contains('allGames__startBtn')) {
-        return;
-      }
-
+    startBtn.addEventListener('click', () => {
       startScreen.classList.add('allGames__startScreen-hidden');
       timerScreen.classList.remove('allGames__timerScreen-hidden');
 
@@ -27,13 +24,14 @@ const Game = {
       setTimeout(() => {
         timerScreen.classList.add('allGames__timerScreen-hidden');
         playScreen.classList.remove('allGames__playScreen-hidden');
+        if (cb) cb();
       }, 3000);
     });
   },
 
-  stopGame: () => { },
+  stopGame: () => {},
 
-  showStatistics: () => { },
+  showStatistics: () => {},
 };
 
 export default Game;
