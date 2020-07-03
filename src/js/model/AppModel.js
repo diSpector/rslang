@@ -40,14 +40,15 @@ export default class AppModel {
 
   // get a single learned word
   async getRandomLearnedWord() {
+    if (this.learnedWordsCounter <= 0) {
+      return { 'error': true, 'errorText': 'Недостаточно выученных слов' };
+    }
     const randomIndex = Math.floor(Math.random() * Math.floor(this.learnedWordsCounter));
-    // console.log(this.learnedWordsCounter);
     return this.getWordDataByIndex(randomIndex);
   }
 
   // get a single unknown word
   async getNewUnknownWord() {
-    this.learnedWordsCounter += 1;
     return this.getWordDataByIndex(this.learnedWordsCounter);
   }
 
@@ -62,64 +63,6 @@ export default class AppModel {
     const result = await this.getWordDataByIndex(index);
     // console.log(startOfDifficultyGroup, startOfRound, index, result);
     return result;
-  }
-
-  // initialize user data for the first load
-  setDefaultUserData(userName) {
-    this.userName = userName;
-    this.learnedWordsCounter = 100;
-    this.difficultWords = [];
-    this.deletedWords = [];
-    localStorage.setItem(this.userName, {
-      learnedWordsCounter: this.learnedWordsCounter,
-      difficultWords: [],
-      deletedWords: [],
-      gameStatistics: {
-        englishPuzzle: {
-          level: 0,
-          page: 0,
-          round: 0,
-        },
-        savannah: {},
-        speakIt: {},
-        sprint: {},
-        square: {},
-      },
-    });
-  }
-
-  // save current user data in local storage(on document.unload)
-  saveUserData() {
-    localStorage.setItem('defaultUser', {
-      learnedWordsCounter: this.learnedWordsCounter,
-      difficultWords: this.difficultWords,
-      deletedWords: this.deletedWords,
-      gameStatistics: this.gameStatistics,
-    });
-  }
-
-  // load user data from local storage(currently happens on document.load)
-  loadUserData() {
-    const UserData = localStorage.getItem('defaultUser');
-    // console.log(UserData);
-    if (!UserData) {
-      this.setDefaultUserData();
-    } else {
-      this.learnedWordsCounter = UserData.learnedWordsCounter ? UserData.learnedWordsCounter : 100;
-      this.difficultWords = UserData.difficultWords ? UserData.difficultWords : []; // ?? check this
-      this.deletedWords = UserData.deletedWords ? UserData.deletedWords : [];
-      this.gameStatistics = UserData.gameStatistics ? UserData.gameStatistics : {
-        englishPuzzle: {
-          level: 0,
-          page: 0,
-          round: 0,
-        },
-        savannah: {},
-        speakIt: {},
-        sprint: {},
-        square: {},
-      };
-    }
   }
 
   // manually set counter for learned words, supposed to be used only for debugging!!
@@ -159,14 +102,12 @@ export default class AppModel {
 
   // utilty function, gets word data from API by its index
   async getWordDataByIndex(index) {
-    // console.log(index);
     const group = Math.floor(index / 600);
     const page = Math.floor((index - group * 600) / 20);
     const wordIndex = index - (group * 600) - (page * 20);
     const url = `https://afternoon-falls-25894.herokuapp.com/words?group=${group}&page=${page}`;
     const responce = await fetch(url);
     const data = await responce.json();
-    // console.log(data);
     const result = this.reformatWordData(data[wordIndex]);
     return result;
   }
