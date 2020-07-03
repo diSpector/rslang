@@ -38,25 +38,6 @@ export default class AppModel {
     this.userName = userName;
   }
 
-  // return array of words, which user learned before. NOT FINISHED!!!!
-  async getLearnedWords() {
-    const UserData = localStorage.getItem(this.userName);
-    if (UserData) {
-      this.learnedWordsCounter = UserData.learnedWordsCounter;
-      const url = 'https://afternoon-falls-25894.herokuapp.com/words?group=1&page=1';
-      const responce = await fetch(url);
-      const data = await responce.json();
-      this.learnedWords = [];
-      for (let i = 0; i < data.length; i += 1) {
-        this.learnedWords.push(data[i].word);
-      }
-    } else {
-      this.setDefaultUserData(this.userName);
-      this.learnedWords = [];
-    }
-    return this.learnedWords;
-  }
-
   // get a single learned word
   async getRandomLearnedWord() {
     const randomIndex = Math.floor(Math.random() * Math.floor(this.learnedWordsCounter));
@@ -185,11 +166,12 @@ export default class AppModel {
     const url = `https://afternoon-falls-25894.herokuapp.com/words?group=${group}&page=${page}`;
     const responce = await fetch(url);
     const data = await responce.json();
-    console.log(data);
+    // console.log(data);
     const result = this.reformatWordData(data[wordIndex]);
     return result;
   }
 
+  // выдает случайное слово и 4 неправильных перевода к нему
   async getFivePossibleTranslations() {
     const correctWordData = await this.getNewUnknownWord();
     const incorrectTranslation1Promise = this.getRandomLearnedWord();
@@ -211,6 +193,7 @@ export default class AppModel {
     };
   }
 
+  // выдает случайное слово и один неправильный перевод
   async getTwoPossibleTranslations() {
     const correctWordDataPromise = this.getRandomLearnedWord();
     const incorrectTranslationPromise = this.getRandomLearnedWord();
@@ -222,6 +205,9 @@ export default class AppModel {
     };
   }
 
+  // выдает набор из 20 слов по указанным данным. Аргументы:
+  // group -  сложность, от 0 до 5
+  // page - страница, от 0 до 29
   async getSetOfWords(group, page) {
     const url = `https://afternoon-falls-25894.herokuapp.com/words?group=${group}&page=${page}`;
     const responce = await fetch(url);
@@ -230,6 +216,10 @@ export default class AppModel {
     return result;
   }
 
+  // выдает набор слов указанной длины по данным параметрам. Аргументы:
+  // group -  сложность, от 0 до 5
+  // page - страница, page * wordsPerPage не может быть больше 600
+  // wordsPerPage - количество запрашиваемых слов
   async getSetOfWordsCustomLength(group, page, wordsPerPage) {
     const url = `${this.searchString}group=${group}&page=${page}&wordsPerExampleSentenceLTE=${this.maxWordsPerExampleSentence}&wordsPerPage=${wordsPerPage}`;
     const responce = await fetch(url);
@@ -237,65 +227,6 @@ export default class AppModel {
     const result = data.map((x) => this.reformatWordData(x));
     return result;
   }
-
-  async getSetOfWordsByDifficulty(difficulty, round, roundLength) {
-    let resultArr = [];
-    let firstPage = [];
-    let secondPage = [];
-    let transformedRound;
-    switch (roundLength) {
-      case 10:
-        firstPage = await this.getSetOfWords(difficulty, Math.floor(round / 2));
-        if (round % 2 === 0) {
-          resultArr = firstPage.slice(0, 10);
-        } else {
-          resultArr = firstPage.slice(10);
-        }
-        break;
-      case 20:
-        resultArr = await this.getSetOfWords(difficulty, round);
-        break;
-      case 30:
-        transformedRound = round * 1.5;
-        if (round % 2 === 0) {
-          firstPage = await this.getSetOfWords(difficulty, transformedRound);
-          secondPage = await this.getSetOfWords(difficulty, transformedRound + 1);
-          resultArr = firstPage.concat(secondPage.slice(0, 10));
-        } else {
-          transformedRound = Math.floor(transformedRound);
-          firstPage = await this.getSetOfWords(difficulty, transformedRound);
-          secondPage = await this.getSetOfWords(difficulty, transformedRound + 1);
-          resultArr = firstPage.slice(10).concat(secondPage);
-        }
-        break;
-      default:
-        return null;
-    }
-    return resultArr;
-  }
-
-  // Deprecated!!!
-  /* async getSetOfWordsAndTranslationsOld(difficulty, round, roundLength, numberOfTranslations) {
-    const correctResults = await this.getSetOfWordsByDifficulty(difficulty, round, roundLength);
-    const incorrectTranslationsPromises = [];
-    let incorrectTranslations = [];
-    let incorrectTranslationsSubArray = [];
-    const finalArray = [];
-    let usableDifficulties = [0, 1, 2, 3, 4, 5].filter((x) => x !== difficulty);
-    usableDifficulties = usableDifficulties.slice(0, numberOfTranslations);
-    for (let i = 0; i < numberOfTranslations; i += 1) {
-      incorrectTranslationsPromises.push(this.getSetOfWordsByDifficulty(usableDifficulties[i], round, roundLength));
-    }
-    incorrectTranslations = await Promise.all(incorrectTranslationsPromises);
-    for (let i = 0; i < roundLength; i += 1) {
-      incorrectTranslationsSubArray = [];
-      for (let j = 0; j < numberOfTranslations; j += 1) {
-        incorrectTranslationsSubArray.push(incorrectTranslations[j][i]);
-      }
-      finalArray.push({ correct: correctResults[i], incorrect: incorrectTranslationsSubArray });
-    }
-    return finalArray;
-  } */
 
   // служебная функция, записывающая массив слов данной сложности из гитхаба в модель
   async getWordsDataFromGithub(difficulty) {
@@ -343,6 +274,9 @@ export default class AppModel {
     return finalArray;
   }
 
+  // функция, выдающая набор заданной длины из ВЫУЧЕННЫХ слов и неправильных переводов к ним
+  // numberOfWords - количество запрашиваемых слов, функция тестировалась для значений 10, 20, 30, 60
+  // numberOfTranslations - количество переводов для каждого слова, от 0 до 4
   async getSetOfLearnedWordsAndTranslations(numberOfWords, numberOfTranslations) {
     if (numberOfWords > this.learnedWordsCounter) {
       return null;
@@ -387,6 +321,8 @@ export default class AppModel {
     return this.currentWordSet.slice(startIndex, startIndex + numberOfWords).map((x) => this.reformatWordData(x));
   }
 
+
+  // создание пользователя
   async createUser(user) {
     const validation = this.validateUserData(user);
     if (validation.valid) {
@@ -404,6 +340,7 @@ export default class AppModel {
     return { data: null, error: validation.error, errorText: validation.errorText };
   }
 
+  // логин пользователя
   async loginUser(user) {
     const validation = this.validateUserData(user);
     if (validation.valid) {
@@ -424,6 +361,7 @@ export default class AppModel {
     return { data: null, error: validation.error, errorText: validation.errorText };
   }
 
+  // служебная функция для валидации вводимых данных пользователя
   validateUserData(user) {
     if (!user.email || !this.emailValidator.test(user.email)) {
       return { error: true, errorText: 'Enter correct email please', valid: false };
@@ -434,6 +372,7 @@ export default class AppModel {
     return { error: false, errorText: '', valid: true };
   }
 
+  // сохранение стратистики
   async saveStats(stats) {
     const rawResponse = await fetch(`https://afternoon-falls-25894.herokuapp.com/users/${this.userId}/statistics`, {
       method: 'PUT',
@@ -449,6 +388,7 @@ export default class AppModel {
     console.log(content);
   }
 
+  // получение статистики залогиненного пользователя
   async getStats() {
     const rawResponse = await fetch(`https://afternoon-falls-25894.herokuapp.com/users/${this.userId}/statistics`, {
       method: 'GET',
