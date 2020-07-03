@@ -33,6 +33,7 @@ export default class AppModel {
     this.userId = null;
     this.emailValidator = /^[-.\w]+@(?:[a-z\d]{2,}\.)+[a-z]{2,6}$/;
     this.passwordValidator = /^(?=.*[A-Z])(?=.*[a-z])(?=.*[0-9])(?=.*[+\-_@$!%*?&#.,;:[\]{}])[\S]{8,}$/;
+    this.serverErrorMessage = 'Ошибка при обращении к серверу';
   }
 
   // change current user to new one
@@ -63,7 +64,6 @@ export default class AppModel {
     const startOfRound = startOfDifficultyGroup + Math.floor((this.wordSetLength / roundLength) * round);
     const index = startOfRound + Math.floor(Math.random() * roundLength);
     const result = await this.getWordDataByIndex(index);
-    // console.log(startOfDifficultyGroup, startOfRound, index, result);
     return result;
   }
 
@@ -104,14 +104,21 @@ export default class AppModel {
 
   // utilty function, gets word data from API by its index
   async getWordDataByIndex(index) {
+    if (index < 0 || index >= this.maxDictionaryLength) {
+      return { 'error': true, 'errorText': 'Неверный индекс слова' };
+    }
     const group = Math.floor(index / this.wordSetLength);
     const page = Math.floor((index - group * this.wordSetLength) / this.defaultPageLength);
     const wordIndex = index - (group * this.wordSetLength) - (page * this.defaultPageLength);
     const url = `${this.searchString}group=${group}&page=${page}`;
-    const responce = await fetch(url);
-    const data = await responce.json();
-    const result = this.reformatWordData(data[wordIndex]);
-    return result;
+    try {
+      const responce = await fetch(url);
+      const data = await responce.json();
+      const result = this.reformatWordData(data[wordIndex]);
+      return result;
+    } catch (e) {
+      return { 'error': true, 'errorText': this.serverErrorMessage };
+    }
   }
 
   // выдает случайное слово и 4 неправильных перевода к нему
@@ -125,6 +132,21 @@ export default class AppModel {
     const incorrectTranslation2 = await incorrectTranslation2Promise;
     const incorrectTranslation3 = await incorrectTranslation3Promise;
     const incorrectTranslation4 = await incorrectTranslation4Promise;
+    if (correctWordData.error) {
+      return correctWordData.errorText;
+    }
+    if (incorrectTranslation1.error) {
+      return incorrectTranslation1.errorText;
+    }
+    if (incorrectTranslation2.error) {
+      return incorrectTranslation2.errorText;
+    }
+    if (incorrectTranslation3.error) {
+      return incorrectTranslation3.errorText;
+    }
+    if (incorrectTranslation4.error) {
+      return incorrectTranslation4.errorText;
+    }
     return {
       correct: correctWordData,
       incorrect: [
@@ -142,6 +164,12 @@ export default class AppModel {
     const incorrectTranslationPromise = this.getRandomLearnedWord();
     const correctWordData = await correctWordDataPromise;
     const incorrectTranslation = await incorrectTranslationPromise;
+    if (correctWordData.error) {
+      return correctWordData.errorText;
+    }
+    if (incorrectTranslation.error) {
+      return incorrectTranslation.errorText;
+    }
     return {
       correct: correctWordData,
       incorrect: incorrectTranslation.wordTranslate,
@@ -152,11 +180,18 @@ export default class AppModel {
   // group -  сложность, от 0 до 5
   // page - страница, от 0 до 29
   async getSetOfWords(group, page) {
+    if (group < 0 || group > 5 || page < 0 || page > 29) {
+      return { 'error': true, 'errorText': 'Некорректные аргументы функции' };
+    }
     const url = `${this.searchString}group=${group}&page=${page}`;
-    const responce = await fetch(url);
-    const data = await responce.json();
-    const result = data.map((x) => this.reformatWordData(x));
-    return result;
+    try {
+      const responce = await fetch(url);
+      const data = await responce.json();
+      const result = data.map((x) => this.reformatWordData(x));
+      return result;
+    } catch (e) {
+      return { 'error': true, 'errorText': this.serverErrorMessage };
+    }
   }
 
   // выдает набор слов указанной длины по данным параметрам. Аргументы:
@@ -164,19 +199,31 @@ export default class AppModel {
   // page - страница, page * wordsPerPage не может быть больше 600
   // wordsPerPage - количество запрашиваемых слов
   async getSetOfWordsCustomLength(group, page, wordsPerPage) {
-    const url = `${this.searchString}group=${group}&page=${page}&wordsPerExampleSentenceLTE=${this.maxWordsPerExampleSentence}&wordsPerPage=${wordsPerPage}`;
-    const responce = await fetch(url);
-    const data = await responce.json();
-    const result = data.map((x) => this.reformatWordData(x));
-    return result;
+    if (group < 0 || group > 5 || page < 0 || wordsPerPage < 0 || page * wordsPerPage > 600) {
+      return { 'error': true, 'errorText': 'Некорректные аргументы функции' };
+    }
+    try {
+      const url = `${this.searchString}group=${group}&page=${page}&wordsPerExampleSentenceLTE=${this.maxWordsPerExampleSentence}&wordsPerPage=${wordsPerPage}`;
+      const responce = await fetch(url);
+      const data = await responce.json();
+      const result = data.map((x) => this.reformatWordData(x));
+      return result;
+    } catch (e) {
+      return { 'error': true, 'errorText': this.serverErrorMessage };
+    }
   }
 
   // служебная функция, записывающая массив слов данной сложности из гитхаба в модель
   async getWordsDataFromGithub(difficulty) {
-    const url = `${this.contentBookURL}${difficulty}.json`;
-    const responce = await fetch(url);
-    const data = await responce.json();
-    this.currentWordSet = await data;
+    try {
+      const url = `${this.contentBookURL}${difficulty}.json`;
+      const responce = await fetch(url);
+      const data = await responce.json();
+      this.currentWordSet = await data;
+      return { 'error': false, 'errorText': '' };
+    } catch (e) {
+      return { 'error': true, 'errorText': this.serverErrorMessage };
+    }
   }
 
   // служебная ф-я, достающая из данных модели набор слов для указанного раунда
@@ -194,9 +241,13 @@ export default class AppModel {
     const incorrectTranslations = [];
     let incorrectTranslationsSubArray = [];
     let numberOfCurrentRound;
+    let githubData = {};
     const finalArray = [];
     const totalNumberOfRounds = this.wordSetLength / roundLength;
-    await this.getWordsDataFromGithub(difficulty);
+    githubData = await this.getWordsDataFromGithub(difficulty);
+    if (githubData.error) {
+      return { 'error': true, 'errorText': this.serverErrorMessage };
+    }
     const correctResults = this.getRoundDataFromModel(round, roundLength).map((x) => this.reformatWordData(x));
     do {
       numberOfCurrentRound = Math.floor(Math.random() * totalNumberOfRounds);
@@ -253,13 +304,17 @@ export default class AppModel {
 
   // выдает рандомный массив выученных слов заданной длины
   async getSetOfLearnedWords(numberOfWords) {
+    if (numberOfWords > this.learnedWordsCounter || numberOfWords < 1) {
+      return { 'error': true, 'errorText': 'Некорректные аргументы функции' };
+    }
     let startIndex = 0;
-    if (numberOfWords > this.learnedWordsCounter) {
-      return null;
+    let githubData = {};
+    if (githubData.error) {
+      return { 'error': true, 'errorText': this.serverErrorMessage };
     }
     const randomSeed = Math.floor(Math.random() * (this.learnedWordsCounter - numberOfWords));
     const randomDifficulty = Math.floor(randomSeed / this.wordSetLength) + 1;
-    await this.getWordsDataFromGithub(randomDifficulty);
+    githubData = await this.getWordsDataFromGithub(randomDifficulty);
     startIndex = randomSeed - randomDifficulty * this.wordSetLength;
     return this.currentWordSet.slice(startIndex, startIndex + numberOfWords).map((x) => this.reformatWordData(x));
   }
@@ -268,7 +323,10 @@ export default class AppModel {
   // создание пользователя
   async createUser(user) {
     const validation = this.validateUserData(user);
-    if (validation.valid) {
+    if (!validation.valid) {
+      return { data: null, error: validation.error, errorText: validation.errorText };
+    }
+    try {
       const rawResponse = await fetch(`${this.backendURL}users`, {
         method: 'POST',
         headers: {
@@ -279,14 +337,18 @@ export default class AppModel {
       });
       const content = await rawResponse.json();
       return { data: content, error: false, errorText: '' };
+    } catch (e) {
+      return { 'error': true, 'errorText': this.serverErrorMessage };
     }
-    return { data: null, error: validation.error, errorText: validation.errorText };
   }
 
   // логин пользователя
   async loginUser(user) {
     const validation = this.validateUserData(user);
-    if (validation.valid) {
+    if (!validation.valid) {
+      return { data: null, error: validation.error, errorText: validation.errorText };
+    }
+    try {
       const rawResponse = await fetch(`${this.backendURL}signin`, {
         method: 'POST',
         headers: {
@@ -300,8 +362,9 @@ export default class AppModel {
       this.authToken = content.token;
       this.userId = content.userId;
       return { data: content, error: false, errorText: '' };
+    } catch (e) {
+      return { 'error': true, 'errorText': this.serverErrorMessage };
     }
-    return { data: null, error: validation.error, errorText: validation.errorText };
   }
 
   // служебная функция для валидации вводимых данных пользователя
@@ -315,33 +378,44 @@ export default class AppModel {
     return { error: false, errorText: '', valid: true };
   }
 
-  // сохранение стратистики
+  // сохранение статистики
   async saveStats(stats) {
-    const rawResponse = await fetch(`${this.backendURL}users/${this.userId}/statistics`, {
-      method: 'PUT',
-      withCredentials: true,
-      headers: {
-        'Authorization': `Bearer ${this.authToken}`,
-        'Accept': 'application/json',
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(stats),
-    });
-    const content = await rawResponse.json();
-    console.log(content);
+    try {
+      const rawResponse = await fetch(`${this.backendURL}users/${this.userId}/statistics`, {
+        method: 'PUT',
+        withCredentials: true,
+        headers: {
+          'Authorization': `Bearer ${this.authToken}`,
+          'Accept': 'application/json',
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(stats),
+      });
+      const content = await rawResponse.json();
+      console.log(content);
+      return { 'error': false, 'errorText': '' };
+    } catch (e) {
+      return { 'error': true, 'errorText': this.serverErrorMessage };
+    }
+
   }
 
   // получение статистики залогиненного пользователя
   async getStats() {
-    const rawResponse = await fetch(`${this.backendURL}users/${this.userId}/statistics`, {
-      method: 'GET',
-      withCredentials: true,
-      headers: {
-        'Authorization': `Bearer ${this.authToken}`,
-        'Accept': 'application/json',
-      },
-    });
-    const content = await rawResponse.json();
-    console.log(content);
+    try {
+      const rawResponse = await fetch(`${this.backendURL}users/${this.userId}/statistics`, {
+        method: 'GET',
+        withCredentials: true,
+        headers: {
+          'Authorization': `Bearer ${this.authToken}`,
+          'Accept': 'application/json',
+        },
+      });
+      const content = await rawResponse.json();
+      console.log(content);
+      return content;
+    } catch (e) {
+      return { 'error': true, 'errorText': this.serverErrorMessage };
+    }
   }
 }

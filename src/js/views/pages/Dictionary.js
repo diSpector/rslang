@@ -15,8 +15,7 @@ const Dictionary = {
     </section>
           `;
 
-    console.log(await model.getStats(
-    ));
+    console.log(await model.getWordDataByIndex(505));
     return view;
   },
   afterRender: async () => {
