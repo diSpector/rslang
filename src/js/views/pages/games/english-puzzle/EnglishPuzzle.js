@@ -554,7 +554,7 @@ const EnglishPuzzle = {
     let newRoundArr = [];
 
     /** draggedParams: { width, order, text } - параметры перетаскиваемого эл-та */
-    const draggedParams = EnglishPuzzle.getClickedElParams(dragEl);
+    const draggedParams = HtmlHelper.getClickedElParams(dragEl);
 
     /** поместить пустой элемент на место, с которого забрали слово */
     HtmlHelper.makeElementEmpty(dragEl, draggedParams.width);
@@ -619,7 +619,7 @@ const EnglishPuzzle = {
 
     const roundArr = roundWords.map((block) => ((block.classList.contains('empty'))
       ? null
-      : EnglishPuzzle.getClickedElParams(block)));
+      : HtmlHelper.getClickedElParams(block)));
     return roundArr;
   },
 
@@ -1162,7 +1162,7 @@ const EnglishPuzzle = {
     const firstNullInd = ArrayHelper.getFirstNullInd(roundArr);
 
     /** clickedParams: { width, order, text, bgImg, bgPos } */
-    const clickedParams = EnglishPuzzle.getClickedElParams(target);
+    const clickedParams = HtmlHelper.getClickedElParams(target);
 
     /** поместить пустой элемент на месте, по которому кликнули */
     HtmlHelper.makeElementEmpty(target, clickedParams.width);
@@ -1212,13 +1212,13 @@ const EnglishPuzzle = {
     }
     const {
       width, text, order, bgImg,
-    } = EnglishPuzzle.getClickedElParams(target);
+    } = HtmlHelper.getClickedElParams(target);
 
     // сделать пустым элемент, по которому кликнули
     HtmlHelper.makeElementEmpty(target, width);
 
     const taskEmptyWord = document.querySelectorAll('.task__words .task__word')[order - 1];
-    EnglishPuzzle.updateElement(taskEmptyWord, text, width, order, bgImg);
+    HtmlHelper.updateElement(taskEmptyWord, text, width, order, bgImg);
 
     EnglishPuzzle.deleteCheckingStyles();
 
@@ -1249,31 +1249,6 @@ const EnglishPuzzle = {
       .querySelectorAll('.englishPuzzle__phrases-round .phrase__word:not(.empty)')
       .length;
     return (howManyWordsInRound === howManyWordCollected);
-  },
-
-  /**
-   * вернуть параметры кликнутого слова - ширину, текст, порядок, задник и позиционирование
-   * @param {HTMLElement} element - html-элемент
-   */
-  getClickedElParams: (element) => ({
-    width: element.getBoundingClientRect().width,
-    text: element.innerHTML,
-    order: element.dataset.orderTask,
-    bgImg: element.style.backgroundImage,
-    bgPos: element.style.backgroundPosition,
-  }),
-
-  /** обновить слово - задать новые текст, ширину, порядок */
-  updateElement: (element, newText, newWidth, newOrder, newBgImg, newBgPos) => {
-    const copyEl = element;
-    copyEl.innerHTML = newText;
-    copyEl.classList.remove('empty');
-    copyEl.style.width = `${newWidth}px`;
-    copyEl.style.flexGrow = '0';
-    copyEl.dataset.orderTask = newOrder;
-    copyEl.draggable = true;
-    copyEl.style.backgroundImage = newBgImg;
-    copyEl.style.backgroundPosition = newBgPos;
   },
 };
 

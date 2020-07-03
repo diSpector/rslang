@@ -182,6 +182,31 @@ const HtmlHelper = {
     elemCopy.style.backgroundPosition = config.bgPos;
   },
 
+  /** обновить слово - задать новые текст, ширину, порядок */
+  updateElement: (element, newText, newWidth, newOrder, newBgImg, newBgPos) => {
+    const copyEl = element;
+    copyEl.innerHTML = newText;
+    copyEl.classList.remove('empty');
+    copyEl.style.width = `${newWidth}px`;
+    copyEl.style.flexGrow = '0';
+    copyEl.dataset.orderTask = newOrder;
+    copyEl.draggable = true;
+    copyEl.style.backgroundImage = newBgImg;
+    copyEl.style.backgroundPosition = newBgPos;
+  },
+
+  /**
+   * вернуть параметры кликнутого слова - ширину, текст, порядок, задник и позиционирование
+   * @param {HTMLElement} element - html-элемент
+   */
+  getClickedElParams: (element) => ({
+    width: element.getBoundingClientRect().width,
+    text: element.innerHTML,
+    order: element.dataset.orderTask,
+    bgImg: element.style.backgroundImage,
+    bgPos: element.style.backgroundPosition,
+  }),
+
 };
 
 export default HtmlHelper;
