@@ -3,6 +3,7 @@
 export default class AppModel {
   constructor() {
     this.searchString = 'https://afternoon-falls-25894.herokuapp.com/words?';
+    this.backendURL = 'https://afternoon-falls-25894.herokuapp.com/';
     this.contentBookURL = 'https://raw.githubusercontent.com/dispector/rslang-data/master/data/book';
     this.contentURL = 'https://raw.githubusercontent.com/dispector/rslang-data/master/';
     this.userName = 'defaultUser';
@@ -25,7 +26,7 @@ export default class AppModel {
       sprint: {},
       square: {},
     };
-    this.defaultUserEmail = '66group@ .com';
+    this.defaultUserEmail = '66group@gmail.com';
     this.defaultUserPassword = 'Gfhjkm_123';
     this.defaultUserId = '5ef6f4c5f3e215001785d617';
     this.authToken = null;
@@ -106,7 +107,7 @@ export default class AppModel {
     const group = Math.floor(index / this.wordSetLength);
     const page = Math.floor((index - group * this.wordSetLength) / this.defaultPageLength);
     const wordIndex = index - (group * this.wordSetLength) - (page * this.defaultPageLength);
-    const url = `https://afternoon-falls-25894.herokuapp.com/words?group=${group}&page=${page}`;
+    const url = `${this.searchString}group=${group}&page=${page}`;
     const responce = await fetch(url);
     const data = await responce.json();
     const result = this.reformatWordData(data[wordIndex]);
@@ -151,7 +152,7 @@ export default class AppModel {
   // group -  сложность, от 0 до 5
   // page - страница, от 0 до 29
   async getSetOfWords(group, page) {
-    const url = `https://afternoon-falls-25894.herokuapp.com/words?group=${group}&page=${page}`;
+    const url = `${this.searchString}group=${group}&page=${page}`;
     const responce = await fetch(url);
     const data = await responce.json();
     const result = data.map((x) => this.reformatWordData(x));
@@ -268,7 +269,7 @@ export default class AppModel {
   async createUser(user) {
     const validation = this.validateUserData(user);
     if (validation.valid) {
-      const rawResponse = await fetch('https://afternoon-falls-25894.herokuapp.com/users', {
+      const rawResponse = await fetch(`${this.backendURL}users`, {
         method: 'POST',
         headers: {
           Accept: 'application/json',
@@ -286,7 +287,7 @@ export default class AppModel {
   async loginUser(user) {
     const validation = this.validateUserData(user);
     if (validation.valid) {
-      const rawResponse = await fetch('https://afternoon-falls-25894.herokuapp.com/signin', {
+      const rawResponse = await fetch(`${this.backendURL}signin`, {
         method: 'POST',
         headers: {
           Accept: 'application/json',
@@ -316,7 +317,7 @@ export default class AppModel {
 
   // сохранение стратистики
   async saveStats(stats) {
-    const rawResponse = await fetch(`https://afternoon-falls-25894.herokuapp.com/users/${this.userId}/statistics`, {
+    const rawResponse = await fetch(`${this.backendURL}users/${this.userId}/statistics`, {
       method: 'PUT',
       withCredentials: true,
       headers: {
@@ -332,7 +333,7 @@ export default class AppModel {
 
   // получение статистики залогиненного пользователя
   async getStats() {
-    const rawResponse = await fetch(`https://afternoon-falls-25894.herokuapp.com/users/${this.userId}/statistics`, {
+    const rawResponse = await fetch(`${this.backendURL}users/${this.userId}/statistics`, {
       method: 'GET',
       withCredentials: true,
       headers: {
