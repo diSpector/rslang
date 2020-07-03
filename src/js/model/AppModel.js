@@ -15,6 +15,7 @@ export default class AppModel {
     this.dailyQuote = 20;
     this.maxWordsPerExampleSentence = 50;
     this.wordSetLength = 600;
+    this.defaultPageLength = 20;
     this.numberOfDifficulties = 6;
     this.currentWordSet = [];
     this.gameStatistics = {
@@ -57,8 +58,8 @@ export default class AppModel {
     if (difficulty > 5 || difficulty < 0) {
       return null;
     }
-    const startOfDifficultyGroup = Math.floor(difficulty * 600);
-    const startOfRound = startOfDifficultyGroup + Math.floor((600 / roundLength) * round);
+    const startOfDifficultyGroup = Math.floor(difficulty * this.wordSetLength);
+    const startOfRound = startOfDifficultyGroup + Math.floor((this.wordSetLength / roundLength) * round);
     const index = startOfRound + Math.floor(Math.random() * roundLength);
     const result = await this.getWordDataByIndex(index);
     // console.log(startOfDifficultyGroup, startOfRound, index, result);
@@ -102,9 +103,9 @@ export default class AppModel {
 
   // utilty function, gets word data from API by its index
   async getWordDataByIndex(index) {
-    const group = Math.floor(index / 600);
-    const page = Math.floor((index - group * 600) / 20);
-    const wordIndex = index - (group * 600) - (page * 20);
+    const group = Math.floor(index / this.wordSetLength);
+    const page = Math.floor((index - group * this.wordSetLength) / this.defaultPageLength);
+    const wordIndex = index - (group * this.wordSetLength) - (page * this.defaultPageLength);
     const url = `https://afternoon-falls-25894.herokuapp.com/words?group=${group}&page=${page}`;
     const responce = await fetch(url);
     const data = await responce.json();
