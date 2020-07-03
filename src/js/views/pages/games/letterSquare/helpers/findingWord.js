@@ -2,14 +2,18 @@ import words from '../model/words';
 import generateStatistic from './generateStatistic';
 
 let word = '';
+let cellNumbers = '';
+let column = '';
+let line = '';
 let counterWord = 8;
 const guessedWords = [];
 const correctAudio = new Audio('src/audio/correct.mp3');
 const errorAudio = new Audio('src/audio/error.mp3');
 
 export default function findingWord() {
-  function checkWord(letter) {
+  function checkWord(letter, idLetters) {
     word += String(letter);
+    cellNumbers += idLetters;
     const btnCheck = document.querySelector('.letterSquare--wordList__btnCheck');
     const btnRemove = document.querySelector('.letterSquare--wordList__btnRemove');
     btnRemove.onclick = () => {
@@ -18,9 +22,49 @@ export default function findingWord() {
         item.classList.remove('td_active');
       });
       word = '';
+      column = '';
+      line = '';
+      cellNumbers = '';
     };
 
     btnCheck.onclick = () => {
+      const arr = cellNumbers.split('');
+      for (let i = 0; i < arr.length; i += 1) {
+        if (i % 2 === 0) {
+          line += arr[i];
+        } else {
+          column += arr[i];
+        }
+      }
+      const lineSort = line.split('').sort().join('');
+      const columnSort = column.split('').sort().join('');
+
+      for (let i = 1; i < column.length; i += 1) {
+        /*console.log('column i - 1: ' + column[i-1]);
+        console.log('column i: ' + column[i]);
+        console.log(column[i - 1] !== column[i]);
+        console.log('lineSort: ' + lineSort);
+        console.log('line: ' + line);
+        console.log(lineSort !== line);*/
+          if (column[i - 1] !== column[i] && lineSort !== line) {
+            console.log(line[i - 1] !== line[i]);
+            console.log(column !== columnSort);
+            errorAudio.play();
+            return;
+          }
+      }
+      for (let i = 1; i < line.length; i += 1) {
+        if (line[i - 1] !== line[i] && column !== columnSort) {
+          /*console.log('line i - 1: ' + line[i-1]);
+          console.log('line i: '+line[i]);
+          console.log('columnSort: ' + columnSort);
+          console.log('column: ' + column);
+          console.log(column !== columnSort);*/
+          errorAudio.play();
+          return;
+        }
+      }
+
       for (let i = 0; i < words.length; i += 1) {
         let wordsProto = words[i];
         let wordProto = word;
@@ -40,6 +84,10 @@ export default function findingWord() {
             }
           });
           guessedWords.push(word);
+          word = '';
+          column = '';
+          line = '';
+          cellNumbers = '';
           counterWord -= 1;
           if (counterWord === 0) {
             generateStatistic();
@@ -49,7 +97,6 @@ export default function findingWord() {
           errorAudio.play();
         }
       }
-      word = '';
     };
   }
 
@@ -61,10 +108,14 @@ export default function findingWord() {
     if (document.getElementById(`${idLetters}`).classList.contains('td_active')) {
       document.getElementById(`${idLetters}`).classList.remove('td_active');
       word = word.replace(`${letter}`, '');
+      cellNumbers = cellNumbers.replace(`${idLetters}`, '');
+      column = '';
+      line = '';
+      console.log(cellNumbers);
       return;
     }
     document.getElementById(`${idLetters}`).classList.add('td_active');
-    checkWord(letter);
+    checkWord(letter, idLetters);
   }
 
   document.querySelector('#myTable').addEventListener('click',
