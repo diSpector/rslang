@@ -198,12 +198,12 @@ export default class AppModel {
   // group -  сложность, от 0 до 5
   // page - страница, page * wordsPerPage не может быть больше 600
   // wordsPerPage - количество запрашиваемых слов
-  async getSetOfWordsCustomLength(group, page, wordsPerPage) {
+  async getSetOfWordsCustomLength(group, page, wordsPerPage = 10, wordsPerExampleSentenceLTE = this.maxWordsPerExampleSentence)  {
     if (group < 0 || group > 5 || page < 0 || wordsPerPage < 0 || page * wordsPerPage > 600) {
       return { 'error': true, 'errorText': 'Некорректные аргументы функции' };
     }
     try {
-      const url = `${this.searchString}group=${group}&page=${page}&wordsPerExampleSentenceLTE=${this.maxWordsPerExampleSentence}&wordsPerPage=${wordsPerPage}`;
+      const url = `${this.searchString}group=${group}&page=${page}&wordsPerExampleSentenceLTE=${wordsPerExampleSentenceLTE}&wordsPerPage=${wordsPerPage}`;
       const responce = await fetch(url);
       const data = await responce.json();
       const result = data.map((x) => this.reformatWordData(x));
