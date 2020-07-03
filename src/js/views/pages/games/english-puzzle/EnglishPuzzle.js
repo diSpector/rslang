@@ -5,6 +5,7 @@ import Model from './helpers/Model';
 import WordsHelper from './helpers/WordsHelper';
 import HtmlHelper from './helpers/HtmlHelper';
 import ArrayHelper from './helpers/ArrayHelper';
+import View from './helpers/View';
 import Config from './settings/gameConfig';
 import Game from '../Game';
 
@@ -100,138 +101,7 @@ const EnglishPuzzle = {
     EnglishPuzzle.beforeRender();
     EnglishPuzzle.appModel = appModel;
     console.log('all settings', EnglishPuzzle.settings);
-    const view = `
-    <div class="englishPuzzle">
-    <div class="englishPuzzle__background"></div>
-    <div class="englishPuzzle__startScreen allGames__startScreen">
-      <h1 class="englishPuzzle__heading allGames__heading">English Puzzle</h1>
-      <p class="englishPuzzle__description allGames__description">
-        Тебе предстоит собирать предложения из слов-фрагментов.<br>
-        Чтобы поставить слово на нужное место, кликни по нему или перетащи мышкой.<br>
-        В одном раунде - 10 предложений, каждому раунду соответствует шедевр живописи.<br>
-        Попробуй открыть их все!
-      </p>
-      <div class="englishPuzzle__choice allGames__choice">
-        <p class="allGames__choice_learn select">Игра с изученными словами</p>
-        <p class="allGames__choice_new">Игра с новыми словами</p>
-        <div class="allGames__choice_levels hidden">
-          <label>Уровень:</label>
-          <select name="levels" id="levels">
-            disabled selected
-          </select>
-          <label>Раунд:</label>
-          <select name="pages" id="pages" size="0">
-          </select>
-        </div>
-      </div>
-      <button class="allGames__startBtn">Начать</button>
-    </div>
-    <div class="englishPuzzle__timerScreen allGames__timerScreen  allGames__timerScreen-hidden">
-      <div class="allGames__timer">3</div>
-      <div class="timerScreen__tip allGames__tip">Используй подсказки "Перевод", "Произношение" и "Фоновый рисунок", если нужна помощь
-      </div>
-    </div>
-    <div class="englishPuzzle__field englishPuzzle__block-hidden allGames__playScreen">
-      <div class="englishPuzzle__menu menu">
-        <div class="menu__tips tips">
-          <div class="tips__button tips__button-autosound" data-tip="autosound" title="Автопроизношение"></div>
-          <div class="tips__button tips__button-translate" data-tip="translate" title="Перевод предложения"></div>
-          <div class="tips__button tips__button-audio" data-tip="audio" title="Прослушать произношение"></div>
-          <div class="tips__button tips__button-picture" data-tip="picture" title="Фоновое изображение"></div>
-        </div>
-      </div>
-      <div class="englishPuzzle__sound sound">
-        <div class="sound__icon"></div>
-      </div>
-      <div class="englishPuzzle__translation"></div>
-
-      <div class="englishPuzzle__phrases phrases">
-        
-        <div class="englishPuzzle__phrases-done"></div>
-        
-        <div class="englishPuzzle__phrases-round"></div>
-          
-        <div class="englishPuzzle__task task">
-          <div class="task__words"></div>
-        </div>
-
-      </div>
-
-      <div class="englishPuzzle__buttons gameButtons">
-        <div class="gameButtons__button gameButtons__button-idk" data-button="idk">Не знаю</div>
-        <div class="gameButtons__button gameButtons__button-check" data-button="check">Проверить</div>
-        <div class="gameButtons__button gameButtons__button-cont" data-button="cont">Продолжить</div>
-        <div class="gameButtons__button gameButtons__button-res" data-button="res">Результаты</div>
-      </div>
-    </div>
-
-    <div class="englishPuzzle__results englishPuzzle__block-hidden">
-      <div class="englishPuzzle__resultsField">
-
-        <div class="englishPuzzle__pictureMinField">
-          <div class="pictureMin__img"></div>
-          <div class="pictureMin__desc"></div>      
-        </div>
-        
-        <div class="englishPuzzle__results-fail">
-          <div class="block__title fail__title">
-            Я не знаю <span class="count__idk"></span>
-          </div>
-          <div class="block__words fail__words">
-          </div>
-        </div>
-
-        <div class="englishPuzzle__results-success">
-          <div class ="block__title success__title">
-            Я знаю <span class="count__iknow"></span>
-          </div>
-          <div class="block__words success__words">
-          </div>
-        </div>
-
-        <div class="englishPuzzle__buttons results__buttons">
-          <div class="results__button gameButtons__button gameButtons__button-repeat" data-button="repeat">Повторить</div>
-          <div class="results__button gameButtons__button gameButtons__button-resCont">Продолжить</div>
-        </div>
-        <div class="englishPuzzle__link englishPuzzle__link-stats">Статистика</div>
-        <div class="englishPuzzle__link englishPuzzle__link-start">На Главную</div>
-
-      </div>
-    </div>
-    <div class="englishPuzzle__picture englishPuzzle__block-hidden">
-      <div class="englishPuzzle__pictureField">
-
-        <div class="picture__img"></div>
-        <div class="picture__desc"></div>
-        <div class="englishPuzzle__buttons">
-          <div class="gameButtons__button gameButtons__button-res" data-button="res">Результаты</div>
-        </div>
-      </div>
-    </div>
-
-    <div class="englishPuzzle__stats englishPuzzle__block-hidden">
-      <div class="englishPuzzle__statsField">
-        <table class="englishPuzzle__statsTable">
-          <tr>
-            <th>#</th>
-            <th>Знаю</th>
-            <th>Не знаю</th>
-            <th>Время игры</th>
-          </tr>
-        </table>
-
-        <div class="englishPuzzle__statsButtons englishPuzzle__buttons">
-          <div class="englishPuzzle__statsButtons gameButtons__button gameButtons__button-repeat" data-button="repeat">Повторить</div>
-          <div class="englishPuzzle__statsButtons gameButtons__button gameButtons__button-resCont">Продолжить</div>
-        </div>
-        <div class="englishPuzzle__link englishPuzzle__link-start">На Главную</div>
-      </div>
-    </div>
-  </div>
-
-
-  </div>
-      `;
+    const view = View.getHtml();
     return view;
   },
 
@@ -252,6 +122,41 @@ const EnglishPuzzle = {
     Game.startGame(() => EnglishPuzzle.loadGame());
   },
 
+  /** загрузить страницу с игрой */
+  loadGame() {
+    EnglishPuzzle.loadPage('game');
+    EnglishPuzzle.fillGamePage();
+    EnglishPuzzle.addListeners();
+  },
+
+  /** загрузить страницу с картиной */
+  loadPicture() {
+    EnglishPuzzle.loadPage('picture');
+    EnglishPuzzle.fillPictureInfo();
+    EnglishPuzzle.addListenersToPicture();
+  },
+
+  /** загрузить страницу с результатами */
+  loadResults() {
+    EnglishPuzzle.loadPage('results');
+    EnglishPuzzle.fillResults();
+    EnglishPuzzle.addListenersToResults();
+  },
+
+  /** загрузить страницу со статистикой со всеми играми */
+  loadStats() {
+    EnglishPuzzle.loadPage('stats');
+    EnglishPuzzle.fillStats();
+    EnglishPuzzle.addListenersToStats();
+  },
+
+  /** отобразить нужную страницу, скрыть остальные */
+  loadPage(pageName) {
+    HtmlHelper.clearAndHideAll();
+    HtmlHelper.showPage(Config.containers[Config.pages[pageName]]);
+  },
+
+  /** склонировать стартовый экран, заполнить меню, поставить начальное знач таймеру */
   fillStartScreen() {
     EnglishPuzzle.cloneStartScreen();
     EnglishPuzzle.fillStartMenus();
@@ -276,6 +181,7 @@ const EnglishPuzzle = {
     EnglishPuzzle.fillStartMenu('page');
   },
 
+  /** заполнить меню уровней/страниц на стартовом экране значениями */
   fillStartMenu(menuKey) {
     const menuContainer = document.getElementById(Config.containers.start.menus.ids[menuKey]);
 
@@ -290,12 +196,6 @@ const EnglishPuzzle = {
   addListenersToStart() {
     const startButton = document.querySelector(Config.startButtons.start);
     startButton.addEventListener('click', EnglishPuzzle.processStartClick);
-  },
-
-  loadGame() {
-    EnglishPuzzle.loadPage('game');
-    EnglishPuzzle.fillGamePage();
-    EnglishPuzzle.addListeners();
   },
 
   /** нажатие на кнопку "Start" на стартовом экране */
@@ -343,8 +243,6 @@ const EnglishPuzzle = {
 
   /** заполнить страницу */
   fillGamePage() {
-    // EnglishPuzzle.hideMenus();
-    // EnglishPuzzle.fillLevelsPagesMenus(),
     EnglishPuzzle.fillDonePhrases();
     EnglishPuzzle.fillRoundPhrase();
     EnglishPuzzle.fillTaskPhrase();
@@ -408,9 +306,7 @@ const EnglishPuzzle = {
           return;
         }
         const taskWordConfig = EnglishPuzzle.settings.taskPictureConfig[i];
-        const taskWordCopy = taskWord;
-        taskWordCopy.style.backgroundImage = taskWordConfig.bgImg;
-        taskWordCopy.style.backgroundPosition = taskWordConfig.bgPos;
+        HtmlHelper.showBgImageByConfig(taskWord, taskWordConfig);
       });
 
       // показать картины на всех НЕПУСТЫХ словах в поле сбора
@@ -420,19 +316,12 @@ const EnglishPuzzle = {
         }
         const order = roundWord.dataset.orderTask;
         const picImg = EnglishPuzzle.settings.taskPictureConfig[order - 1];
-        const roundWordCopy = roundWord;
-        roundWordCopy.style.backgroundImage = picImg.bgImg;
-        roundWordCopy.style.backgroundPosition = picImg.bgPos;
+        HtmlHelper.showBgImageByConfig(roundWord, picImg);
       });
     } else { // если отключена, убрать все картины из поля сбора и из поля перемешанных
-      taskPhraseContainer.forEach((taskWord) => EnglishPuzzle.deleteBgImage(taskWord));
-      roundPhraseContainer.forEach((roundWord) => EnglishPuzzle.deleteBgImage(roundWord));
+      taskPhraseContainer.forEach((taskWord) => HtmlHelper.deleteBgImage(taskWord));
+      roundPhraseContainer.forEach((roundWord) => HtmlHelper.deleteBgImage(roundWord));
     }
-  },
-
-  deleteBgImage(cont) {
-    const copyCont = cont;
-    copyCont.style.backgroundImage = 'none';
   },
 
   /** наполнить поле с выполненными фразами */
@@ -691,11 +580,6 @@ const EnglishPuzzle = {
     }
   },
 
-  /** найти индекс первого null-элемента */
-  getFirstNullInd(arr) {
-    return arr.findIndex((elem) => elem === null);
-  },
-
   /**
    * рендер слов в раунде на основании массива
    * @param {Array} configArr - массив для рендера в формате:
@@ -829,27 +713,6 @@ const EnglishPuzzle = {
     }
   },
 
-
-  /** отобразить нужную страницу, скрыть остальные */
-  loadPage(pageName) {
-    HtmlHelper.clearAndHideAll();
-    HtmlHelper.showPage(Config.containers[Config.pages[pageName]]);
-    // this.removeListeners();
-  },
-
-  // /** клик по кнопке Results */
-  // processResClick: () => {
-  //   EnglishPuzzle.loadPage('results');
-
-  //   // const { settings } = EnglishPuzzle;
-  //   // const newGameSettings = EnglishPuzzle.getNewLevelPageRound(settings.game);
-  //   // settings.game = Object.assign({}, newGameSettings);
-  //   // Model.saveProgress(newGameSettings);
-  //   // Model.saveTips(settings.tips);
-
-  //   EnglishPuzzle.fillResults();
-  // },
-
   /** наполнить страницу результатами */
   fillResults() {
     const { knowWords, idkWords } = this.settings.results;
@@ -924,7 +787,6 @@ const EnglishPuzzle = {
   /** клик по ссылке "На Главную" на стр. результатов */
   processResultsMainClick: async () => {
     EnglishPuzzle.deleteLocalStat();
-    await EnglishPuzzle.render(EnglishPuzzle.appModel);
     EnglishPuzzle.loadStart();
   },
 
@@ -970,13 +832,6 @@ const EnglishPuzzle = {
     EnglishPuzzle.loadStats();
   },
 
-  /** загрузить страницу со статистикой со всеми играми */
-  loadStats() {
-    EnglishPuzzle.loadPage('stats');
-    EnglishPuzzle.fillStats();
-    EnglishPuzzle.addListenersToStats();
-  },
-
   /** наполнить таблицу статистики результатами */
   fillStats() {
     const stats = Model.getGlobalStats('english-puzzle');
@@ -987,7 +842,6 @@ const EnglishPuzzle = {
       Utils.createBlockInside('td', '', tr, game.knowCount);
       Utils.createBlockInside('td', '', tr, game.dontKnowCount);
       Utils.createBlockInside('td', '', tr, HtmlHelper.beautifyUnixDate(game.date));
-      // Utils.createBlockInside('td', '', tr, game.date);
     });
   },
 
@@ -1021,7 +875,6 @@ const EnglishPuzzle = {
   /** клик по кнопке "Continue" на странице результатов */
   processResultsContClick: async () => {
     EnglishPuzzle.deleteLocalStat();
-    // await EnglishPuzzle.render(EnglishPuzzle.appModel);
     await EnglishPuzzle.updateGameData();
     EnglishPuzzle.loadGame();
   },
@@ -1194,12 +1047,8 @@ const EnglishPuzzle = {
     EnglishPuzzle.hideButton('check');
     EnglishPuzzle.showButton('cont');
 
-    // const { round } = EnglishPuzzle.settings.game;
-    // if (round === 9) {
     const tipsContainer = document.querySelector(Config.containers.tips);
     tipsContainer.removeEventListener('click', EnglishPuzzle.processTipClick);
-    // EnglishPuzzle.isPageIsOver = true;
-    // }
   },
 
   /** нажатие на кнопку "Check"
@@ -1245,13 +1094,6 @@ const EnglishPuzzle = {
       EnglishPuzzle.hideButton('idk');
       EnglishPuzzle.hideButton('check');
       EnglishPuzzle.showButton('cont');
-
-      // const { round } = EnglishPuzzle.settings.game;
-      // if (round === 9) {
-      //   // EnglishPuzzle.hideButton('cont');
-      //   // EnglishPuzzle.showButton('res');
-      //   EnglishPuzzle.isPageIsOver = true;
-      // }
     }
   },
 
@@ -1274,7 +1116,6 @@ const EnglishPuzzle = {
     if (settings.game.round !== 0) { // собрано меньше 10 раундов - не надо загружать новые слова
       EnglishPuzzle.clearGameField();
       EnglishPuzzle.updateWordsByRound(settings.game.round);
-      // EnglishPuzzle.afterRender();
       EnglishPuzzle.loadGame();
     } else { // собрано все 10 раундов - загрузить картину
       EnglishPuzzle.settings.results = { ...EnglishPuzzle.settings.localStat };
@@ -1286,28 +1127,9 @@ const EnglishPuzzle = {
         dontKnowCount: EnglishPuzzle.settings.results.idkWords.length,
       });
 
-      EnglishPuzzle.settings.localStat = {
-        knowWords: [],
-        idkWords: [],
-      };
-
-      Model.saveStats(EnglishPuzzle.settings.localStat);
+      EnglishPuzzle.deleteLocalStat();
       EnglishPuzzle.loadPicture();
     }
-  },
-
-  /** загрузить страницу с картиной */
-  loadPicture() {
-    EnglishPuzzle.loadPage('picture');
-    EnglishPuzzle.fillPictureInfo('picture');
-    EnglishPuzzle.addListenersToPicture();
-  },
-
-  /** загрузить страницу с результатами */
-  loadResults() {
-    EnglishPuzzle.loadPage('results');
-    EnglishPuzzle.fillResults();
-    EnglishPuzzle.addListenersToResults();
   },
 
   /** добавить слушатели на страницу с картиной */
@@ -1321,11 +1143,6 @@ const EnglishPuzzle = {
   processPictureResClick() {
     EnglishPuzzle.loadResults();
   },
-
-  // /** обновить конфигурацию подсказок */
-  // updateTipsByRound(tipsObject) {
-  //   EnglishPuzzle.settings.tips = Object.assign({}, tipsObject);
-  // },
 
   /**
    * клик по слову в блоке с перемешанными словами:
@@ -1342,7 +1159,7 @@ const EnglishPuzzle = {
     }
 
     const roundArr = EnglishPuzzle.getRoundArr();
-    const firstNullInd = EnglishPuzzle.getFirstNullInd(roundArr);
+    const firstNullInd = ArrayHelper.getFirstNullInd(roundArr);
 
     /** clickedParams: { width, order, text, bgImg, bgPos } */
     const clickedParams = EnglishPuzzle.getClickedElParams(target);

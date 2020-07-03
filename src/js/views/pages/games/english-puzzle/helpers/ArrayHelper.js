@@ -62,6 +62,11 @@ const ArrayHelper = {
     return resObj;
   },
 
+  /** найти индекс первого null-элемента в массиве*/
+  getFirstNullInd(arr) {
+    return arr.findIndex((elem) => elem === null);
+  },
+
 };
 
 export default ArrayHelper;

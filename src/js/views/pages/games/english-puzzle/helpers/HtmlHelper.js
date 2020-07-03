@@ -133,12 +133,6 @@ const HtmlHelper = {
    * @param {float} width - ширина, которую нужно назначить пустому элементу
    * */
   makeElementEmpty(elem, width) {
-    // elem.classList.add(Config.cssStyles.emptyWord);
-    // elem.innerHTML = '';
-    // elem.style.width = `${width}px`;
-    // elem.style.flexGrow = '0';
-    // elem.draggable = false;
-    // elem.style.backgroundImage = 'none';
     const copyEl = elem;
     copyEl.classList.add(Config.cssStyles.emptyWord);
     copyEl.innerHTML = '';
@@ -173,6 +167,19 @@ const HtmlHelper = {
     const formattedTime = `${hours}:${minutes}:${seconds}`;
     // const formattedTime = `${hours}:${minutes.substr(-2)}:${seconds.substr(-2)}`;
     return formattedTime;
+  },
+
+  /** удалить бэкграунд контейнера */
+  deleteBgImage(cont) {
+    const copyCont = cont;
+    copyCont.style.backgroundImage = 'none';
+  },
+
+  /** отрисовать бэкграунд эл-та в зависимости от конфига */
+  showBgImageByConfig(elem, config) {
+    const elemCopy = elem;
+    elemCopy.style.backgroundImage = config.bgImg;
+    elemCopy.style.backgroundPosition = config.bgPos;
   },
 
 };
