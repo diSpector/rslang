@@ -1,7 +1,6 @@
 import '../../../../../css/pages/games/letterSquare/letterSquare.scss';
 import '../../../../../css/pages/games/allGames.scss';
 import Utils from '../../../../services/Utils';
-import Game from '../game';
 
 import gamePageRendering from './helpers/gamePageRendering';
 import drawPlayField from './helpers/drawField';

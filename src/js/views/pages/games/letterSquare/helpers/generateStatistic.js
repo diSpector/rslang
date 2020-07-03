@@ -3,8 +3,8 @@ let arr2 = '';
 const comma = ',';
 
 export default function generateStatistic() {
-  const unfoundword = document.querySelectorAll('.letterSquare--wordList__itemList');
-  unfoundword.forEach((item) => {
+  const unfoundWord = document.querySelectorAll('.letterSquare--wordList__itemList');
+  unfoundWord.forEach((item) => {
     arr2 += item.innerHTML + comma;
   });
   const foundWord = document.querySelectorAll('.letterSquare--wordList__foundWord');
@@ -15,8 +15,6 @@ export default function generateStatistic() {
   subStr1.splice(-1, 1);
   const subStr2 = arr2.split(',');
   subStr2.splice(-1, 1);
-  console.log(subStr1);
-  console.log(subStr2);
 
   document.querySelector('.letterSquare__game').classList.add('letterSquare-hidden');
   document.querySelector('.letterSquare__statistic').classList.remove('letterSquare-hidden');

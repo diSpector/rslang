@@ -23,7 +23,7 @@ const Home = {
     const loginUserButton = document.querySelector('.login--login-user__button');
     const logOutput = document.querySelector('.login--log_output');
     createUserButton.addEventListener('click', async () => {
-      const responce = await model.createUser({ 'email': emailInput.value, 'password': passwordInput.value });
+      const responce = await model.createUser({ email: emailInput.value, password: passwordInput.value });
       if (responce.error) {
         logOutput.innerHTML = responce.errorText;
       } else {
@@ -32,7 +32,7 @@ const Home = {
     });
     loginUserButton.addEventListener('click', async () => {
       console.log(emailInput.value + passwordInput.value);
-      const responce = await model.loginUser({ 'email': emailInput.value, 'password': passwordInput.value });
+      const responce = await model.loginUser({ email: emailInput.value, password: passwordInput.value });
       if (responce.error) {
         logOutput.innerHTML = responce.errorText;
       } else {

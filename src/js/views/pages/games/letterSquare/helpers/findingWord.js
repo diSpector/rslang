@@ -22,7 +22,11 @@ export default function findingWord() {
 
     btnCheck.onclick = () => {
       for (let i = 0; i < words.length; i += 1) {
-        if (words[i] === word) {
+        let wordsProto = words[i];
+        let wordProto = word;
+        wordsProto = wordsProto.split('').sort().join('');
+        wordProto = wordProto.split('').sort().join('');
+        if (wordsProto === wordProto) {
           correctAudio.play();
           const tdGuessedItem = document.querySelectorAll('.td_active');
           tdGuessedItem.forEach((item) => {
@@ -30,7 +34,7 @@ export default function findingWord() {
           });
           const worList = document.querySelectorAll('.letterSquare--wordList__itemList');
           worList.forEach((item) => {
-            if (item.innerHTML === word) {
+            if (item.innerHTML.split('').sort().join('') === wordProto) {
               item.classList.remove('letterSquare--wordList__itemList');
               item.classList.add('letterSquare--wordList__foundWord');
             }
@@ -53,8 +57,13 @@ export default function findingWord() {
     if (idLetters === 'myTable') {
       return;
     }
-    document.getElementById(`${idLetters}`).classList.add('td_active');
     const letter = document.getElementById(idLetters).innerHTML;
+    if (document.getElementById(`${idLetters}`).classList.contains('td_active')) {
+      document.getElementById(`${idLetters}`).classList.remove('td_active');
+      word = word.replace(`${letter}`, '');
+      return;
+    }
+    document.getElementById(`${idLetters}`).classList.add('td_active');
     checkWord(letter);
   }
 

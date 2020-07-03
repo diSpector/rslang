@@ -3,6 +3,18 @@ import wordFilling from './addingWordsToTable';
 import timerw from './timer';
 
 export default function drawPlayField() {
+
+  document.querySelector('.allGames__choice_learn').onclick = () => {
+    document.querySelector('.allGames__choice_learn').classList.add('select');
+    document.querySelector('.allGames__choice_new').classList.remove('select');
+    document.querySelector('.allGames__choice_levels').classList.add('hidden');
+  };
+  document.querySelector('.allGames__choice_new').onclick = () => {
+    document.querySelector('.allGames__choice_new').classList.add('select');
+    document.querySelector('.allGames__choice_learn').classList.remove('select');
+    document.querySelector('.allGames__choice_levels').classList.remove('hidden');
+  };
+
   const startBtn = document.querySelector('.letterSquare--btn__startBtn');
 
   startBtn.addEventListener('click', ({ target }) => {
