@@ -6,7 +6,9 @@ const AllGames = {
     <div class="allGames">
       <div class="wrapper">
         <h1 class="allGames__title">Все игры</h1>
+        <p class="allGames__description"> В наших играх ты сможешь потренировать свои навыки и улучшить знания английского языка.</p>
         <div class="allGames__cards">
+
           <div class="allGames__gameCard audition" id="audition">
             <div class="gameCard__title">Аудиовызов</div>
             <div class="gameCard__icon"></div>
@@ -18,17 +20,67 @@ const AllGames = {
               </div>
             </div>
           </div>
+
           <div class="allGames__gameCard sprint" id="sprint">
             <div class="gameCard__title">Спринт</div>
-              <div class="gameCard__icon"></div>
-              <div class="gameCard__hint sprint">
-                <div class="gameCard__hint-description">Учит быстро переводить с английского на ваш родной язык. 
-                Для этой тренировки используются слова из вашего словаря.</div>
+            <div class="gameCard__icon"></div>
+            <div class="gameCard__hint sprint">
+                <div class="gameCard__hint-description">Учит быстро переводить с английского на ваш родной язык.</div>
                 <div class="gameCard__hint-skills">
+                  <div class="gameCard__hint-icon vocabulary"></div>
+                </div>
+            </div>
+          </div>
+
+          <div class="allGames__gameCard speakit" id="speakit">
+            <div class="gameCard__title">Скажи это</div>
+            <div class="gameCard__icon"></div>
+            <div class="gameCard__hint speakit">
+              <div class="gameCard__hint-description">Тренировка произношения слов.</div>
+              <div class="gameCard__hint-skills">
                 <div class="gameCard__hint-icon vocabulary"></div>
+                <div class="gameCard__hint-icon voice"></div>
               </div>
             </div>
           </div>
+
+          <div class="allGames__gameCard english-puzzle" id="english-puzzle">
+            <div class="gameCard__title">Пазл</div>
+            <div class="gameCard__icon"></div>
+            <div class="gameCard__hint english-puzzle">
+              <div class="gameCard__hint-description">Учит правильно составлять предложения.</div>
+              <div class="gameCard__hint-skills">
+                <div class="gameCard__hint-icon grammar"></div>
+                <div class="gameCard__hint-icon writing"></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="allGames__gameCard savannah" id="savannah">
+            <div class="gameCard__title">Саванна</div>
+            <div class="gameCard__icon"></div>
+            <div class="gameCard__hint savannah">
+              <div class="gameCard__hint-description">Тренировка развивает словарный запас.</div>
+              <div class="gameCard__hint-skills">
+                <div class="gameCard__hint-icon vocabulary"></div>
+                <div class="gameCard__hint-icon writing"></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="allGames__gameCard square" id="square">
+            <div class="gameCard__title">Буквенный квадрат</div>
+            <div class="gameCard__icon"></div>
+            <div class="gameCard__hint square">
+              <div class="gameCard__hint-description">Буквенный квадрат — классическое упражнение для запоминания новых слов.</div>
+              <div class="gameCard__hint-skills">
+                <div class="gameCard__hint-icon vocabulary"></div>
+                <div class="gameCard__hint-icon writing"></div>
+                <div class="gameCard__hint-icon grammar"></div>
+              </div>
+            </div>
+          </div>
+
         </div>
       </div>
     </div>
