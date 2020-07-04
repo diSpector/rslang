@@ -8,7 +8,9 @@ const timerw = () => {
   time -= 1;
   if (time < 0) {
     clearTimeout(timer);
-    generateStatistic();
+    if (document.querySelector('.letterSquare__statistic').classList.contains('letterSquare-hidden')) {
+      generateStatistic();
+    }
   } else {
     timer = setTimeout(timerw, 1000);
   }

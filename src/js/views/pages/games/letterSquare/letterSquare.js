@@ -6,7 +6,6 @@ import gamePageRendering from './helpers/gamePageRendering';
 import drawPlayField from './helpers/drawField';
 import findingWord from './helpers/findingWord';
 
-
 const letterSquare = {
 
   settings: {

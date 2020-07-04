@@ -2,6 +2,9 @@ import words from '../model/words';
 import wordFilling from './addingWordsToTable';
 import timerw from './timer';
 
+let timer;
+let time = 3;
+
 export default function drawPlayField() {
 
   document.querySelector('.allGames__choice_learn').onclick = () => {
@@ -19,8 +22,20 @@ export default function drawPlayField() {
 
   startBtn.addEventListener('click', ({ target }) => {
     document.querySelector('.allGames__startScreen').classList.add('letterSquare-hidden');
-    document.querySelector('.letterSquare__game').classList.remove('letterSquare-hidden');
-    timerw();
+    document.querySelector('.allGames__timerScreen').classList.remove('allGames__timerScreen-hidden');
+    const timerStart = () => {
+      document.querySelector('.allGames__timer').innerHTML = time;
+      time -= 1;
+      if (time < 0) {
+        clearTimeout(timer);
+        document.querySelector('.letterSquare__game').classList.remove('letterSquare-hidden');
+        document.querySelector('.allGames__timerScreen').classList.add('letterSquare-hidden');
+        timerw();
+      } else {
+        timer = setTimeout(timerStart, 1000);
+      }
+    };
+    timerStart();
   });
 
   const numberСell = 10;

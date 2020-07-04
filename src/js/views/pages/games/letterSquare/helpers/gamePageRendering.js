@@ -2,9 +2,7 @@ export default function gamePageRendering() {
   return `
   <section class="allGames__startScreen letterSquare letterSquare__startScreen">
     <h1 class="allGames__heading letterSquare__heading">Буквенный квадрат</h1>
-      <p class="allGames--description letterSquare--description">Буквенный квадрат — классическое упражнение для запоминания новых слов.
-      <p class="letterSquare--description">Слова могут располагаться слева направо, сверху вниз и наоборот соответственно.
-      Ваша задача — найти все за две минуты!</p>
+      <p class="allGames--description letterSquare--description">Буквенный квадрат — классическое упражнение для запоминания новых слов.</p>
       <div class="allGames__choice letterSquare__choice">
             <p class="allGames__choice_learn select">Игра с изученными словами</p>
             <p class="allGames__choice_new">Игра с новыми словами</p>
@@ -45,6 +43,12 @@ export default function gamePageRendering() {
     <button class="allGames__startBtn letterSquare--btn__startBtn">Начать</button>
   </section>
 
+  <section class="allGames__timerScreen  allGames__timerScreen-hidden letterSquare">
+    <div class="allGames__timer">3</div>
+    <div class="allGames__tip letterSquare__tip">Слова могут располагаться слева направо, сверху вниз и наоборот соответственно.
+    Ваша задача — найти все за две минуты!</div>
+  </section>
+
     <section class="letterSquare letterSquare__game letterSquare-hidden">
       <div class="letterSquare--game__time">120</div>
       <div class="letterSquare--container">
@@ -68,8 +72,10 @@ export default function gamePageRendering() {
         </div>
         <div class="letterSquare--statistic__numberWordsFound">Найденные слова: </div>
         <div class="letterSquare--statistic__numberWordsNotFound">Ненайденные слова: </div>
-        <button class="letterSquare--statistic__button--next" onclick="document.location.reload()">Играть снова</button><br>
-        <button class="letterSquare--statistic__button--back" onclick="location.href='/'">Перейти на главную страницу</button>
+        <button class="letterSquare--statistic__button--play" onclick="document.location.reload()">Играть снова</button>
+        <button class="letterSquare--statistic__button--next" onclick="document.location.reload()">Продолжить</button><br>
+        <a class="letterSquare--statistic__button--back" onclick="location.href='/'">Перейти на главную страницу</a><br>
+        <a class="letterSquare--statistic__button--statistics" href='/#/statistic'>Статистика за все игры</a><br>
       </div>
     </section>
         `;

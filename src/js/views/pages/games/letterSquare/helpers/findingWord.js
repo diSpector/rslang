@@ -6,6 +6,8 @@ let cellNumbers = '';
 let column = '';
 let line = '';
 let counterWord = 8;
+let lineSort;
+let columnSort;
 const guessedWords = [];
 const correctAudio = new Audio('src/audio/correct.mp3');
 const errorAudio = new Audio('src/audio/error.mp3');
@@ -25,6 +27,8 @@ export default function findingWord() {
       column = '';
       line = '';
       cellNumbers = '';
+      lineSort = '';
+      columnSort = '';
     };
 
     btnCheck.onclick = () => {
@@ -36,68 +40,84 @@ export default function findingWord() {
           column += arr[i];
         }
       }
-      const lineSort = line.split('').sort().join('');
-      const columnSort = column.split('').sort().join('');
+      lineSort = line.split('').sort().join('');
+      columnSort = column.split('').sort().join('');
 
-      for (let i = 1; i < column.length; i += 1) {
-        /*console.log('column i - 1: ' + column[i-1]);
-        console.log('column i: ' + column[i]);
-        console.log(column[i - 1] !== column[i]);
-        console.log('lineSort: ' + lineSort);
-        console.log('line: ' + line);
-        console.log(lineSort !== line);*/
-          if (column[i - 1] !== column[i] && lineSort !== line) {
-            console.log(line[i - 1] !== line[i]);
-            console.log(column !== columnSort);
+      let resultColumn = [];
+      let resultLine = [];
+        for (let str of columnSort) {
+          if (!resultColumn.includes(str)) {
+            resultColumn.push(str);
+          }
+        }
+        for (let str of lineSort) {
+          if (!resultLine.includes(str)) {
+            resultLine.push(str);
+          }
+        }
+
+      if (resultColumn.length !== 1) {
+        for (let i = 1; i < lineSort.length; i += 1) {
+          console.log(i);
+          console.log(lineSort[i - 1]);
+          console.log(lineSort[i]);
+          if (lineSort[i] - lineSort[i - 1] !== 0) {
             errorAudio.play();
             return;
           }
-      }
-      for (let i = 1; i < line.length; i += 1) {
-        if (line[i - 1] !== line[i] && column !== columnSort) {
-          /*console.log('line i - 1: ' + line[i-1]);
-          console.log('line i: '+line[i]);
-          console.log('columnSort: ' + columnSort);
-          console.log('column: ' + column);
-          console.log(column !== columnSort);*/
-          errorAudio.play();
-          return;
         }
       }
 
-      for (let i = 0; i < words.length; i += 1) {
-        let wordsProto = words[i];
-        let wordProto = word;
-        wordsProto = wordsProto.split('').sort().join('');
-        wordProto = wordProto.split('').sort().join('');
-        if (wordsProto === wordProto) {
-          correctAudio.play();
-          const tdGuessedItem = document.querySelectorAll('.td_active');
-          tdGuessedItem.forEach((item) => {
-            item.classList.add('td_guessed');
-          });
-          const worList = document.querySelectorAll('.letterSquare--wordList__itemList');
-          worList.forEach((item) => {
-            if (item.innerHTML.split('').sort().join('') === wordProto) {
-              item.classList.remove('letterSquare--wordList__itemList');
-              item.classList.add('letterSquare--wordList__foundWord');
-            }
-          });
-          guessedWords.push(word);
-          word = '';
-          column = '';
-          line = '';
-          cellNumbers = '';
-          counterWord -= 1;
-          if (counterWord === 0) {
-            generateStatistic();
+      if (resultLine.length !== 1) {
+        for (let i = 1; i < resultColumn.length; i += 1) {
+          console.log(i);
+          console.log(resultColumn[i - 1]);
+          console.log(resultColumn[i]);
+          if (resultColumn[i] - resultColumn[i - 1] !== 0) {
+            errorAudio.play();
+            return;
           }
-          break;
-        } else if (words[i] !== word && i === words.length - 1) {
-          errorAudio.play();
         }
       }
-    };
+      check();
+    }
+  };
+
+  function check() {
+    for (let i = 0; i < words.length; i += 1) {
+      let wordsProto = words[i];
+      let wordProto = word;
+      wordsProto = wordsProto.split('').sort().join('');
+      wordProto = wordProto.split('').sort().join('');
+      if (wordsProto === wordProto) {
+        correctAudio.play();
+        const tdGuessedItem = document.querySelectorAll('.td_active');
+        tdGuessedItem.forEach((item) => {
+          item.classList.add('td_guessed');
+        });
+        const worList = document.querySelectorAll('.letterSquare--wordList__itemList');
+        worList.forEach((item) => {
+          if (item.innerHTML.split('').sort().join('') === wordProto) {
+            item.classList.remove('letterSquare--wordList__itemList');
+            item.classList.add('letterSquare--wordList__foundWord');
+          }
+        });
+        guessedWords.push(word);
+        word = '';
+        column = '';
+        line = '';
+        cellNumbers = '';
+        lineSort = '';
+        columnSort = '';
+        counterWord -= 1;
+        if (counterWord === 0) {
+          generateStatistic();
+        }
+        break;
+      } else if (words[i] !== word && i === words.length - 1) {
+        errorAudio.play();
+      }
+    }
   }
 
   function catchLetters(idLetters) {
@@ -111,7 +131,6 @@ export default function findingWord() {
       cellNumbers = cellNumbers.replace(`${idLetters}`, '');
       column = '';
       line = '';
-      console.log(cellNumbers);
       return;
     }
     document.getElementById(`${idLetters}`).classList.add('td_active');
