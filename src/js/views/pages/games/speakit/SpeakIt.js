@@ -32,7 +32,7 @@ const SpeakIt = {
               <p class="allGames__choice_new">Игра с новыми словами</p>
               <div class="allGames__choice_levels hidden"></div>
           </div>
-          <button class="allGames__startBtn  btn">Начать</button>
+          <button class="allGames__startBtn  ">Начать</button>
            
             
         </div>
@@ -76,7 +76,7 @@ const SpeakIt = {
                 
                 <div class="button button__speak">Начать игру</div>
                 <div class="button button__results">Завершить</div>
-                <div class="button button__startScreen2">К старту</div>
+                <div class="button__startScreen2">К старту</div>
             </div>
 
         </div>
@@ -96,11 +96,12 @@ const SpeakIt = {
             <div class="results__words results__uncorrect__words"></div>
             
             <div class="result__buttons">
-                <div class="button button__restart">Повторить</div>
-                <div class="button button__global">Глобальная статистика</div>
-                <div class="button button__next">Продолжить</div>
-                <div class="button button__startScreen">К старту</div>
+                <button class=" button__restart btn">Повторить</button>                
+                <button class=" button__next btn">Продолжить</button>
             </div>
+                <div class="button__global">Глобальная статистика</div>
+                <div class="button__startScreen">К старту</div>
+            
         </div>
         <div class="global">
             <div class="global__header">Статистика по всем завершенным играм</div>
@@ -116,7 +117,7 @@ const SpeakIt = {
             </div>
             <div class="global__buttons">
                 
-                <div class="button button__stats">Назад к статистике</div>
+                <button class="btn button__stats">Назад к статистике</button>
             </div>
         </div>
 
@@ -440,10 +441,16 @@ const SpeakIt = {
       gameInProcess = false;
 
       recognition.onsoundstart = null;
-       recognition.removeEventListener('end', recognition.start);
+      try {
+        recognition.removeEventListener('end', recognition.start);
+        recognition.stop();
+      } catch (error) {
+        
+      }
+       
      
-      recognition.abort();
-      recognition.stop();
+      // recognition.abort();
+      
       renderResults();
     };
     async function game(words = null) { // страница "Игра"
@@ -501,7 +508,7 @@ const SpeakIt = {
       wordsDivs.forEach((wordDiv) => wordDiv.classList.remove('pushed'));
       wordsDivs.forEach((wordDiv) => wordDiv.classList.remove('correct'));
 
-      if (recognition === null) {
+     // if (recognition === null) {
         recognition = new webkitSpeechRecognition();
         recognition.lang = 'en-US';
         recognition.maxAlternatives = 5;
@@ -574,9 +581,9 @@ const SpeakIt = {
        
 
         recognition.start();
-      } else {
+      //} else {
         // this.recognition.start();
-      }
+      //}
     };
 
 
@@ -737,6 +744,16 @@ const changeLevelClick = (e) => { // обработчик выбора уров�
       document.querySelector('.allGames__startScreen-hidden').classList.remove('allGames__startScreen-hidden');
       document.querySelector('.allGames__playScreen').classList.add('allGames__playScreen-hidden');
       document.querySelector('.allGames__timer').textContent = 3;
+
+       try {
+        recognition.removeEventListener('end', recognition.start);
+        //recognition.abort();
+      recognition.stop();
+      } catch (error) {
+        
+      }
+     
+      
       showPage('startPage');
       if (recognition) recognition.onsoundstart = null;
     }
@@ -792,7 +809,7 @@ const changeLevelClick = (e) => { // обработчик выбора уров�
       statWordsContainer.addEventListener('click', statsWordClick);
 
       // показать глобальную статистику приложения
-      const globalStatsButton = document.querySelector('.result__buttons .button__global');
+      const globalStatsButton = document.querySelector('.button__global');
       globalStatsButton.addEventListener('click', globalStatsClick);
 
 
