@@ -1,0 +1,172 @@
+.promo {
+    margin: 90px auto;
+    max-width: 1200px;
+    padding: 0 20px;
+    font-family: 'Roboto', sans-serif;
+    font-size: 18px;
+    
+}
+.promo {
+    h2{
+        font-family: 'Montserrat'
+    }
+    p.quote {
+        margin: 20px;
+        text-align: center;
+        
+        font-style: italic;
+    }
+    q {
+        
+        font-size: 24px;
+        font-family: 'Neucha', sans-serif; /* Шрифт с засечками */
+       // font-style: italic; /* Курсивное начертание текста */
+        color:  rgb(88, 97, 135); /* Синий цвет текста */
+        quotes: "\00ab" "\00bb"; /* Кавычки-елочки */
+       }
+    .part{
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: space-between;
+        
+    }
+    
+    .part div.text {
+        flex-basis: 2;
+       
+        width: 650px;
+    }
+        
+    .img {
+        flex-basis: 1;
+        margin: 0 auto;
+        
+    }
+    
+    .img img {
+          height: 200px;
+          margin: 0 auto;
+    
+    }
+    .promo__games {
+        text-align: center;
+    }
+    .promo__game__cards {
+        &{
+            display:flex;
+            width: 1200px;
+        flex-wrap: wrap;
+        justify-content: space-between;
+        align-items: center;
+        margin: 0 auto;
+        }
+        @media(max-width: 1400px) {
+            width: 600px;
+        }
+        @media(max-width: 800px) {
+            width: 400px;
+        }
+        @media(max-width: 440px) {
+            width: auto;
+            flex-direction: column;
+        }
+        & > div {
+            width: 170px;
+            height: 170px;
+            border-radius: 10px;
+            margin: 9px;
+            background-repeat: no-repeat;
+            background-size: 100%;
+            //background-position: absolute;
+            font-family: 'Neucha', cursive;
+            color: #fff;
+            text-align: center;
+            box-shadow: 0 0 5px 1px rgba(0, 0, 0, 0.5);
+
+        }
+        h3 {
+            font-weight: 400;
+            margin-block-start: 0.5em;
+        }
+        .audition {
+            background-color: #9bc0c6;
+            background-image: url(../../img/promo/banners/audition-banner.svg);
+            background-position-y: 65px;
+            
+          }
+        .sprint {
+            background-color: rgb(88, 97, 135);
+            background-image: url(../../img/promo/banners/sprint-banner.svg);  
+            background-position-y: 49px;
+           
+          }
+          .speakit {
+            background-color: rgb(30, 128, 240);
+            background-image: url(../../img/promo/banners/speakit-banner.svg);
+            background-position-y: 49px;
+            
+          }
+          .puzzle {
+            background-color: #c28f80;
+            background-image: url(../../img/promo/banners/english-puzzle-banner.svg);
+            background-position-y: 65px;
+          }
+          .savannah {
+            background-color: darkolivegreen;
+            background-image: url(../../img/promo/banners/savannah-banner.svg);
+            background-size: 130%;
+            background-position: -45px 34px;
+          }
+          .square {
+            background-color: indianred;
+            background-image: url(../../img/promo/banners/square-banner.svg);
+            background-size: 150%;
+            background-position: -30px 39px;
+                       
+          }
+        
+
+
+    }
+
+    @media(max-width:1400px) {
+        .part div.img {
+            order: 2;
+        }
+       
+    
+      .img img {
+            height: 150px;
+              
+      }
+     .part div.text{
+          width: auto;
+      }
+     
+    .part {
+        flex-direction: column;
+    }
+    
+    }
+    
+    @media(max-width:500px) {
+        .img img {
+            height: 100px;
+              
+      }
+      & {
+        margin: 20px;
+        
+        padding: 0;
+        
+    }
+    }
+       
+
+
+}
+
+
+
+
+
