@@ -210,6 +210,7 @@ const SpeakIt = {
       words = common.shuffleWords(words);
     }
 
+
     const statsWordClick = (e) => {
       const target = e.target.closest('.stat__word');
       if (!target) { // если это не слово со звуком
@@ -244,6 +245,7 @@ const SpeakIt = {
       render.clearWords();
       render.words(words);
     }
+
 
     const restart = () => { // сброс игры
       game(words);
@@ -448,6 +450,7 @@ const SpeakIt = {
       // нажатие на "Старт"
       const startButton = document.querySelector('.allGames__startBtn');
       startButton.addEventListener('click', startButtonClick);
+
 
       const startScreenButton = document.querySelector('.button__startScreen');
       startScreenButton.addEventListener('click', startScreen);
