@@ -198,7 +198,7 @@ export default class AppModel {
   // group -  сложность, от 0 до 5
   // page - страница, page * wordsPerPage не может быть больше 600
   // wordsPerPage - количество запрашиваемых слов
-  async getSetOfWordsCustomLength(group, page, wordsPerPage = 10, wordsPerExampleSentenceLTE = this.maxWordsPerExampleSentence)  {
+  async getSetOfWordsCustomLength(group, page, wordsPerPage = 10, wordsPerExampleSentenceLTE = this.maxWordsPerExampleSentence) {
     if (group < 0 || group > 5 || page < 0 || wordsPerPage < 0 || page * wordsPerPage > 600) {
       return { 'error': true, 'errorText': 'Некорректные аргументы функции' };
     }
@@ -397,7 +397,6 @@ export default class AppModel {
     } catch (e) {
       return { 'error': true, 'errorText': this.serverErrorMessage };
     }
-
   }
 
   // получение статистики залогиненного пользователя
@@ -417,5 +416,15 @@ export default class AppModel {
     } catch (e) {
       return { 'error': true, 'errorText': this.serverErrorMessage };
     }
+  }
+
+  /** сохранить на бэкенде настройки приложения */
+  async saveSettings(settingsObj) {
+
+  }
+
+  /** получить с бэкенда настройки приложения */
+  async getSettings () {
+
   }
 }
