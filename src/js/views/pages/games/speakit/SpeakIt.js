@@ -6,6 +6,7 @@ import AppModel from '../../../../model/AppModel';
 import View from './helpers/View';
 import Common from './helpers/Common';
 import Render from './helpers/Render';
+import Storage from './helpers/Storage';
 
 const SpeakIt = {
 
@@ -157,6 +158,7 @@ const SpeakIt = {
     const view = new View(config);
     const common = new Common();
     const render = new Render();
+    const storage = new Storage();
 
     const translateContainer = document.querySelector('.pic__translate');
     const levelsContainer = document.querySelector('.allGames__choice_levels');
@@ -164,49 +166,29 @@ const SpeakIt = {
     async function getRepeatWords() {
       const repeatWords = await model.getSetOfLearnedWords(10);
       words = repeatWords;
-
       return repeatWords;
     }
-
     function isGameIsEnd() {
       return corrects === words.length;
     }
     function setLastGame() {
-      let lastGame = JSON.parse(localStorage.getItem('speakItlevel'));
+      let lastGame = storage.getData('speakItlevel');
       if (lastGame === null) {
         lastGame = { levels: 0, pages: 0 };
+        storage.saveLevelAndPage(0, 0);
       }
-      levels.value = lastGame.levels;
-      pages.value = lastGame.pages;
+
+      levels.value = Number(lastGame.levels);
+      pages.value = Number(lastGame.pages);
       level = lastGame.levels;
       page = lastGame.pages;
-      localStorage.setItem('speakItlevel', JSON.stringify(lastGame));
     }
-
 
     function resetGameCount() { // сбросить счет, остановить игру
       errors = 0;
       corrects = 0;
       wordsArr = words.map((wordObj) => wordObj.word.toLowerCase()); // массив слов игры
       gameInProcess = false;
-    }
-
-    function resetSpeak() { // убрать стиль с кнопки "speak", откл+вкл прослушивание кнопки
-      const speakButton = document.querySelector('.button__speak');
-      speakButton.classList.remove('activated');
-    }
-
-    function renderWord(word, container) { // отрисовать блок со словом
-      const cont = container;
-      cont.dataset.word = word.word.toLowerCase();
-      render.div('word__icon', '', container);
-      const container2 = render.div('word__word', null, container);
-      render.div('word__english', word.word, container2);
-      render.div('word__transcription', word.transcription, container2);
-    }
-    function renderWords() { // отрисовать слова в контейнере
-      const wordsContainer = document.querySelectorAll('.words__container .word');
-      words.forEach((word, i) => renderWord(word, wordsContainer[i]));
     }
 
     function intersection(wordsArr, spaekedWords) {
@@ -227,23 +209,6 @@ const SpeakIt = {
       words = await model.getSetOfWordsByDifficulty(level, page, 10);
       words = common.shuffleWords(words);
     }
-
-
-    function saveGameToLocalStorage() { // записать результаты игры в localStorage
-      let gameInfo = JSON.parse(localStorage.getItem('speakItStat'));
-      if (gameInfo === null) {
-        gameInfo = [];
-      }
-
-      gameInfo.push({
-        date: new Date().toLocaleString(),
-        errors,
-        words: wordsArr,
-      });
-
-      localStorage.setItem('speakItStat', JSON.stringify(gameInfo));
-    }
-
 
     const statsWordClick = (e) => {
       const target = e.target.closest('.stat__word');
@@ -266,8 +231,8 @@ const SpeakIt = {
       }
       render.results(words, errors);
     };
-    async function game(words = null) { // страница "Игра"
-      if (words === null) { // если не переданы слова, получить новые
+    async function game(wordsArray = null) { // страница "Игра"
+      if (wordsArray === null) { // если не переданы слова, получить новые
         setLastGame();
         if (mode === 'repeat') { await getRepeatWords(); } else { await reloadWords(); }
       }
@@ -275,11 +240,10 @@ const SpeakIt = {
       resultsButton.style.display = 'none';
       await view.showPage('game');
       resetGameCount();
-      resetSpeak();
+      common.resetSpeak();
       render.clearWords();
-      renderWords();
+      render.words(words);
     }
-
 
     const restart = () => { // сброс игры
       game(words);
@@ -287,8 +251,9 @@ const SpeakIt = {
 
     const next = async () => {
       if (mode === 'level') {
-        if (page < 59) localStorage.setItem('speakItlevel', JSON.stringify({ levels: level, pages: Number(page) + 1 }));
-        else if (level !== 5) { localStorage.setItem('speakItlevel', JSON.stringify({ levels: 0, pages: 0 })); } else localStorage.setItem('speakItlevel', JSON.stringify({ levels: Number(level) + 1, pages: 0 }));
+        if (page < 59) storage.saveLevelAndPage(level, Number(page) + 1);
+        else if (Number(level) === 5) storage.saveLevelAndPage(0, 0);
+        else storage.saveLevelAndPage(Number(level) + 1, 0);
       }
       game();
     };
@@ -343,7 +308,7 @@ const SpeakIt = {
               imgContainer.src = image;
               corrects += 1;
               if (isGameIsEnd()) {
-                saveGameToLocalStorage();
+                storage.saveGame(errors, wordsArr);
                 results();
               }
             } else {
@@ -464,16 +429,8 @@ const SpeakIt = {
       levelsContainer.append(pagesLable);
       levelsContainer.append(pages);
       setLastGame();
-      pages.onchange = async () => {
-        level = levels.value;
-        page = pages.value;
-        localStorage.setItem('speakItlevel', JSON.stringify({ levels: level, pages: page }));
-      };
-      levels.onchange = async () => {
-        level = levels.value;
-        page = pages.value;
-        localStorage.setItem('speakItlevel', JSON.stringify({ levels: level, pages: page }));
-      };
+      pages.onchange = () => storage.saveLevelAndPage(levels.value, pages.value);
+      levels.onchange = () => storage.saveLevelAndPage(levels.value, pages.value);
     }
     function startScreen() {
       document.querySelector('.allGames__startScreen-hidden').classList.remove('allGames__startScreen-hidden');
@@ -491,7 +448,6 @@ const SpeakIt = {
       // нажатие на "Старт"
       const startButton = document.querySelector('.allGames__startBtn');
       startButton.addEventListener('click', startButtonClick);
-
 
       const startScreenButton = document.querySelector('.button__startScreen');
       startScreenButton.addEventListener('click', startScreen);

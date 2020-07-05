@@ -13,4 +13,9 @@ export default class Common {
     const audio = new Audio(soundPath);
     audio.play();
   }
+
+  resetSpeak() { // убрать стиль с кнопки "speak", откл+вкл прослушивание кнопки
+    const speakButton = document.querySelector('.button__speak');
+    speakButton.classList.remove('activated');
+  }
 }

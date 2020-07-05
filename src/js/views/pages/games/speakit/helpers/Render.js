@@ -124,7 +124,20 @@ export default class Render {
     const translated = await this.getTranslate(wordObj.word);
     newWordTranslate.innerText = translated;
     newWord.append(newWordTranslate);
-
     wordsContainer.append(newWord);
+  }
+
+  words(words) { // отрисовать слова в контейнере
+    const wordsContainer = document.querySelectorAll('.words__container .word');
+    words.forEach((word, i) => this.word(word, wordsContainer[i]));
+  }
+
+  word(word, container) { // отрисовать блок со словом
+    const cont = container;
+    cont.dataset.word = word.word.toLowerCase();
+    this.div('word__icon', '', container);
+    const container2 = this.div('word__word', null, container);
+    this.div('word__english', word.word, container2);
+    this.div('word__transcription', word.transcription, container2);
   }
 }
