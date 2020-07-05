@@ -3,8 +3,9 @@ import '../../../css/pages/promo.scss';
 const Promo = {
   render: async () => {
     const view = /* html */`
+    <div class="promo__background">
     <div class="promo">
-        <div class="promo__background"></div>
+        
         <div class="promo__quote">
             <p class="quote"><q>RSLang — лучший способ изучать английский язык</q><br>(Цитаты великих людей)</p>
         </div>
@@ -34,7 +35,9 @@ const Promo = {
                     максимально эффективным, что сэкономит Вам время и увеличит скорость изучения языка.
                     !описание набора правил для определения интервала
                 </p>
-            </div>
+                
+                
+                
 
         </div>
         <div class="promo__responsive, part">
@@ -58,6 +61,7 @@ const Promo = {
 
 
         </div>
+    </div>
     </div>
 
           `;
