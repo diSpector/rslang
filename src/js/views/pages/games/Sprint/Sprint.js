@@ -1,7 +1,7 @@
 import '../../../../../css/pages/games/Sprint/Sprint.scss';
 import '../../../../../css/pages/games/allGames.scss';
 import Utils from '../../../../services/Utils';
-import { generateWord, timerw } from './SprintGame';
+import { generateNewWord, generateLearnWord, timerw } from './SprintGame';
 import Game from '../game';
 
 const Sprint = {
@@ -101,6 +101,7 @@ const Sprint = {
           <div class="sprint--card__button">
             <button class="sprint--button__correct">Верно</button>
             <button class="sprint--button__error">Неверно</button>
+            <button class="sprint--button__warn hidden">Ок</button>
           </div>
         </div>
         <div class="sprint--game__time">60</div>
@@ -121,6 +122,7 @@ const Sprint = {
           <button class="sprint--end__button_repeat" onclick="document.location.reload()">Играть еще раз</button>
           <button class="sprint--end__button_continue" onclick="document.location.reload()">Продолжить</button>
           <button class="sprint--end__button_main" onclick="location.href='/'">Главная страница</button>
+          <button class="sprint--end__button_global" onclick="location.href='/'">Глобальная статистика</button>
         </div>
         <div class="sprint--end__statistic hidden">
           <div class="sprint--end__statistic_correct">
@@ -149,11 +151,22 @@ const Sprint = {
       localStorage.setItem('data', JSON.stringify(data));
       data = JSON.parse(localStorage.getItem('data'));
     }
-    const level = document.querySelector('#levels').value;
-    const round = document.querySelector('#pages').value;
+
+    const startBtn = document.querySelector('.allGames__startBtn');
+    startBtn.addEventListener('click', async () => {
+      const isNewWords = document.querySelector('.allGames__choice_new').classList.contains('select');
+
+      const level = document.querySelector('#levels').value;
+      const round = document.querySelector('#pages').value;
+
+      if (level && round && isNewWords) {
+        generateNewWord(model, round, level);
+      } else {
+        generateLearnWord(model);
+      }
+    });
 
     Game.initStartScreen();
-    generateWord(model, round, level);
   },
 };
 

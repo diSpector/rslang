@@ -153,6 +153,10 @@
   border-radius: 15px;
   box-shadow:3px 3px 3px darkgrey;
   overflow: hidden;
+  &.warn{
+    height: 200px;
+    margin: auto;
+  }
 }
 
 .sprint--card__list{
@@ -225,6 +229,9 @@
   p{
     margin: 7px;
   }
+  &.warn{
+    margin: 30px auto;
+  }
 }
 .sprint--game__result {
   display: flex;
@@ -234,6 +241,10 @@
     position: absolute;
     top: 40px;
   }
+  &.hidden{
+    display: none;
+  }
+
 }
 
 .sprint--game__result_addPoints{
@@ -281,7 +292,7 @@
 
 .sprint--end__message, .sprint--end__statistic{
   p{
-    margin: 15px;
+    margin: 8px;
   }
   &.hidden{
     display: none;
@@ -330,6 +341,9 @@
   display: flex;
   text-align: center;
   margin: 10px auto;
+  &.hidden{
+    display: none;
+  }
 }
 .sprint--game__arrow_left{
   filter: invert(0.8);
@@ -393,10 +407,10 @@
   }
 }
 
-.sprint--end__button_repeat,.sprint--end__button_main, .sprint--end__button_continue {
+.sprint--end__button_repeat,.sprint--end__button_main, .sprint--end__button_continue, .sprint--end__button_global, .sprint--button__warn {
   cursor: pointer;
   width: 85%;
-  margin: 10px;
+  margin: 6px;
   height: 35px;
   color: white;
   border: 0;

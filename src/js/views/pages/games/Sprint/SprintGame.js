@@ -11,9 +11,11 @@ let wordNumber = 0;
 let arrayWord;
 let round;
 let level;
-const lengthWord = 30;
+let lengthWord = 30;
 const lengthRound = 30;
 const lengthLevel = 6;
+let newWord;
+let checkAnswer = true;
 
 
 const generate = (words) => {
@@ -162,22 +164,39 @@ const timerw = () => {
 };
 
 const nextWord = (model) => {
-  wordNumber += 1;
-  wordNumber = 0;
-  round += 1;
-  if (round > lengthRound) {
-    round = 0;
-    level += 1;
-    if (level > lengthLevel) {
-      level = lengthLevel;
+  if (newWord) {
+    wordNumber += 1;
+    wordNumber = 0;
+    round += 1;
+    if (round > lengthRound) {
+      round = 0;
+      level += 1;
+      if (level > lengthLevel) {
+        level = lengthLevel;
+      }
     }
+    wordNumber = 0;
+    generateNewWord(model, round, level);
+  } else {
+    document.querySelector('.sprint--card__title').innerHTML = '<p>Игра закончена</p>';
+    document.querySelector('.sprint--card__list').classList.add('hidden');
+    document.querySelector('.sprint--card__list2').classList.add('hidden');
+    document.querySelector('.sprint--card__word').innerHTML = 'Все изученные вами слова закончились.';
+    document.querySelector('.sprint--card__word').classList.add('warn');
+    document.querySelector('.sprint--button__correct').classList.add('hidden');
+    document.querySelector('.sprint--button__error').classList.add('hidden');
+    document.querySelector('.sprint--button__warn').classList.remove('hidden');
+    document.querySelector('.sprint--game__card').classList.add('warn');
+    document.querySelector('.sprint--game__arrow').classList.add('hidden');
+    document.querySelector('.sprint--game__result').classList.add('hidden');
+    document.querySelector('.sprint--game__time').classList.add('hidden');
+    checkAnswer = false;
   }
-  wordNumber = 0;
-  generateWord(model, round, level);
+  document.querySelector('.sprint--button__warn').onclick = () => {
+    time = 0;
+  };
 };
-
 const game = (model, data) => {
-  console.log(data, wordNumber, round, level);
   const dataCor = data.correct;
   const dataErr = data.incorrect[0].wordTranslate;
   let count = generate([dataCor.word, dataCor.wordTranslate, dataErr, dataCor.audio]);
@@ -202,7 +221,7 @@ const game = (model, data) => {
     }
   };
   document.onkeyup = (event) => {
-    if (time < 60) {
+    if (time < 60 && checkAnswer) {
       if (event.code === 'ArrowLeft') {
         count += 1;
         document.querySelector('.sprint--game__arrow_left').classList.add('click');
@@ -236,14 +255,24 @@ const game = (model, data) => {
   };
 };
 
-const generateWord = (model, choiseRound, choiseLevel) => {
-  round = choiseRound;
-  level = choiseLevel;
-  console.log(round, level);
+const generateNewWord = (model, choiseRound, choiseLevel) => {
+  newWord = true;
+  round = Number(choiseRound);
+  level = Number(choiseLevel);
   model.getSetOfWordsAndTranslations(level, round, 30, 1).then((data) => {
     arrayWord = data;
     game(model, arrayWord[wordNumber]);
   });
 };
 
-export { generateWord, timerw };
+const generateLearnWord = (model) => {
+  newWord = false;
+  lengthWord = 100;
+  model.getSetOfLearnedWordsAndTranslations(100, 1).then((data) => {
+    arrayWord = data;
+    game(model, arrayWord[wordNumber]);
+  });
+};
+
+
+export { generateNewWord, generateLearnWord, timerw };
