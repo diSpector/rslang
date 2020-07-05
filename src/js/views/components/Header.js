@@ -8,7 +8,7 @@ const Header = {
             <h1 class="header__logo"><a href="/#">RS Lang</a></h1>
             <nav class="header__nav">
                 <ul class="header__navList">
-                    <li class="header__navItem"><a href="#/games">Games</a></li>
+                    <li class="header__navItem"><a href="#/games/all">Games</a></li>
                     <li class="header__navItem"><a href="#/dictionary">Dictionary</a></li>
                     <li class="header__navItem"><a href="#/statistic">Statistic</a></li>
                     <li class="header__navItem"><a href="#/about">About</a></li>
