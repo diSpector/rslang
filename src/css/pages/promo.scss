@@ -17,7 +17,6 @@
     font-family: 'Roboto', sans-serif;
     font-size: 18px;
     
-    
 }
 .promo {
     
@@ -64,6 +63,17 @@
     }
     .promo__games {
         text-align: center;
+    }
+    .hidden {
+        display: none;
+    }
+    .repeat__button{
+        background-color: white;
+        display: block;
+        margin: 0 auto;
+    }
+    .promo_algoritm {
+        background-color: white;
     }
     .promo__game__cards {
         &{
@@ -138,6 +148,7 @@
             background-position: -30px 39px;
                        
           }
+
         
 
 
