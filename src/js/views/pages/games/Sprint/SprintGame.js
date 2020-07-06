@@ -39,6 +39,10 @@ const generate = (words) => {
 };
 
 const check = (count) => {
+  checkAnswer = false;
+  setTimeout(() => {
+    checkAnswer = true;
+  }, 500)
   if (count % 2 === 0) {
     correctAudio.play();
     countCorrect += 1;
@@ -197,38 +201,12 @@ const nextWord = (model) => {
   };
 };
 const game = (model, data) => {
-  const dataCor = data.correct;
-  const dataErr = data.incorrect[0].wordTranslate;
-  let count = generate([dataCor.word, dataCor.wordTranslate, dataErr, dataCor.audio]);
-  document.querySelector('.sprint--button__correct').onclick = () => {
-    count += 1;
-    check(count);
-    wordNumber += 1;
-    if (wordNumber === lengthWord) {
-      nextWord(model);
-    } else {
-      game(model, arrayWord[wordNumber]);
-    }
-  };
-  document.querySelector('.sprint--button__error').onclick = () => {
-    count += 0;
-    check(count);
-    wordNumber += 1;
-    if (wordNumber === lengthWord) {
-      nextWord(model);
-    } else {
-      game(model, arrayWord[wordNumber]);
-    }
-  };
-  document.onkeyup = (event) => {
-    if (time < 60 && checkAnswer) {
-      if (event.code === 'ArrowLeft') {
+    const dataCor = data.correct;
+    const dataErr = data.incorrect[0].wordTranslate;
+    let count = generate([dataCor.word, dataCor.wordTranslate, dataErr, dataCor.audio]);
+    document.querySelector('.sprint--button__correct').onclick = () => {
+      if (checkAnswer) {
         count += 1;
-        document.querySelector('.sprint--game__arrow_left').classList.add('click');
-        setTimeout(() => {
-          document.querySelector('.sprint--game__arrow_left').classList.remove('click');
-        }, 100);
-
         check(count);
         wordNumber += 1;
         if (wordNumber === lengthWord) {
@@ -237,22 +215,52 @@ const game = (model, data) => {
           game(model, arrayWord[wordNumber]);
         }
       }
-      if (event.code === 'ArrowRight') {
+    };
+    document.querySelector('.sprint--button__error').onclick = () => {
+      if (checkAnswer) {
         count += 0;
         check(count);
-        document.querySelector('.sprint--game__arrow_right').classList.add('click');
-        setTimeout(() => {
-          document.querySelector('.sprint--game__arrow_right').classList.remove('click');
+        wordNumber += 1;
+        if (wordNumber === lengthWord) {
+          nextWord(model);
+        } else {
+          game(model, arrayWord[wordNumber]);
+        }
+      }
+    };
+    document.onkeyup = (event) => {
+      if (time < 60 && checkAnswer) {
+        if (event.code === 'ArrowLeft') {
+          count += 1;
+          document.querySelector('.sprint--game__arrow_left').classList.add('click');
+          setTimeout(() => {
+            document.querySelector('.sprint--game__arrow_left').classList.remove('click');
+          }, 100);
+          check(count);
           wordNumber += 1;
           if (wordNumber === lengthWord) {
             nextWord(model);
           } else {
             game(model, arrayWord[wordNumber]);
           }
-        }, 100);
+        }
+        if (event.code === 'ArrowRight') {
+          count += 0;
+          check(count);
+          document.querySelector('.sprint--game__arrow_right').classList.add('click');
+          setTimeout(() => {
+            document.querySelector('.sprint--game__arrow_right').classList.remove('click');
+            wordNumber += 1;
+            if (wordNumber === lengthWord) {
+              nextWord(model);
+            } else {
+              game(model, arrayWord[wordNumber]);
+            }
+          }, 100);
+        }
       }
     }
-  };
+  
 };
 
 const generateNewWord = (model, choiseRound, choiseLevel) => {
