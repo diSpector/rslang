@@ -1,0 +1,133 @@
+$imgPath: '../../img/games/english-puzzle/';
+.dictionary--container{
+    max-width: 1200px;
+    margin: 0 auto;
+}
+.dictionary--container{
+    .hidden {
+        display: none;
+    }
+    .dictionarry--navigation{
+        display:flex;
+        justify-content: space-between;
+        .dictionarry--settings{
+            display: flex;
+            & > div {
+                background-image: url($imgPath + 'icons/sound_white.png');
+                width: 32px;
+                height: 32px;
+                background-color: green;
+                margin-left: 10px;
+                background-size: 25px 25px;
+                background-position: 50%;
+                background-repeat: no-repeat;
+                border-radius: 7px;
+                &:hover {
+                    cursor: pointer;
+                    box-shadow: 0px 0px 4px -2px;
+                }
+            }
+            .unactive{
+                background-color: #a9a9a9;
+            }
+            .dictionarry--buttonExample {
+                background-image: url($imgPath + 'icons/text_white.svg');
+            }
+            .dictionarry--buttonExplanation {
+                background-image: url($imgPath + 'icons/text_white.svg');
+            }
+            .dictionarry--buttonTranscription {
+                background-image: url($imgPath + 'icons/music_note.svg');
+            }
+            .dictionarry--buttonImg {
+                background-image: url($imgPath + 'icons/image_white.svg');
+            }
+
+        }
+        
+    }
+    .page {
+        padding: 20px;
+        .wordCard {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid gray;
+            
+            & > div {
+                margin:5px;            
+            }
+            .sound__icon{
+                background-image: url($imgPath + '/icons/sound.png');
+                width: 40px;
+                height: 40px;
+                background-size: 30px 30px;
+                background-position: center;
+                background-repeat: no-repeat;
+                box-sizing: border-box;
+                &:hover {
+                    cursor: pointer;
+                    box-shadow: 0px 0px 4px -2px;
+                }
+            }
+            .textTranscription {
+                
+                padding-right: 5px;
+                font-size: 18px;
+                width: 200px;
+                div {
+                   display: inline-block;
+                    padding-right: 5px;
+                }
+                .hidden {
+                    display: none;
+                }
+            }
+
+            .translate {
+                font-size: 18px;
+            }
+            .longRead {
+                font-size: 16px;
+                width: 500px;
+                
+            }
+            .imgContainer {
+                .wordImg {
+                    
+                    width: 150px;
+                                        
+                }
+                
+                width: 150px;
+            }
+            
+            .wordButtonContainer {
+                display: flex;
+                flex-direction: column;
+            }
+
+
+
+
+        }
+        
+    
+    }
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+}
