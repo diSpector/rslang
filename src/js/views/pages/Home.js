@@ -1,4 +1,5 @@
 import '../../../css/pages/learn.scss';
+import HomeHandler from './HomeHandler';
 
 const Home = {
   render: async () => {
@@ -36,10 +37,10 @@ const Home = {
                 <p class="learn--card__wordTranslate">атрибут</p>
             </main>
             <footer class="learn--card__complexity">
-                <span>Снова</span>
-                <span>Трудно</span>
-                <span>Хорошо</span>
-                <span>Легко</span>
+                <span class="learn--card__complexity-repeat">Снова</span>
+                <span class="learn--card__complexity-hard">Трудно</span>
+                <span class="learn--card__complexity-well">Хорошо</span>
+                <span class="learn--card__complexity-easy">Легко</span>
             </footer>
         </section>
 
@@ -55,6 +56,7 @@ const Home = {
   afterRender: async (model) => {
     const word = await model.getNewUnknownWord();
     console.log(word);
+    HomeHandler.initHomeHandler();
   },
 
 };
