@@ -1,0 +1,61 @@
+@import '../abstract/constants.scss';
+@import '../abstract/mixins.scss';
+
+.settings {
+    position: fixed;
+    top: 0;
+    right: 0;
+    z-index: 2;
+    overflow-y: auto;
+
+    display: flex;
+    flex-direction: column;
+    // align-items: center;
+    box-sizing: border-box;
+    padding: 10px;
+
+    width: 320px;
+    height: 100vh;
+    background-color: white;
+    box-shadow: 0 0 5px 1px rgba(0, 0, 0, 0.5);
+
+    font-size: 1.6rem;
+
+    transform: translateX(101%);
+    transition: transform 0.5s;
+
+    @include media-mobile-big {
+        width: 100%;
+    }
+}
+
+.settings-open {
+    transform: translateX(0);
+}
+
+.settings--closeBtn {
+    display: block;
+    position: absolute;
+    top: 0;
+    right: 0;
+    
+    width: 25px;
+    height: 25px;
+    margin: 15px;
+    background-image: url('../../img/learn/close.svg');
+    background-size: contain;
+    cursor: pointer;
+    transition: transform 0.1s;
+
+    &:hover {
+        transform: scale(1.1);
+    }
+}
+
+.inputWrapper{
+    display: flex;
+
+    label {
+        width: 70%;
+    }
+}
