@@ -1,18 +1,59 @@
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
+
 $imgPath: '../../img/games/english-puzzle/';
+$currentColor: #8eb15157;
+$hardColor: #1e80f05c;
+$deletedColor: #e75f5f47;
 .dictionary--container{
-    max-width: 1200px;
     margin: 0 auto;
+    max-width: 1200px;
+    color: black;
+
 }
+
 .dictionary--container{
     .hidden {
         display: none;
     }
     .dictionarry--navigation{
+        font-family: 'Montserrat', sans-serif;
         display:flex;
+        align-items: center;
         justify-content: space-between;
+
+        .dictionary--wordsButton{
+            display: flex;
+            align-items: flex-end;
+            padding-top: 10px;
+            & > div {
+                padding: 5px;
+                height:40px;
+                font-size: 24px;
+                cursor: pointer;
+                border-top-left-radius: 10px;
+                border-top-right-radius: 10px;
+                &:hover{
+                    box-shadow: 0px -2px 1px 2px rgba(63, 50, 50, 0.06);
+                }
+                
+            }
+            .dictionary--currentWordsButton{
+                background-color: $currentColor;
+            }
+            .dictionary--hardWordsButton{
+                background-color: $hardColor;
+            };
+            .dictionary--deletedWordsButton{
+                background-color: $deletedColor;
+            };
+        }
         .dictionarry--settings{
             display: flex;
+            
+            height: 30px;
+            width: 200px;
             & > div {
+                
                 background-image: url($imgPath + 'icons/sound_white.png');
                 width: 32px;
                 height: 32px;
@@ -45,15 +86,33 @@ $imgPath: '../../img/games/english-puzzle/';
 
         }
         
-    }
+    
+}
+    .dictionary--currentWords {
+        background-color: $currentColor;
+        }
+    .dictionary--hardWords {
+        background-color: $hardColor;
+    } 
+    .dictionary--deletedWords {
+        background-color: $deletedColor;
+    } 
     .page {
-        padding: 20px;
+                
+        padding: 10px;
+        font-family: 'Roboto', sans-serif;
+        font-size: 18px;
+        
+       
         .wordCard {
+            border-radius: 10px;
+            box-shadow: 0 0 3px 1px rgba(0, 0, 0, 0.3);
+            background-color: white;
             display: flex;
             flex-wrap: wrap;
             justify-content: space-between;
             align-items: center;
-            border-bottom: 1px solid gray;
+            margin: 5px;
             
             & > div {
                 margin:5px;            
@@ -85,7 +144,7 @@ $imgPath: '../../img/games/english-puzzle/';
                 }
             }
 
-            .translate {
+            .translation {
                 font-size: 18px;
             }
             .longRead {
@@ -106,6 +165,13 @@ $imgPath: '../../img/games/english-puzzle/';
             .wordButtonContainer {
                 display: flex;
                 flex-direction: column;
+                
+                .wordDeleteButton{
+                    background-color: #ff6a6a;
+                }
+                .wordRestoreButton{
+                    background-color: #179e17;
+                }
             }
 
 
@@ -116,18 +182,6 @@ $imgPath: '../../img/games/english-puzzle/';
     
     }
     
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 }

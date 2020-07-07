@@ -5,12 +5,11 @@ const Dictionary = {
   render: async (model) => {
     const view = /* html */`
     <section class="section dictionary--container">
-      <h1 class="dictionary--subheader">Словарь для пользователя 1</h1>
-      <nav class = "dictionarry--navigation">
+        <nav class = "dictionarry--navigation">
         <div class = "dictionary--wordsButton">
-          <button data-container ='.dictionary--currentWords' class = "dictionary--currentWordsButton button">На изучении</button>
-          <button data-container ='.dictionary--hardWords' class = "dictionary--hardWordsButton button">Сложные</button>
-          <button data-container ='.dictionary--deletedWords' class = "dictionary--deletedWordsButton button">Удалённые</button>
+          <div data-container ='.dictionary--currentWords' class = "dictionary--currentWordsButton button">На изучении</div>
+          <div data-container ='.dictionary--hardWords' class = "dictionary--hardWordsButton button">Сложные</div>
+          <div data-container ='.dictionary--deletedWords' class = "dictionary--deletedWordsButton button">Удалённые</div>
         </div>
         <div class = "dictionarry--settings"</div>
           <div class = "dictionarry--buttonExample" title="Показывать примеры"></div>
@@ -23,15 +22,15 @@ const Dictionary = {
       
       
       <div class="dictionary--currentWords page">
-        <h2>Изучаемые слова</h2>
+       
       </div>
       
       <div class="dictionary--hardWords hidden page">
-        <h2>Сложные слова</h2>
+        
       </div>
       
       <div class="dictionary--deletedWords hidden page">
-        <h2>Удалённые слова</h2>
+       
       </div>
     </section>
           `;
@@ -72,7 +71,7 @@ const Dictionary = {
       const newWordTransciption = createNewElement('div', 'transcription', wordObj.transcription);
       newWordTextTranscription.append(newWordTransciption);
 
-      const newWordTranslate = createNewElement('div', 'translate', wordObj.wordTranslate);
+      const newWordTranslate = createNewElement('div', 'translation', wordObj.wordTranslate);
       mainWordAttributes.append(newWordTranslate);
 
       const longRead = createNewElement('div', 'longRead');
@@ -119,10 +118,10 @@ const Dictionary = {
         wordButtonContainer.append(wordDeleteButton);
         wordDeleteButton.onclick = () => {
           newWord.remove();
-          constructCurd(wordObj, 'deleted');
           if (sameHardWord) {
             sameHardWord.remove();
           }
+          constructCurd(wordObj, 'deleted');
           console.log('Del');
         };
 
@@ -157,11 +156,11 @@ const Dictionary = {
           wordHardButton.onclick = () => {
             newWord.remove();
             constructCurd(wordObj, 'hard');
+            constructCurd(wordObj, 'current');
             console.log('Diff');
           };
           newWord.classList.add('current');
         }
-
 
         const currentWordsContainer = document.querySelector('.dictionary--currentWords');
         currentWordsContainer.append(newWord);
