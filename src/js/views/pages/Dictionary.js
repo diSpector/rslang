@@ -42,8 +42,9 @@ const Dictionary = {
     const model = new AppModel();
     let settings = null;
 
-    function createNewElement(type, selector, innerText) {
+    function createNewElement(type, selector, innerText, title) {
       const container = document.createElement(type);
+      if (title) container.setAttribute('title', title);
       container.classList.add(selector);
       if (innerText) container.innerHTML = innerText;
       return container;
@@ -99,7 +100,7 @@ const Dictionary = {
       newWord.classList.add(wordObj.word);
 
       if (mode === 'deleted') {
-        const wordRestoreButton = createNewElement('button', 'wordRestoreButton', 'Восстановить');
+        const wordRestoreButton = createNewElement('div', 'wordRestoreButton', '', 'Восстановить');
         wordButtonContainer.append(wordRestoreButton);
         wordRestoreButton.onclick = () => {
           newWord.remove();
@@ -114,7 +115,7 @@ const Dictionary = {
       if (mode === 'current') {
         const sameHardWord = document.querySelector(`.${wordObj.word}`);
         // ставим onclick на кнопку удаления
-        const wordDeleteButton = createNewElement('button', 'wordDeleteButton', 'Удалить');
+        const wordDeleteButton = createNewElement('div', 'wordDeleteButton', '', 'Удалить');
         wordButtonContainer.append(wordDeleteButton);
         wordDeleteButton.onclick = () => {
           newWord.remove();
@@ -126,7 +127,7 @@ const Dictionary = {
         };
 
         if (sameHardWord) {
-          const wordCurrentButton = createNewElement('button', 'wordHardButton', 'В несложные');
+          const wordCurrentButton = createNewElement('div', 'wordCurrentButton', '', 'В несложные');
           wordButtonContainer.append(wordCurrentButton);
           wordCurrentButton.onclick = () => {
             newWord.remove();
@@ -151,7 +152,7 @@ const Dictionary = {
             console.log('Current');
           };
         } else {
-          const wordHardButton = createNewElement('button', 'wordHardButton', 'В сложные');
+          const wordHardButton = createNewElement('div', 'wordHardButton', '', 'В сложные');
           wordButtonContainer.append(wordHardButton);
           wordHardButton.onclick = () => {
             newWord.remove();
@@ -166,10 +167,10 @@ const Dictionary = {
         currentWordsContainer.append(newWord);
       }
       if (mode === 'hard') {
-        const wordDeleteButton = createNewElement('button', 'wordDeleteButton', 'Удалить');
+        const wordDeleteButton = createNewElement('div', 'wordDeleteButton', '', 'Удалить');
         wordButtonContainer.append(wordDeleteButton);
 
-        const wordCurrentButton = createNewElement('button', 'wordCurrentButton', 'В несложные');
+        const wordCurrentButton = createNewElement('div', 'wordCurrentButton', '', 'В несложные');
         wordButtonContainer.append(wordCurrentButton);
 
         const hardWordsContainer = document.querySelector('.dictionary--hardWords');
