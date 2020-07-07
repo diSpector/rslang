@@ -5,7 +5,7 @@
     position: fixed;
     top: 0;
     right: 0;
-    z-index: 2;
+    z-index: 5;
     overflow-y: auto;
 
     display: flex;
@@ -33,6 +33,15 @@
     transform: translateX(0);
 }
 
+.settings__error {
+    display: none;
+    color: red;
+
+    &-show {
+        display: block;
+    }
+}
+
 .settings--closeBtn {
     display: block;
     position: absolute;
@@ -52,10 +61,20 @@
     }
 }
 
-.inputWrapper{
+.settings--form {
     display: flex;
+    flex-direction: column;
+}
 
-    label {
-        width: 70%;
+.settings__saveButton {
+    @include button;
+    align-self: center;
+    background: #9bc0c6;     
+    border: 1px solid #9bc0c6; 
+
+    &:hover {
+        background: #586187;
+        border: 1px solid #586187;
+        color: white;
     }
 }

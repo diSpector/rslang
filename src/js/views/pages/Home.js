@@ -71,16 +71,17 @@ const Home = {
         <div class="settings--closeBtn"></div>
         <h2>Настройки</h2>
 
+        <form class="settings--form" action="#" method="POST">
         <fieldset>
             <legend>Слова для изучения</legend>
 
             <div class="settings__newWordsPerDay">
-                <input type="number" id="newWordsPerDay" min="10" max="50" value="15">
+                <input type="number" id="newWordsPerDay" min="10" max="30" value="15" required>
                 <label for="newWordsPerDay">Количество новых слов в день</label>
             </div>
 
             <div class="settings__maxWordsPerDay">
-                <input type="number" id="maxWordsPerDay" min="10" max="50" value="30">
+                <input type="number" id="maxWordsPerDay" min="10" max="50" value="30" required>
                 <label for="maxWordsPerDay">Максимальное количество карточек в день</label>
             </div>
         </fieldset>
@@ -89,6 +90,7 @@ const Home = {
 
         <fieldset>
             <legend>Информация на карточке</legend>
+            <div class="settings__error">Необходимо выбрать один из вариантов</div>
 
             <div class="settings__wordTranslate">
               <input type="checkbox" id="isWordTranslate" checked>
@@ -108,6 +110,7 @@ const Home = {
 
         <hr>
 
+        <!--
         <fieldset>
             <legend>Отображение перевода после угадывания*</legend>
 
@@ -125,6 +128,7 @@ const Home = {
         </fieldset>
 
         <hr>
+        -->
         
         <fieldset>
             <legend>Дополнительные элементы</legend>
@@ -165,7 +169,10 @@ const Home = {
               <label for="isIntervalButtons">Блок кнопок для интервального повторения</label>
             </div>
         </fieldset>
-    </>
+
+        <button class="settings__saveButton" type="submit">Сохранить</button>
+        </form>
+    </div>
     `;
 
     return view;
@@ -183,34 +190,34 @@ const Home = {
     closeBtn.addEventListener('click', () => settings.classList.remove('settings-open'));
   },
 
-  translationActiveToggle(target) {
-    const { id } = target;
-    const exampleTranslate = document.querySelector('#isTextExampleTranslate');
-    const meaningTranslate = document.querySelector('#isTextMeaningTranslate');
+  // translationActiveToggle(target) {
+  //   const { id } = target;
+  //   const exampleTranslate = document.querySelector('#isTextExampleTranslate');
+  //   const meaningTranslate = document.querySelector('#isTextMeaningTranslate');
 
-    switch (id) {
-      case 'isTextMeaning':
-        if (target.checked) {
-          meaningTranslate.disabled = false;
-        } else {
-          meaningTranslate.disabled = true;
-          meaningTranslate.checked = false;
-          this.settings.isTextMeaningTranslate = false;
-        }
-        break;
-      case 'isTextExample':
-        if (target.checked) {
-          exampleTranslate.disabled = false;
-        } else {
-          exampleTranslate.disabled = true;
-          exampleTranslate.checked = false;
-          this.settings.isTextExampleTranslate = false;
-        }
-        break;
-      default:
-        break;
-    }
-  },
+  //   switch (id) {
+  //     case 'isTextMeaning':
+  //       if (target.checked) {
+  //         meaningTranslate.disabled = false;
+  //       } else {
+  //         meaningTranslate.disabled = true;
+  //         meaningTranslate.checked = false;
+  //         this.settings.isTextMeaningTranslate = false;
+  //       }
+  //       break;
+  //     case 'isTextExample':
+  //       if (target.checked) {
+  //         exampleTranslate.disabled = false;
+  //       } else {
+  //         exampleTranslate.disabled = true;
+  //         exampleTranslate.checked = false;
+  //         this.settings.isTextExampleTranslate = false;
+  //       }
+  //       break;
+  //     default:
+  //       break;
+  //   }
+  // },
 
   isInfoChecked() {
     const isWordTranslate = document.querySelector('#isWordTranslate').checked;
@@ -218,6 +225,16 @@ const Home = {
     const isTextExample = document.querySelector('#isTextExample').checked;
 
     return !!((isWordTranslate || isTextMeaning || isTextExample));
+  },
+
+  showError() {
+    const error = document.querySelector('.settings__error');
+    error.classList.add('settings__error-show');
+  },
+
+  hideError() {
+    const error = document.querySelector('.settings__error');
+    error.classList.remove('settings__error-show');
   },
 
   changeSettings() {
@@ -231,7 +248,7 @@ const Home = {
           this.settings[key] = false;
         }
 
-        this.translationActiveToggle(event.target);
+        // this.translationActiveToggle(event.target);
       }
 
       if (event.target.type === 'number') {
@@ -242,11 +259,26 @@ const Home = {
     };
   },
 
+  saveSettings() {
+    const form = document.querySelector('.settings--form');
+    form.addEventListener('submit', (event) => {
+      event.preventDefault();
+      this.hideError();
+
+      if (this.isInfoChecked()) {
+        console.log('save settings to backend');
+      } else {
+        this.showError();
+      }
+    });
+  },
+
   initSettings() {
     Home.showSettingsToggle();
     Home.closeSettings();
 
     Home.changeSettings();
+    Home.saveSettings();
   },
 
   afterRender: async (model) => {
