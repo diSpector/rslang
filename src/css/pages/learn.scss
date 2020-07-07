@@ -110,6 +110,10 @@
     &-inactive {
         opacity: 0.5;
     }
+
+    &-hidden {
+        display: none;
+    }
 }
 
 .learn--card__content {
@@ -135,6 +139,10 @@
     margin: 10px;
     object-fit: cover;
     border-radius: 50%;
+
+    &-hidden {
+        display: none;
+    }
 }
 
 .learn--card__sentences {
@@ -150,6 +158,10 @@
 .learn--card__textExample,
 .learn--card__textExampleTranslate {
     margin-top: 0;
+
+    &-hidden {
+        display: none;
+    }
 }
 
 .learn--card__textMeaning i,
@@ -174,6 +186,10 @@
 .learn--card__transcription {
     margin: 5px 0;
     color: #1e80f0;
+
+    &-hidden {
+        display: none;
+    }
 }
 
 .learn--card__wordTranslate {
@@ -181,6 +197,10 @@
     color: #586187;
     font-size: 2rem;
     font-weight: bold;
+
+    &-hidden {
+        display: none;
+    }
 }
 
 .learn--card__complexity {
@@ -196,6 +216,10 @@
         &:hover {
             text-decoration: none;
         }
+    }
+
+    &-hidden {
+        display: none;
     }
 }
 
@@ -219,5 +243,9 @@
             border: 1px solid #586187;
             color: white;
         }
+    }
+
+    &-hidden {
+        display: none;
     }
 }
