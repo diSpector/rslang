@@ -7,17 +7,18 @@ const Home = {
     newWordsPerDay: 10, // Количество новых слов в день
     maxWordsPerDay: 30, // Максимальное количество карточек в день
     isWordTranslate: true, // Перевод слова
-    isTextMeaning: false, // Предложение с объяснением значения слова
-    isTextExample: false, // Предложение с примером использования изучаемого слова
+    isTextMeaning: true, // Предложение с объяснением значения слова
+    isTextExample: true, // Предложение с примером использования изучаемого слова
     isTextMeaningTranslate: false, // Перевод предложения с объяснением значения слова
     isTextExampleTranslate: false, // Перевод предложения с примером использования изучаемого слова
     isTranscription: false, // Транскрипция слова
-    isImage: false, // Картинка-ассоциация
-    isAnswerButton: false, // Кнопка "Показать ответ"
-    isDeleteWordButton: false, // Кнопка "Удалить слово из изучения"
-    isMoveToDifficultButton: false, // Кнопка - поместить слово в группу «Сложные»
-    isIntervalButtons: false, // Блок кнопок для интервального повторения
+    isImage: true, // Картинка-ассоциация
+    isAnswerButton: true, // Кнопка "Показать ответ"
+    isDeleteWordButton: true, // Кнопка "Удалить слово из изучения"
+    isMoveToDifficultButton: true, // Кнопка - поместить слово в группу «Сложные»
+    isIntervalButtons: true, // Блок кнопок для интервального повторения
   },
+  currentWord: null,
 
   render: async () => {
     const view = `
@@ -33,7 +34,7 @@ const Home = {
 
         <section class="learn--card">
             <header class="learn--card__header">
-                <div class="learn--card__icon  learn--card__icon-book" title="Включить/выключить отбражение перевода"></div>
+                <div class="learn--card__icon  learn--card__icon-book" title="Включить/выключить отбражение перевода предложений"></div>
                 <div class="learn--card__icon  learn--card__icon-inactive  learn--card__icon-headphones" title="Включить/выключить автовоспроизведение звука"></div>
                 <div class="learn--card__icon  learn--card__icon-brain" title="Поместить слово в группу «Сложные»"></div>
                 <div class="learn--card__icon  learn--card__icon-delete" title="Удалить слово из изучения"></div>
@@ -44,13 +45,13 @@ const Home = {
                     <img class="learn--card__image" src="https://raw.githubusercontent.com/dispector/rslang-data/master/files/06_0102.jpg">
                     <div class="learn--card__sentences">
                         <p class="learn--card__textMeaning">An <i>attribute</i> is a characteristic of a person or thing.</p>
-                        <p class="learn--card__textMeaningTranslate">Атрибут является характеристикой человека или вещи</p>
+                        <p class="learn--card__textMeaningTranslate  learn--card__textMeaningTranslate-hidden">Атрибут является характеристикой человека или вещи</p>
                         <p class="learn--card__textExample">He isn’t very clever, but he does have some other positive <b>attributes</b>.</p>
-                        <p class="learn--card__textExampleTranslate">Он не очень умен, но у него есть некоторые другие положительные качества</p>
+                        <p class="learn--card__textExampleTranslate  learn--card__textExampleTranslate-hidden">Он не очень умен, но у него есть некоторые другие положительные качества</p>
                     </div>
                 </div>
                 <input class="learn--card__input" type="text">
-                <p class="learn--card__transcription">[ǽtribjùːt]</p>
+                <p class="learn--card__transcription  learn--card__transcription-hidden">[ǽtribjùːt]</p>
                 <p class="learn--card__wordTranslate">атрибут</p>
             </main>
             <footer class="learn--card__complexity">
@@ -98,37 +99,17 @@ const Home = {
             </div>
 
             <div class="settings__textMeaning">
-              <input type="checkbox" id="isTextMeaning">
+              <input type="checkbox" id="isTextMeaning" checked>
               <label for="isTextMeaning">Предложение с объяснением значения слова</label>
             </div>
 
             <div class="settings__textExample">
-              <input type="checkbox" id="isTextExample">
+              <input type="checkbox" id="isTextExample" checked>
               <label for="isTextExample">Предложение с примером использования изучаемого слова</label>
             </div>
         </fieldset>
 
         <hr>
-
-        <!--
-        <fieldset>
-            <legend>Отображение перевода после угадывания*</legend>
-
-            <div class="settings__textMeaningTranslate">
-              <input type="checkbox" id="isTextMeaningTranslate" disabled>
-              <label for="isTextMeaningTranslate">Перевод предложения с объяснением значения слова</label>
-            </div>
-
-            <div class="settings__textExampleTranslate">
-              <input type="checkbox" id="isTextExampleTranslate" disabled>
-              <label for="isTextExampleTranslate">Перевод предложения с примером использования изучаемого слова</label>
-            </div>
-
-            <small>* Поля становятся доступными только при выборе соответствующей информации на карточке</small>
-        </fieldset>
-
-        <hr>
-        -->
         
         <fieldset>
             <legend>Дополнительные элементы</legend>
@@ -139,7 +120,7 @@ const Home = {
             </div>
 
             <div class="settings__image">
-              <input type="checkbox" id="isImage">
+              <input type="checkbox" id="isImage" checked>
               <label for="isImage">Картинка-ассоциация</label>
             </div>
         </fieldset>
@@ -150,22 +131,22 @@ const Home = {
             <legend>Кнопки (дополнительный функционал)</legend>
 
             <div class="settings__showAnswer">
-              <input type="checkbox" id="isAnswerButton">
+              <input type="checkbox" id="isAnswerButton" checked>
               <label for="isAnswerButton">Показать ответ</label>
             </div>
 
             <div class="settings__deleteWord">
-              <input type="checkbox" id="isDeleteWordButton">
+              <input type="checkbox" id="isDeleteWordButton" checked>
               <label for="isDeleteWordButton">Удалить слово из изучения</label>
             </div>
 
             <div class="settings__difficult">
-              <input type="checkbox" id="isMoveToDifficultButton">
+              <input type="checkbox" id="isMoveToDifficultButton" checked>
               <label for="isMoveToDifficultButton">Поместить слово в группу «Сложные»</label>
             </div>
 
             <div class="settings__intervalButtons">
-              <input type="checkbox" id="isIntervalButtons">
+              <input type="checkbox" id="isIntervalButtons" checked>
               <label for="isIntervalButtons">Блок кнопок для интервального повторения</label>
             </div>
         </fieldset>
@@ -189,35 +170,6 @@ const Home = {
     const closeBtn = document.querySelector('.settings--closeBtn');
     closeBtn.addEventListener('click', () => settings.classList.remove('settings-open'));
   },
-
-  // translationActiveToggle(target) {
-  //   const { id } = target;
-  //   const exampleTranslate = document.querySelector('#isTextExampleTranslate');
-  //   const meaningTranslate = document.querySelector('#isTextMeaningTranslate');
-
-  //   switch (id) {
-  //     case 'isTextMeaning':
-  //       if (target.checked) {
-  //         meaningTranslate.disabled = false;
-  //       } else {
-  //         meaningTranslate.disabled = true;
-  //         meaningTranslate.checked = false;
-  //         this.settings.isTextMeaningTranslate = false;
-  //       }
-  //       break;
-  //     case 'isTextExample':
-  //       if (target.checked) {
-  //         exampleTranslate.disabled = false;
-  //       } else {
-  //         exampleTranslate.disabled = true;
-  //         exampleTranslate.checked = false;
-  //         this.settings.isTextExampleTranslate = false;
-  //       }
-  //       break;
-  //     default:
-  //       break;
-  //   }
-  // },
 
   isInfoChecked() {
     const isWordTranslate = document.querySelector('#isWordTranslate').checked;
@@ -247,8 +199,6 @@ const Home = {
         } else {
           this.settings[key] = false;
         }
-
-        // this.translationActiveToggle(event.target);
       }
 
       if (event.target.type === 'number') {
@@ -267,6 +217,7 @@ const Home = {
 
       if (this.isInfoChecked()) {
         console.log('save settings to backend');
+        Home.renderCard();
       } else {
         this.showError();
       }
@@ -281,11 +232,41 @@ const Home = {
     Home.saveSettings();
   },
 
+  renderElement(flag1, flag2, elementClass, hiddenClass, innerHtml = null, src = null) {
+    const element = document.querySelector(`.${elementClass}`);
+    if (flag1 || flag2) {
+      element.classList.remove(hiddenClass);
+      if (innerHtml) element.innerHTML = innerHtml;
+      if (src) element.setAttribute('src', src);
+    } else {
+      element.classList.add(hiddenClass);
+    }
+  },
+
+  renderCard() {
+    // информация на карточке
+    this.renderElement(Home.settings.isWordTranslate, null, 'learn--card__wordTranslate', 'learn--card__wordTranslate-hidden', this.currentWord.wordTranslate);
+    this.renderElement(Home.settings.isTextMeaning, null, 'learn--card__textMeaning', 'learn--card__textMeaning-hidden', this.currentWord.textMeaning);
+    this.renderElement(Home.settings.isTextExample, null, 'learn--card__textExample', 'learn--card__textExample-hidden', this.currentWord.textExample);
+
+    // дополнительные элементы
+    this.renderElement(Home.settings.isImage, null, 'learn--card__image', 'learn--card__image-hidden', null, this.currentWord.image);
+
+    // кнопки
+    this.renderElement(Home.settings.isDeleteWordButton, null, 'learn--card__icon-delete', 'learn--card__icon-hidden');
+    this.renderElement(Home.settings.isMoveToDifficultButton, null, 'learn--card__icon-brain', 'learn--card__icon-hidden');
+    this.renderElement(Home.settings.isAnswerButton, null, 'learn--button-show', 'learn--button-hidden');
+    this.renderElement(Home.settings.isIntervalButtons, null, 'learn--card__complexity', 'learn--card__complexity-hidden');
+    // переводы предложений
+    this.renderElement(Home.settings.isTextMeaning, Home.settings.isTextExample, 'learn--card__icon-book', 'learn--card__icon-hidden');
+  },
+
   afterRender: async (model) => {
-    const word = await model.getNewUnknownWord();
-    console.log(word);
+    Home.currentWord = await model.getNewUnknownWord();
+    console.log(Home.currentWord);
 
     Home.initSettings();
+    Home.renderCard();
 
     HomeHandler.initHomeHandler();
   },
