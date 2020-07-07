@@ -56,7 +56,7 @@ const Home = {
   afterRender: async (model) => {
     const word = await model.getNewUnknownWord();
     console.log(word);
-    HomeHandler.initHomeHandler();
+    HomeHandler.initHomeHandler(word);
   },
 
 };
