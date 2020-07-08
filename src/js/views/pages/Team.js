@@ -12,11 +12,11 @@ const Team = {
             <div class="aboutTeam__card_text">
               <p class="aboutTeam__card_name">Денис Архипов</p>
               <p class="aboutTeam__card_position">Ментор</p>
-              <p class="aboutTeam__card_about">Менторил</p>
+              <p class="aboutTeam__card_about">Менторил и trello это очень важно!</p>
               <div class="aboutTeam__card_contact">
                 <div class="aboutTeam__card_contact-github">
-                  <div class="aboutTeam__card_contact-githubImage imageDdenis"></div>
-                  <a class="aboutTeam__card_contact-githubLink" href="https://github.com/mironovahl" target="_blank">mironovahl</a>
+                  <div class="aboutTeam__card_contact-githubImage"></div>
+                  <a class="aboutTeam__card_contact-githubLink" href="https://github.com/vikingspb" target="_blank">vikingspb</a>
                 </div>
               </div>
             </div>
