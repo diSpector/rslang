@@ -17,6 +17,16 @@ html, body {
     margin: 0;
 }
 
+body {
+    min-height: calc(100vh - 71px);
+    display: flex;
+    flex-direction: column;
+}
+
+.content {
+    flex-grow: 1;
+}
+
 .wrapper {
     max-width: 1024px;
     margin: 0 auto;
@@ -37,8 +47,7 @@ html, body {
 
 body {
     margin: 71px 0 0;
-}
-
-.container {
-
+    @media (max-width: 500px) {
+        margin: 95px 0 0;
+    }
 }
