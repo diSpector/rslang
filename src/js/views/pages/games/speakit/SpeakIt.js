@@ -204,7 +204,9 @@ const SpeakIt = {
 
 
     async function reloadWords() { // загрузить новые слова
-      words = await model.getSetOfWordsByDifficulty(level, page, 10);
+      words = await model.getSetOfWordsAndTranslations(Number(level) + 1, page, 10);
+      words = words.reduce((accumulator, currentValue) => [...accumulator, currentValue.correct], []);
+      console.log(words);
       words = common.shuffleWords(words);
     }
 
