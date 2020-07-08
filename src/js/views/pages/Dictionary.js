@@ -178,7 +178,7 @@ const Dictionary = {
         hardWordsContainer.append(newWord);
         newWord.classList.add('hard');
       }
-      applaySettingsToOneCard(newWord);
+      model.applaySettingsToOneCard(newWord);
     }
 
     async function start() {
@@ -211,7 +211,14 @@ const Dictionary = {
       }
     }
 
-    function getSettings() {
+    async function getSettings() {
+      // авторизация
+      await model.loginUser({ email: '66group@gmail.com', password: 'Gfhjkm_123' });
+
+      const settingsGetRaw = await model.getSettings();
+      const { dictionary } = settingsGetRaw;
+      settings = dictionary;
+      /*
       settings = JSON.parse(localStorage.getItem('dictionarySettings'));
       if (!settings) {
         settings = {
@@ -220,7 +227,7 @@ const Dictionary = {
           transcription: true,
           img: true,
         };
-      }
+      } */
       if (!settings.example) changeSetting('.dictionarry--buttonExample');
       if (!settings.meaning) changeSetting('.dictionarry--buttonExplanation');
       if (!settings.transcription) changeSetting('.dictionarry--buttonTranscription');
@@ -254,8 +261,8 @@ const Dictionary = {
         settings.img = !settings.img;
         changeSetting('.dictionarry--buttonImg', '.imgContainer');
       }
-
-      localStorage.setItem('dictionarySettings', JSON.stringify(settings));
+      model.saveDictionarySettings(settings);
+      // localStorage.setItem('dictionarySettings', JSON.stringify(settings));
     }
 
     function showPage(target) {
