@@ -50,7 +50,7 @@ const Home = {
                         <p class="learn--card__textExampleTranslate  learn--card__textExampleTranslate-hidden">Он не очень умен, но у него есть некоторые другие положительные качества</p>
                     </div>
                 </div>
-                <input class="learn--card__input" type="text">
+                <div class="learn--card__input" contenteditable></div>
                 <p class="learn--card__transcription  learn--card__transcription-hidden">[ǽtribjùːt]</p>
                 <p class="learn--card__wordTranslate">атрибут</p>
             </main>
@@ -268,7 +268,7 @@ const Home = {
     Home.initSettings();
     Home.renderCard();
 
-    HomeHandler.initHomeHandler();
+    HomeHandler.initHomeHandler(Home.currentWord);
   },
 
 };

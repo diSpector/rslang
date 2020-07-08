@@ -1,5 +1,6 @@
 const HomeHandler = {
   currentWord: null,
+  isWrongWord: false,
 
   playAudio: () => {
     const wordAudio = new Audio(HomeHandler.currentWord.audio);
@@ -11,14 +12,55 @@ const HomeHandler = {
     wordAudioMeaning.onended = () => console.log('Next card');
   },
 
+  showTranslate: () => {
+    const textMeaningTranslate = document.querySelector('.learn--card__textMeaningTranslate');
+    const textExampleTranslate = document.querySelector('.learn--card__textExampleTranslate');
+    textMeaningTranslate.classList.remove('learn--card__textMeaningTranslate-hidden');
+    textExampleTranslate.classList.remove('learn--card__textExampleTranslate-hidden');
+  },
+
   correctAnswer: () => {
     console.log('Correct word');
     HomeHandler.playAudio();
+    HomeHandler.showTranslate();
+  },
+
+  setWrongLetters: () => {
+    const cardInput = document.querySelector('.learn--card__input');
+    const userWord = cardInput.innerText;
+    const correctWord = HomeHandler.currentWord.word;
+    let wrongWordCount = 0;
+    let WrongLettersColor = 'orange';
+    for (let i = 0; i < correctWord.length; i += 1) {
+      if (correctWord[i] !== userWord[i]) {
+        wrongWordCount += 1;
+      }
+    }
+    if (wrongWordCount > correctWord.length / 2) WrongLettersColor = 'red';
+    let coloredWord = '';
+    for (let i = 0; i < correctWord.length; i += 1) {
+      if (correctWord[i] === userWord[i]) {
+        coloredWord += `<span style="color: green; transition: 0.5s ease; opacity: 1;">${correctWord[i]}</span>`;
+      } else {
+        coloredWord += `<span style="color: ${WrongLettersColor}; transition: 0.5s ease; opacity: 1;">${correctWord[i]}</span>`;
+      }
+    }
+    cardInput.innerHTML = coloredWord;
+    HomeHandler.isWrongWord = true;
+    setTimeout(() => {
+      const letters = document.querySelectorAll('.learn--card__input > span');
+      for (let i = 0; i < letters.length; i += 1) {
+        letters[i].style.opacity = '0.5';
+      }
+    }, 1000);
+    cardInput.onkeydown = () => {
+      if (HomeHandler.isWrongWord) cardInput.innerHTML = '';
+      HomeHandler.isWrongWord = false;
+    };
   },
 
   wrongAnswer: () => {
-    const cardInput = document.querySelector('.learn--card__input');
-    cardInput.value = HomeHandler.currentWord.word;
+    HomeHandler.setWrongLetters();
   },
 
   getTextWidth: (text, font) => {
@@ -49,9 +91,10 @@ const HomeHandler = {
 
   addCardKeyHandler: () => {
     const card = document.querySelector('.learn--card');
-    card.onkeyup = ({ key }) => {
-      const userWord = document.querySelector('.learn--card__input').value;
-      if (key === 'Enter' && document.activeElement.classList.contains('learn--card__input')) {
+    card.onkeydown = (event) => {
+      const userWord = document.querySelector('.learn--card__input').innerText;
+      if (event.key === 'Enter' && document.activeElement.classList.contains('learn--card__input')) {
+        event.preventDefault();
         if (userWord === HomeHandler.currentWord.word) {
           HomeHandler.correctAnswer();
         } else if (userWord !== '') {
@@ -69,7 +112,7 @@ const HomeHandler = {
         console.log('Show Answer');
       }
       if (target.classList.contains('learn--button-next')) {
-        const userWord = document.querySelector('.learn--card__input').value;
+        const userWord = document.querySelector('.learn--card__input').innerText;
         if (userWord === HomeHandler.currentWord.word) {
           HomeHandler.correctAnswer();
         } else if (userWord !== '') {
