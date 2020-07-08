@@ -71,83 +71,77 @@ const Home = {
 
     <div class="settings">
         <div class="settings--closeBtn"></div>
-        <h2>Настройки</h2>
+        <h2 class="settings--heading">Настройки</h2>
 
         <form class="settings--form" action="#" method="POST">
         <fieldset>
             <legend>Слова для изучения</legend>
             <div class="settings__error  settings__error-max">Количество новых слов не может быть больше максимального количества карточек</div>
 
-            <div class="settings__newWordsPerDay">
+            <div class="settings__item">
                 <input type="number" id="newWordsPerDay" min="10" max="30" value="15" required>
                 <label for="newWordsPerDay">Количество новых слов в день</label>
             </div>
 
-            <div class="settings__maxWordsPerDay">
+            <div class="settings__item">
                 <input type="number" id="maxWordsPerDay" min="10" max="50" value="30" required>
                 <label for="maxWordsPerDay">Максимальное количество карточек в день</label>
             </div>
         </fieldset>
 
-        <hr>
-
         <fieldset>
             <legend>Информация на карточке</legend>
             <div class="settings__error  settings__error-info">Необходимо выбрать один из вариантов</div>
 
-            <div class="settings__wordTranslate">
+            <div class="settings__item">
               <input type="checkbox" id="isWordTranslate" checked>
               <label for="isWordTranslate">Перевод слова</label>
             </div>
 
-            <div class="settings__textMeaning">
+            <div class="settings__item">
               <input type="checkbox" id="isTextMeaning" checked>
               <label for="isTextMeaning">Предложение с объяснением значения слова</label>
             </div>
 
-            <div class="settings__textExample">
+            <div class="settings__item">
               <input type="checkbox" id="isTextExample" checked>
               <label for="isTextExample">Предложение с примером использования изучаемого слова</label>
             </div>
         </fieldset>
-
-        <hr>
         
         <fieldset>
             <legend>Дополнительные элементы</legend>
 
-            <div class="settings__transcription">
+            <div class="settings__item">
               <input type="checkbox" id="isTranscription">
               <label for="isTranscription">Транскрипция слова (появится после угадывания слова)</label>
             </div>
 
-            <div class="settings__image">
+            <div class="settings__item">
               <input type="checkbox" id="isImage" checked>
               <label for="isImage">Картинка-ассоциация</label>
             </div>
         </fieldset>
-
-        <hr>
         
         <fieldset>
             <legend>Кнопки (дополнительный функционал)</legend>
 
-            <div class="settings__showAnswer">
+            <div class="settings__item">
               <input type="checkbox" id="isAnswerButton" checked>
               <label for="isAnswerButton">Показать ответ</label>
             </div>
 
-            <div class="settings__deleteWord">
+            <div class="settings__item">
               <input type="checkbox" id="isDeleteWordButton" checked>
               <label for="isDeleteWordButton">Удалить слово из изучения</label>
             </div>
 
-            <div class="settings__difficult">
+            <div class="settings__item">
               <input type="checkbox" id="isMoveToDifficultButton" checked>
               <label for="isMoveToDifficultButton">Поместить слово в группу «Сложные»</label>
             </div>
 
-            <div class="settings__intervalButtons">
+            <div class="settings__item">
               <input type="checkbox" id="isIntervalButtons" checked>
               <label for="isIntervalButtons">Блок кнопок для интервального повторения</label>
             </div>
