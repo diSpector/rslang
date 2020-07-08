@@ -180,6 +180,11 @@
     color: #586187;
     font-size: 2rem;
     font-weight: bold;
+    text-align: center;
+    height: 24px;
+    overflow: hidden;
+    overflow-wrap: normal;
+    transition: 1s ease;
 }
 
 .learn--card__transcription {
