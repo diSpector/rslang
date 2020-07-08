@@ -3,21 +3,22 @@ import '../../../css/pages/settings.scss';
 import HomeHandler from './HomeHandler';
 
 const Home = {
-  settings: {
-    newWordsPerDay: 10, // Количество новых слов в день
-    maxWordsPerDay: 30, // Максимальное количество карточек в день
-    isWordTranslate: true, // Перевод слова
-    isTextMeaning: true, // Предложение с объяснением значения слова
-    isTextExample: true, // Предложение с примером использования изучаемого слова
-    isTextMeaningTranslate: false, // Перевод предложения с объяснением значения слова
-    isTextExampleTranslate: false, // Перевод предложения с примером использования изучаемого слова
-    isTranscription: false, // Транскрипция слова
-    isImage: true, // Картинка-ассоциация
-    isAnswerButton: true, // Кнопка "Показать ответ"
-    isDeleteWordButton: true, // Кнопка "Удалить слово из изучения"
-    isMoveToDifficultButton: true, // Кнопка - поместить слово в группу «Сложные»
-    isIntervalButtons: true, // Блок кнопок для интервального повторения
-  },
+  // settings: {
+  //   newWordsPerDay: 10, // Количество новых слов в день
+  //   maxWordsPerDay: 30, // Максимальное количество карточек в день
+  //   isWordTranslate: false, // Перевод слова
+  //   isTextMeaning: false, // Предложение с объяснением значения слова
+  //   isTextExample: false, // Предложение с примером использования изучаемого слова
+  //   isTextMeaningTranslate: false, // Перевод предложения с объяснением значения слова
+  //   isTextExampleTranslate: false, // Перевод предложения с примером использования слова
+  //   isTranscription: false, // Транскрипция слова
+  //   isImage: false, // Картинка-ассоциация
+  //   isAnswerButton: false, // Кнопка "Показать ответ"
+  //   isDeleteWordButton: false, // Кнопка "Удалить слово из изучения"
+  //   isMoveToDifficultButton: false, // Кнопка - поместить слово в группу «Сложные»
+  //   isIntervalButtons: false, // Блок кнопок для интервального повторения
+  // },
+  settings: null,
   currentWord: null,
 
   render: async () => {
@@ -236,7 +237,7 @@ const Home = {
     return true;
   },
 
-  saveSettings() {
+  saveSettings(model) {
     const form = document.querySelector('.settings--form');
     form.addEventListener('submit', (event) => {
       event.preventDefault();
@@ -244,18 +245,37 @@ const Home = {
       this.hideError('settings__error-max');
 
       if (this.isValid()) {
-        console.log('save settings to backend');
+        model.saveCardsSettings(this.settings);
+        console.log('saved settings', this.settings);
         Home.renderCard();
       }
     });
   },
 
-  initSettings() {
+  renderSettings() {
+    document.querySelector('#newWordsPerDay').value = this.settings.newWordsPerDay;
+    document.querySelector('#maxWordsPerDay').value = this.settings.maxWordsPerDay;
+
+    document.querySelector('#isWordTranslate').checked = this.settings.isWordTranslate;
+    document.querySelector('#isTextMeaning').checked = this.settings.isTextMeaning;
+    document.querySelector('#isTextExample').checked = this.settings.isTextExample;
+
+    document.querySelector('#isTranscription').checked = this.settings.isTranscription;
+    document.querySelector('#isImage').checked = this.settings.isImage;
+
+    document.querySelector('#isAnswerButton').checked = this.settings.isAnswerButton;
+    document.querySelector('#isDeleteWordButton').checked = this.settings.isDeleteWordButton;
+    document.querySelector('#isMoveToDifficultButton').checked = this.settings.isMoveToDifficultButton;
+    document.querySelector('#isIntervalButtons').checked = this.settings.isIntervalButtons;
+  },
+
+  initSettings(model) {
     Home.showSettingsToggle();
     Home.closeSettings();
 
+    Home.renderSettings();
     Home.changeSettings();
-    Home.saveSettings();
+    Home.saveSettings(model);
   },
 
   renderElement(flag1, flag2, elementClass, hiddenClass, innerHtml = null, src = null) {
@@ -288,10 +308,15 @@ const Home = {
   },
 
   afterRender: async (model) => {
+    await model.loginUser({ email: '66group@gmail.com', password: 'Gfhjkm_123' });
+    const settingsGetRaw = await model.getSettings();
+    const { data: settings } = settingsGetRaw;
+    Home.settings = settings;
+
     Home.currentWord = await model.getNewUnknownWord();
     console.log(Home.currentWord);
 
-    Home.initSettings();
+    Home.initSettings(model);
     Home.renderCard();
 
     HomeHandler.initHomeHandler(Home.currentWord);
