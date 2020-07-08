@@ -2,14 +2,23 @@ const HomeHandler = {
   currentWord: null,
   isWrongWord: false,
 
+  settings: {
+    sentenceTranslate: null,
+    audioAutoplay: null,
+  },
+
   playAudio: () => {
-    const wordAudio = new Audio(HomeHandler.currentWord.audio);
-    const wordAudioExample = new Audio(HomeHandler.currentWord.audioExample);
-    const wordAudioMeaning = new Audio(HomeHandler.currentWord.audioMeaning);
-    wordAudio.play();
-    setTimeout(() => wordAudioExample.play(), 1000);
-    setTimeout(() => wordAudioMeaning.play(), 7000);
-    wordAudioMeaning.onended = () => console.log('Next card');
+    if (HomeHandler.settings.audioAutoplay === true) {
+      const wordAudio = new Audio(HomeHandler.currentWord.audio);
+      const wordAudioExample = new Audio(HomeHandler.currentWord.audioExample);
+      const wordAudioMeaning = new Audio(HomeHandler.currentWord.audioMeaning);
+      wordAudio.play();
+      setTimeout(() => wordAudioExample.play(), 1000);
+      setTimeout(() => wordAudioMeaning.play(), 7000);
+      wordAudioMeaning.onended = () => console.log('Next card');
+    } else {
+      console.log('Next card');
+    }
   },
 
   showTranslate: () => {
@@ -20,7 +29,10 @@ const HomeHandler = {
   },
 
   correctAnswer: () => {
-    console.log('Correct word');
+    const cardInput = document.querySelector('.learn--card__input');
+    cardInput.innerText = HomeHandler.currentWord.word;
+    cardInput.removeAttribute('contenteditable');
+
     HomeHandler.playAudio();
     HomeHandler.showTranslate();
   },
@@ -109,7 +121,7 @@ const HomeHandler = {
     const learnButtons = document.querySelector('.learn--buttons');
     learnButtons.addEventListener('click', ({ target }) => {
       if (target.classList.contains('learn--button-show')) {
-        console.log('Show Answer');
+        HomeHandler.correctAnswer();
       }
       if (target.classList.contains('learn--button-next')) {
         const userWord = document.querySelector('.learn--card__input').innerText;
@@ -118,6 +130,35 @@ const HomeHandler = {
         } else if (userWord !== '') {
           console.log('Wrong answer');
         }
+      }
+    });
+  },
+
+  setSettings: () => {
+    const headerSettings = document.querySelectorAll('.learn--card__header > div');
+    headerSettings.forEach((elem) => {
+      if (elem.classList.contains('learn--card__icon-book')) {
+        if (elem.classList.contains('learn--card__icon-inactive')) {
+          HomeHandler.settings.sentenceTranslate = false;
+        } else {
+          HomeHandler.settings.sentenceTranslate = true;
+        }
+      }
+      if (elem.classList.contains('learn--card__icon-headphones')) {
+        if (elem.classList.contains('learn--card__icon-inactive')) {
+          HomeHandler.settings.audioAutoplay = false;
+        } else {
+          HomeHandler.settings.audioAutoplay = true;
+        }
+      }
+    });
+  },
+
+  addSettingsClickHandler: () => {
+    const headerSettings = document.querySelector('.learn--card__header');
+    headerSettings.addEventListener('click', ({ target }) => {
+      if (target.classList.contains('learn--card__icon-book')) {
+        console.log('translate');
       }
     });
   },
@@ -135,6 +176,8 @@ const HomeHandler = {
     HomeHandler.addCardClickHandler();
     HomeHandler.addCardKeyHandler();
     HomeHandler.addButtonsClickHandler();
+    HomeHandler.addSettingsClickHandler();
+    HomeHandler.setSettings();
   },
 };
 
