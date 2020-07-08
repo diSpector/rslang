@@ -75,6 +75,7 @@ const Home = {
         <form class="settings--form" action="#" method="POST">
         <fieldset>
             <legend>Слова для изучения</legend>
+            <div class="settings__error  settings__error-max">Количество новых слов не может быть больше максимального количества карточек</div>
 
             <div class="settings__newWordsPerDay">
                 <input type="number" id="newWordsPerDay" min="10" max="30" value="15" required>
@@ -91,7 +92,7 @@ const Home = {
 
         <fieldset>
             <legend>Информация на карточке</legend>
-            <div class="settings__error">Необходимо выбрать один из вариантов</div>
+            <div class="settings__error  settings__error-info">Необходимо выбрать один из вариантов</div>
 
             <div class="settings__wordTranslate">
               <input type="checkbox" id="isWordTranslate" checked>
@@ -179,13 +180,21 @@ const Home = {
     return !!((isWordTranslate || isTextMeaning || isTextExample));
   },
 
-  showError() {
-    const error = document.querySelector('.settings__error');
+  // is maxWordsPerDay bigger than newWordsPerDay
+  isMaxBiggerThanNew() {
+    const maxWordsPerDay = document.querySelector('#maxWordsPerDay').value;
+    const newWordsPerDay = document.querySelector('#newWordsPerDay').value;
+
+    return (maxWordsPerDay >= newWordsPerDay);
+  },
+
+  showError(errorClass) {
+    const error = document.querySelector(`.${errorClass}`);
     error.classList.add('settings__error-show');
   },
 
-  hideError() {
-    const error = document.querySelector('.settings__error');
+  hideError(errorClass) {
+    const error = document.querySelector(`.${errorClass}`);
     error.classList.remove('settings__error-show');
   },
 
@@ -209,17 +218,34 @@ const Home = {
     };
   },
 
+  // валидация настроек
+  isValid() {
+    this.hideError('settings__error-info');
+    this.hideError('settings__error-max');
+
+    if (!this.isMaxBiggerThanNew()) {
+      this.showError('settings__error-max');
+      return false;
+    }
+
+    if (!this.isInfoChecked()) {
+      this.showError('settings__error-info');
+      return false;
+    }
+
+    return true;
+  },
+
   saveSettings() {
     const form = document.querySelector('.settings--form');
     form.addEventListener('submit', (event) => {
       event.preventDefault();
-      this.hideError();
+      this.hideError('settings__error-info');
+      this.hideError('settings__error-max');
 
-      if (this.isInfoChecked()) {
+      if (this.isValid()) {
         console.log('save settings to backend');
         Home.renderCard();
-      } else {
-        this.showError();
       }
     });
   },
@@ -268,7 +294,7 @@ const Home = {
     Home.initSettings();
     Home.renderCard();
 
-    HomeHandler.initHomeHandler();
+    HomeHandler.initHomeHandler(Home.currentWord);
   },
 
 };
