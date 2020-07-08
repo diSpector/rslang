@@ -7,7 +7,6 @@ const DateHelper = {
     let day = dateTodayObj.getDate();
     day = (day < 10) ? `0${day}` : day;
     return `${year}-${month}-${day}`;
-
   },
 };
 
