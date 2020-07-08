@@ -34,7 +34,7 @@ const routes = {
   '/': Home, // Главная,
   '/login': Login, // Авторизация/Регистрация
   '/stats': Statistics, // Статистика,
-  '/dictionary/:id': Dictionary, // Словарь,
+  '/dictionary': Dictionary, // Словарь,
   '/games/:id': Games, // Мини-игры,
   '/promo': Promo, // О приложении,
   '/team': Team, // О команде,

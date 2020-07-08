@@ -53,15 +53,16 @@ const Dictionary = {
 
     async function constructCurd(wordObj, mode) {
       const newWord = createNewElement('div', 'wordCard');
-
+      const wordData = createNewElement('div', 'wordData');
+      newWord.append(wordData);
 
       const newWordSoundIcon = createNewElement('div', 'sound__icon');
       const audio = new Audio(wordObj.audio);
       newWordSoundIcon.onclick = () => audio.play();
-      newWord.append(newWordSoundIcon);
+      wordData.append(newWordSoundIcon);
 
       const mainWordAttributes = createNewElement('div', 'mainWordAttributes');
-      newWord.append(mainWordAttributes);
+      wordData.append(mainWordAttributes);
 
       const newWordTextTranscription = createNewElement('div', 'textTranscription');
       mainWordAttributes.append(newWordTextTranscription);
@@ -76,9 +77,9 @@ const Dictionary = {
       mainWordAttributes.append(newWordTranslate);
 
       const longRead = createNewElement('div', 'longRead');
-      newWord.append(longRead);
+      wordData.append(longRead);
 
-      const newWordExample = createNewElement('div', 'example', wordObj.textExample);
+      const newWordExample = createNewElement('q', 'example', wordObj.textExample);
       longRead.append(newWordExample);
 
       const newWordMeaning = createNewElement('div', 'meaning', wordObj.textMeaning);
@@ -92,7 +93,7 @@ const Dictionary = {
       wordImg.src = wordObj.image;
       const newWordImg = createNewElement('div', 'imgContainer');
       newWordImg.append(wordImg);
-      newWord.append(newWordImg);
+      wordData.append(newWordImg);
 
       const wordButtonContainer = createNewElement('div', 'wordButtonContainer');
       newWord.append(wordButtonContainer);
@@ -177,6 +178,7 @@ const Dictionary = {
         hardWordsContainer.append(newWord);
         newWord.classList.add('hard');
       }
+      applaySettingsToOneCard(newWord);
     }
 
     async function start() {
@@ -197,6 +199,17 @@ const Dictionary = {
         constructCurd(word, 'deleted');
       });
     }
+    function changeSetting(buttonSelect, divSelector) {
+      const button = document.querySelector(buttonSelect);
+      button.classList.toggle('unactive');
+      if (divSelector) {
+        const list = document.querySelectorAll(divSelector);
+        const array = Array.from(list);
+        array.forEach((element) => {
+          element.classList.toggle('hidden');
+        });
+      }
+    }
 
     function getSettings() {
       settings = JSON.parse(localStorage.getItem('dictionarySettings'));
@@ -208,20 +221,21 @@ const Dictionary = {
           img: true,
         };
       }
-      if (!settings.example) changeSetting('.dictionarry--buttonExample', '.example');
-      if (!settings.meaning) changeSetting('.dictionarry--buttonExplanation', '.meaning');
-      if (!settings.transcription) changeSetting('.dictionarry--buttonTranscription', '.transcription');
-      if (!settings.img) changeSetting('.dictionarry--buttonImg', '.imgContainer');
+      if (!settings.example) changeSetting('.dictionarry--buttonExample');
+      if (!settings.meaning) changeSetting('.dictionarry--buttonExplanation');
+      if (!settings.transcription) changeSetting('.dictionarry--buttonTranscription');
+      if (!settings.img) changeSetting('.dictionarry--buttonImg');
     }
-    function changeSetting(buttonSelect, divSelect) {
-      const button = document.querySelector(buttonSelect);
-      button.classList.toggle('unactive');
 
-      const list = document.querySelectorAll(divSelect);
-      const array = Array.from(list);
-      array.forEach((element) => {
-        element.classList.toggle('hidden');
-      });
+    function changeSettingForOneCard(block, divSelector) {
+      block.querySelector(divSelector).classList.add('hidden');
+    }
+
+    function applaySettingsToOneCard(block) {
+      if (!settings.example) changeSettingForOneCard(block, '.example');
+      if (!settings.meaning) changeSettingForOneCard(block, '.meaning');
+      if (!settings.transcription) changeSettingForOneCard(block, '.transcription');
+      if (!settings.img) changeSettingForOneCard(block, '.imgContainer');
     }
     function clickSettings(target) {
       if (target.classList.contains('dictionarry--buttonExample')) {
@@ -266,8 +280,8 @@ const Dictionary = {
 
     async function go() {
       setEventListeners();
+      await getSettings();
       await start();
-      getSettings();
     }
     go();
   },

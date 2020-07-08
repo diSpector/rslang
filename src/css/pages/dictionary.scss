@@ -27,6 +27,7 @@ $deletedColor:indianred;
                 order: 8;
                 & > div {
                 font-size: 16px;
+                
                 }
             }
         }
@@ -40,15 +41,13 @@ $deletedColor:indianred;
                 text-align: center;
                 color: white;
                 font-weight: 600;
-                padding: 8px;
-                
+                padding: 6px;
                 cursor: pointer;
                 border-top-left-radius: 10px;
                 border-top-right-radius: 10px;
                 &:hover{
                     box-shadow: 0px -2px 1px 2px rgba(63, 50, 50, 0.06);
                 }
-                
             }
             .dictionary--currentWordsButton{
                 background-color: $currentColor;
@@ -96,10 +95,7 @@ $deletedColor:indianred;
             .dictionarry--buttonImg {
                 background-image: url($imgPath + 'image_white.svg');
             }
-
         }
-        
-    
 }
     .dictionary--currentWords {
         background-color: $currentColor;
@@ -115,83 +111,100 @@ $deletedColor:indianred;
         padding: 10px;
         font-family: 'Roboto', sans-serif;
         font-size: 18px;
-        
        
         .wordCard {
             border-radius: 10px;
             box-shadow: 0 0 3px 1px rgba(0, 0, 0, 0.3);
             background-color: white;
             display: flex;
-            flex-wrap: wrap;
-            justify-content: space-between;
+            
             align-items: center;
             margin: 5px;
-            
-            & > div {
-                margin:5px;            
-            }
-            .sound__icon{
-                background-image: url($imgPath + 'sound.png');
-                width: 40px;
-                height: 40px;
-                background-size: 30px 30px;
-                background-position: center;
-                background-repeat: no-repeat;
-                box-sizing: border-box;
-                &:hover {
-                    cursor: pointer;
-                    box-shadow: 0px 0px 4px -2px;
+            .wordData{
+               
+                flex-grow: 1;
+                align-items: center;
+                display: flex;
+                flex-wrap: wrap;
+                & > div {
+                    margin: 5px;            
                 }
-            }
-            .textTranscription {
-                
-                padding-right: 5px;
-                font-size: 18px;
-                width: 180px;
-                div {
-                   display: inline-block;
+                .sound__icon{
+                    background-image: url($imgPath + 'sound.png');
+                    width: 40px;
+                    height: 40px;
+                    background-size: 30px 30px;
+                    background-position: center;
+                    background-repeat: no-repeat;
+                    box-sizing: border-box;
+                    &:hover {
+                        cursor: pointer;
+                        box-shadow: 0px 0px 4px -2px;
+                    }
+                }
+                .textTranscription {
+                    display: flex;
+                    flex-wrap: wrap;
                     padding-right: 5px;
+                    font-size: 18px;
+                    width: 200px;
+                    div {
+                        padding-right: 5px;
+                    }
+                    .text {
+                       font-weight: bold;
+                    }
+                    .transcription {
+                        color: gray;
+                    }
+                    .hidden {
+                        display: none;
+                    }
                 }
-                .text {
-                   font-weight: bold;
+    
+                .translation {
+                    font-size: 18px;
                 }
-                .transcription {
-                    color: gray;
-                }
-                .hidden {
-                    display: none;
-                }
-            }
-
-            .translation {
-                font-size: 18px;
-            }
-            .longRead {
-                font-size: 16px;
-                width: 500px;
-                
-                
-            }
-            @media (max-width: 1020px){
                 .longRead {
-                order:9;
-                width: auto;
-                padding: 10px;
+                    margin: 0 auto;
+                    padding: 5px;
+                    font-size: 16px;
+                    width: 500px;
+                    .meaning{
+                        color: rgb(112, 112, 112);
+                    }
+                    .example {
+                        quotes: "“" "”"; 
+                    }
+                    .progress {
+                        font-size: 14px;
+                    } 
                 }
-            }
-            .imgContainer {
-                .wordImg {
-                    
+               
+                .imgContainer {
+                    margin: 0 auto;
+                    padding-top: 5px;
+                    .wordImg {
+                        width: 150px;               
+                    }
                     width: 150px;
-                                        
                 }
-                
-                width: 150px;
+                @media (max-width: 600px){
+                    .longRead {
+                    width: auto;
+                    }
+                }
+                @media (max-width: 370px){
+                    .textTranscription {
+                    width: 100px;
+                    }
+                }
             }
-            
+                        
             .wordButtonContainer {
                 display: flex;
                 flex-direction: column;
+                margin:5px; 
 
                 & > div {
                     margin: 5px 8px;
@@ -204,15 +217,12 @@ $deletedColor:indianred;
                         transform: scale(1.1);
                     }
                 }
-                
-                
+                                
                 .wordDeleteButton{
                     background-image: url(../../img/dictionary/basket.svg);
-                   
                 }
                 .wordRestoreButton{
                     background-image: url(../../img/dictionary/unbasket.svg);
-                    
                 }
                 .wordHardButton{
                     background-image: url(../../img/dictionary/brain.svg);
@@ -221,15 +231,8 @@ $deletedColor:indianred;
                     background-image: url(../../img/dictionary/unbrain.svg);
                 }
             }
-
-
-
-
         }
-        
     
     }
-    
-
 
 }
