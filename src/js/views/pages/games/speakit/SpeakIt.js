@@ -134,10 +134,8 @@ const SpeakIt = {
     const config = {
       apiMaxPage: 29,
       repoUrl: 'https://raw.githubusercontent.com/dispector/rslang-data/master/',
-      YaTranslateApiUrl: 'https://translate.yandex.net/api/v1.5/tr.json/translate?key=trnsl.1.1.20200322T155651Z.de98a60e6a99185e.089aea4237b51c6db082c966f27a7895cd1e8b44&',
       pages: ['start', 'game', 'results', 'global'],
       hiddenCssCLass: 'hidden',
-
     };
     let recognition = null;
     let gameInProcess = false;
@@ -372,15 +370,15 @@ const SpeakIt = {
       imgContainer.src = image;
     }
 
-    async function setTranslate(word) { // получить перевод слова и вставить его на страницу
-      translateContainer.innerText = await render.getTranslate(word);
+    function setTranslate(wordObj) { // получить перевод слова и вставить его на страницу
+      translateContainer.innerText = wordObj.wordTranslate;
     }
 
     function processWord(wordObj) { // вставить картинку, слово, проиграть звук
       const { image } = wordObj;
       const { audio } = wordObj;
       setImage(image);
-      setTranslate(wordObj.word);
+      setTranslate(wordObj);
       common.playSound(audio);
     }
     const wordClick = (e) => { // обработчик нажатия на слово

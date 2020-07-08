@@ -1,14 +1,4 @@
 export default class Render {
-  async getTranslate(word) {
-    const YaTranslateApiUrl = 'https://translate.yandex.net/api/v1.5/tr.json/translate?key=trnsl.1.1.20200322T155651Z.de98a60e6a99185e.089aea4237b51c6db082c966f27a7895cd1e8b44&';
-
-    const url = `${YaTranslateApiUrl}text=${word}&lang=en-ru`;
-    const translationObj = await fetch(url);
-    const json = await translationObj.json();
-    const translation = json.text[0];
-    return translation;
-  }
-
   async results(words, errors) { // вывести страницу с результатом
     const errorsContainer = document.querySelector('.results__errors');
     const correctWordsContainer = document.querySelector('.results__correct__words');
@@ -121,8 +111,7 @@ export default class Render {
 
     const newWordTranslate = document.createElement('div');
     newWordTranslate.classList.add('translate');
-    const translated = await this.getTranslate(wordObj.word);
-    newWordTranslate.innerText = translated;
+    newWordTranslate.innerText = wordObj.wordTranslate;
     newWord.append(newWordTranslate);
     wordsContainer.append(newWord);
   }
