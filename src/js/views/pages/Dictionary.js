@@ -2,7 +2,7 @@ import '../../../css/pages/dictionary.scss';
 import AppModel from '../../model/AppModel';
 
 const Dictionary = {
-  render: async (model) => {
+  render: async () => {
     const view = /* html */`
     <section class="section dictionary--container">
         <nav class = "dictionarry--navigation">
@@ -35,11 +35,6 @@ const Dictionary = {
     </section>
           `;
 
-<<<<<<< HEAD
-
-=======
-    console.log(await model.getSetOfWordsAndTranslations(1, 10, 20, 0));
->>>>>>> develop
     return view;
   },
   afterRender: async () => {
@@ -182,13 +177,13 @@ const Dictionary = {
         hardWordsContainer.append(newWord);
         newWord.classList.add('hard');
       }
-      model.applaySettingsToOneCard(newWord);
+      applaySettingsToOneCard(newWord);
     }
 
     async function start() {
-      const currentWords = await model.getSetOfWordsByDifficulty(1, 1, 10);
-      const hardWords = await model.getSetOfWordsByDifficulty(1, 2, 10);
-      const deletedWords = await model.getSetOfWordsByDifficulty(1, 3, 10);
+      const currentWords = await model.getSetOfWordsCustomLength(1, 1, 10);
+      const hardWords = await model.getSetOfWordsCustomLength(1, 2, 10);
+      const deletedWords = await model.getSetOfWordsCustomLength(1, 3, 10);
 
       hardWords.forEach((word) => {
         constructCurd(word, 'hard');
@@ -220,8 +215,8 @@ const Dictionary = {
       await model.loginUser({ email: '66group@gmail.com', password: 'Gfhjkm_123' });
 
       const settingsGetRaw = await model.getSettings();
-      const { dictionary } = settingsGetRaw;
-      settings = dictionary;
+      const { data: allSettings } = settingsGetRaw;
+      settings = allSettings.dictionary;
       /*
       settings = JSON.parse(localStorage.getItem('dictionarySettings'));
       if (!settings) {
