@@ -50,7 +50,7 @@ export default class AppModel {
   // get a single learned word
   async getRandomLearnedWord() {
     if (this.learnedWordsCounter <= 0) {
-      return { 'error': true, 'errorText': 'Недостаточно выученных слов' };
+      return { error: true, errorText: 'Недостаточно выученных слов' };
     }
     const randomIndex = Math.floor(Math.random() * Math.floor(this.learnedWordsCounter));
     return this.getWordDataByIndex(randomIndex);
@@ -67,7 +67,8 @@ export default class AppModel {
       return null;
     }
     const startOfDifficultyGroup = Math.floor(difficulty * this.wordSetLength);
-    const startOfRound = startOfDifficultyGroup + Math.floor((this.wordSetLength / roundLength) * round);
+    const startOfRound = startOfDifficultyGroup
+      + Math.floor((this.wordSetLength / roundLength) * round);
     const index = startOfRound + Math.floor(Math.random() * roundLength);
     const result = await this.getWordDataByIndex(index);
     return result;
@@ -112,7 +113,7 @@ export default class AppModel {
   // utilty function, gets word data from API by its index
   async getWordDataByIndex(index) {
     if (index < 0 || index >= this.maxDictionaryLength) {
-      return { 'error': true, 'errorText': 'Неверный индекс слова' };
+      return { error: true, errorText: 'Неверный индекс слова' };
     }
     const group = Math.floor(index / this.wordSetLength);
     const page = Math.floor((index - group * this.wordSetLength) / this.defaultPageLength);
@@ -124,7 +125,7 @@ export default class AppModel {
       const result = this.reformatWordData(data[wordIndex]);
       return result;
     } catch (e) {
-      return { 'error': true, 'errorText': this.serverErrorMessage };
+      return { error: true, errorText: this.serverErrorMessage };
     }
   }
 
@@ -188,7 +189,7 @@ export default class AppModel {
   // page - страница, от 0 до 29
   async getSetOfWords(group, page) {
     if (group < 0 || group > 5 || page < 0 || page > 29) {
-      return { 'error': true, 'errorText': 'Некорректные аргументы функции' };
+      return { error: true, errorText: 'Некорректные аргументы функции' };
     }
     const url = `${this.searchString}group=${group}&page=${page}`;
     try {
@@ -197,7 +198,7 @@ export default class AppModel {
       const result = data.map((x) => this.reformatWordData(x));
       return result;
     } catch (e) {
-      return { 'error': true, 'errorText': this.serverErrorMessage };
+      return { error: true, errorText: this.serverErrorMessage };
     }
   }
 
@@ -205,9 +206,14 @@ export default class AppModel {
   // group -  сложность, от 0 до 5
   // page - страница, page * wordsPerPage не может быть больше 600
   // wordsPerPage - количество запрашиваемых слов
-  async getSetOfWordsCustomLength(group, page, wordsPerPage = 10, wordsPerExampleSentenceLTE = this.maxWordsPerExampleSentence) {
+  async getSetOfWordsCustomLength(
+    group,
+    page,
+    wordsPerPage = 10,
+    wordsPerExampleSentenceLTE = this.maxWordsPerExampleSentence,
+  ) {
     if (group < 0 || group > 5 || page < 0 || wordsPerPage < 0 || page * wordsPerPage > 600) {
-      return { 'error': true, 'errorText': 'Некорректные аргументы функции' };
+      return { error: true, errorText: 'Некорректные аргументы функции' };
     }
     try {
       const url = `${this.searchString}group=${group}&page=${page}&wordsPerExampleSentenceLTE=${wordsPerExampleSentenceLTE}&wordsPerPage=${wordsPerPage}`;
@@ -216,7 +222,7 @@ export default class AppModel {
       const result = data.map((x) => this.reformatWordData(x));
       return result;
     } catch (e) {
-      return { 'error': true, 'errorText': this.serverErrorMessage };
+      return { error: true, errorText: this.serverErrorMessage };
     }
   }
 
@@ -227,9 +233,9 @@ export default class AppModel {
       const responce = await fetch(url);
       const data = await responce.json();
       this.currentWordSet = await data;
-      return { 'error': false, 'errorText': '' };
+      return { error: false, errorText: '' };
     } catch (e) {
-      return { 'error': true, 'errorText': this.serverErrorMessage };
+      return { error: true, errorText: this.serverErrorMessage };
     }
   }
 
@@ -253,17 +259,22 @@ export default class AppModel {
     const totalNumberOfRounds = this.wordSetLength / roundLength;
     githubData = await this.getWordsDataFromGithub(difficulty);
     if (githubData.error) {
-      return { 'error': true, 'errorText': this.serverErrorMessage };
+      return { error: true, errorText: this.serverErrorMessage };
     }
-    const correctResults = this.getRoundDataFromModel(round, roundLength).map((x) => this.reformatWordData(x));
+    const correctResults = this.getRoundDataFromModel(round, roundLength)
+      .map((x) => this.reformatWordData(x));
     do {
       numberOfCurrentRound = Math.floor(Math.random() * totalNumberOfRounds);
-      if (!incorrectTranslationsRounds.includes(numberOfCurrentRound) && numberOfCurrentRound !== round) {
+      if (
+        !incorrectTranslationsRounds.includes(numberOfCurrentRound)
+        && numberOfCurrentRound !== round
+      ) {
         incorrectTranslationsRounds.push(numberOfCurrentRound);
       }
     } while (incorrectTranslationsRounds.length < numberOfTranslations);
     for (let i = 0; i < numberOfTranslations; i += 1) {
-      incorrectTranslations[i] = this.getRoundDataFromModel(incorrectTranslationsRounds[i], roundLength);
+      incorrectTranslations[i] = this
+        .getRoundDataFromModel(incorrectTranslationsRounds[i], roundLength);
     }
     for (let i = 0; i < roundLength; i += 1) {
       incorrectTranslationsSubArray = [];
@@ -276,7 +287,7 @@ export default class AppModel {
   }
 
   // функция, выдающая набор заданной длины из ВЫУЧЕННЫХ слов и неправильных переводов к ним
-  // numberOfWords - количество запрашиваемых слов, функция тестировалась для значений 10, 20, 30, 60
+  // numberOfWords - кол-во запрашиваемых слов, функция тестировалась для значений 10, 20, 30, 60
   // numberOfTranslations - количество переводов для каждого слова, от 0 до 4
   async getSetOfLearnedWordsAndTranslations(numberOfWords, numberOfTranslations) {
     if (numberOfWords > this.learnedWordsCounter) {
@@ -305,25 +316,31 @@ export default class AppModel {
     // выбираем случайный раунд
     const indexOfRandomRound = Math.floor(Math.random() * numberOfPossibleRounds);
     // вызываем функцию getSetOfWordsAndTranslations с найденными параметрами
-    const result = await this.getSetOfWordsAndTranslations(randomDifficulty, indexOfRandomRound, numberOfWords, numberOfTranslations);
+    const result = await this.getSetOfWordsAndTranslations(
+      randomDifficulty,
+      indexOfRandomRound,
+      numberOfWords,
+      numberOfTranslations,
+    );
     return result;
   }
 
   // выдает рандомный массив выученных слов заданной длины
   async getSetOfLearnedWords(numberOfWords) {
     if (numberOfWords > this.learnedWordsCounter || numberOfWords < 1) {
-      return { 'error': true, 'errorText': 'Некорректные аргументы функции' };
+      return { error: true, errorText: 'Некорректные аргументы функции' };
     }
     let startIndex = 0;
     let githubData = {};
     if (githubData.error) {
-      return { 'error': true, 'errorText': this.serverErrorMessage };
+      return { error: true, errorText: this.serverErrorMessage };
     }
     const randomSeed = Math.floor(Math.random() * (this.learnedWordsCounter - numberOfWords));
     const randomDifficulty = Math.floor(randomSeed / this.wordSetLength) + 1;
     githubData = await this.getWordsDataFromGithub(randomDifficulty);
     startIndex = randomSeed - randomDifficulty * this.wordSetLength;
-    return this.currentWordSet.slice(startIndex, startIndex + numberOfWords).map((x) => this.reformatWordData(x));
+    return this.currentWordSet.slice(startIndex, startIndex + numberOfWords)
+      .map((x) => this.reformatWordData(x));
   }
 
 
@@ -345,7 +362,7 @@ export default class AppModel {
       const content = await rawResponse.json();
       return { data: content, error: false, errorText: '' };
     } catch (e) {
-      return { 'error': true, 'errorText': this.serverErrorMessage };
+      return { error: true, errorText: this.serverErrorMessage };
     }
   }
 
@@ -370,7 +387,7 @@ export default class AppModel {
       this.userId = content.userId;
       return { data: content, error: false, errorText: '' };
     } catch (e) {
-      return { 'error': true, 'errorText': this.serverErrorMessage };
+      return { error: true, errorText: this.serverErrorMessage };
     }
   }
 
@@ -392,17 +409,17 @@ export default class AppModel {
         method: 'PUT',
         withCredentials: true,
         headers: {
-          'Authorization': `Bearer ${this.authToken}`,
-          'Accept': 'application/json',
+          Authorization: `Bearer ${this.authToken}`,
+          Accept: 'application/json',
           'Content-Type': 'application/json',
         },
         body: JSON.stringify(stats),
       });
       const content = await rawResponse.json();
       console.log(content);
-      return { 'error': false, 'errorText': '' };
+      return { error: false, errorText: '' };
     } catch (e) {
-      return { 'error': true, 'errorText': this.serverErrorMessage };
+      return { error: true, errorText: this.serverErrorMessage };
     }
   }
 
@@ -413,21 +430,21 @@ export default class AppModel {
         method: 'GET',
         withCredentials: true,
         headers: {
-          'Authorization': `Bearer ${this.authToken}`,
-          'Accept': 'application/json',
+          Authorization: `Bearer ${this.authToken}`,
+          Accept: 'application/json',
         },
       });
       const content = await rawResponse.json();
       console.log(content);
       return content;
     } catch (e) {
-      return { 'error': true, 'errorText': this.serverErrorMessage };
+      return { error: true, errorText: this.serverErrorMessage };
     }
   }
 
-  /** 
-   * сохранить на бэкенде настройки приложения 
-   * 
+  /**
+   * сохранить на бэкенде настройки приложения
+   *
    * @param {Object} settingsObj - объект с настройками
    * settingsObj = {
    *  newWordsPerDay, // number, кол-во новых слов в день
@@ -446,7 +463,7 @@ export default class AppModel {
    *  dictionary: {
    *    example,
    *    meaning,
-   *    transcription, 
+   *    transcription,
    *    img,
    *   }
    * }
@@ -491,11 +508,11 @@ export default class AppModel {
       console.log('content', content);
       return { error: false, errorText: '' };
     } catch (e) {
-      return { 'error': true, 'errorText': 'Ошибка при сохранении настроек. Попробуйте еще раз попозже' };
+      return { error: true, errorText: 'Ошибка при сохранении настроек. Попробуйте еще раз попозже' };
     }
   }
 
-  /** 
+  /**
    * сохранить настройки словаря (не затронув при этом настройки приложения)
    * @param {Object} settingsObj - {example, meaning, transcription, img}
   */
@@ -547,11 +564,11 @@ export default class AppModel {
       };
       return { data: settingsObj, error: false, errorText: '' };
     } catch (e) {
-      return { 'error': true, 'errorText': 'Ошибка при получении настроек. Попробуйте еще раз попозже' };
+      return { error: true, errorText: 'Ошибка при получении настроек. Попробуйте еще раз попозже' };
     }
   }
 
-  /** 
+  /**
    * получить с бэкенда все изученные пользователем слова
    * */
   async getAllLearnedWordsFromBackend() {
@@ -568,7 +585,7 @@ export default class AppModel {
       const content = await rawResponse.json();
       return { data: content, error: false, errorText: '' };
     } catch (e) {
-      return { 'error': true, 'errorText': 'Ошибка при получении слов. Попробуйте еще раз попозже' };
+      return { error: true, errorText: 'Ошибка при получении слов. Попробуйте еще раз попозже' };
     }
   }
 
@@ -586,23 +603,23 @@ export default class AppModel {
      *   optional: {
      *     wordId: number, // id слова в bookN.js
      *     state: string, // none|deleted,
-     *     date: dateTime, // none|dateTime - дата следующего повторения  
+     *     date: dateTime, // none|dateTime - дата следующего повторения
      *    }
      *  }
-     * ] 
+     * ]
      * */
     const { data: allLearnedWordsWithDeleted } = learnedWordsObj;
     /** оставляем только слова без метки "deleted" */
     const allLearnedWords = this.wordsHelper.removeDeletedWords(allLearnedWordsWithDeleted);
-    
+
     // добавить проверку на непустоту
-    
+
     const dateToday = this.dateHelper.getBeutifyTodayDate();
     /** сначала берем слова с сегодняшней датой */
     const wordsWithDateToday = this.wordsHelper.filterWordsWithDate(allLearnedWords, dateToday);
 
     /** ищем слова, у которых дата не указана */
-    const wordsWithoutDate = this.wordsHelper.filterWordsWithDate(allLearnedWords, "none");
+    const wordsWithoutDate = this.wordsHelper.filterWordsWithDate(allLearnedWords, 'none');
 
     /** ищем слова, у которых дата указана и она не сегодня, чтобы добить ими массив */
     const wordsWithDateSpecified = this.wordsHelper
@@ -632,9 +649,9 @@ export default class AppModel {
 
     const maxId = Math.max(...convertIdsFromHex);
     const idsArr = this.wordsHelper.createArrOfIds(
-      newWordsPerDay, 
-      maxId + 1, 
-      this.backendWordIdPrefix
+      newWordsPerDay,
+      maxId + 1,
+      this.backendWordIdPrefix,
     );
 
     // const newWordsObj = await this.getNewWords(newWordsPerDay, maxId);
@@ -645,7 +662,6 @@ export default class AppModel {
     const returnArray = resWordsArr.concat(resNewWordsArr);
     const shuffledReturnArray = this.wordsHelper.shuffleArray(returnArray);
     return shuffledReturnArray;
-
   }
 
   /** получить слова по агрегированному запросу - объект, в котором есть ВСЁ */
@@ -665,16 +681,16 @@ export default class AppModel {
 
       return { data: content, error: false, errorText: '' };
     } catch (e) {
-      return { 'error': true, 'errorText': 'Ошибка при получении слов. Попробуйте еще раз попозже' };
+      return { error: true, errorText: 'Ошибка при получении слов. Попробуйте еще раз попозже' };
     }
   }
 
-  // /** 
+  // /**
   //  * вернуть слова с гитхаба - либо с одной книги, либо с двух (если нужно склеить)
-  //  * 
+  //  *
   //  * @param {Number} count - количество слов, которые нужно получить,
   //  * @param {Number} begin - с какого id начать отдавать эти слова
-  //  * 
+  //  *
   //  * @return {Array} - массив объектов слов
   //  * */
   // async getNewWords(count, begin) {
@@ -686,8 +702,10 @@ export default class AppModel {
   //     words = await this.getWordsFromBook(bookNumberStart, count, relativeBegin);
   //     return words;
   //   } else {
-  //     const wordsBegin = await this.getWordsFromBook(bookNumberStart, 600 - relativeBegin, relativeBegin);
-  //     const wordsEnd = await this.getWordsFromBook(bookNumberEnd, count - (600 - relativeBegin), 0);
+  //     const wordsBegin = await this
+  // .getWordsFromBook(bookNumberStart, 600 - relativeBegin, relativeBegin);
+  //     const wordsEnd = await this
+  // .getWordsFromBook(bookNumberEnd, count - (600 - relativeBegin), 0);
   //     return wordsBegin.concat(wordsEnd);
   //   }
   // }
@@ -743,7 +761,7 @@ export default class AppModel {
         wordId: id,
         state: 'none',
         date: 'none',
-      }
+      },
     };
 
     const done = await this.createLearnedWord(id, saveWordObj);
@@ -767,7 +785,7 @@ export default class AppModel {
 
       return { data: content, error: false, errorText: '' };
     } catch (e) {
-      return { 'error': true, 'errorText': 'Ошибка при получении слов. Попробуйте еще раз попозже' };
+      return { error: true, errorText: 'Ошибка при получении слов. Попробуйте еще раз попозже' };
     }
   }
 
@@ -786,16 +804,10 @@ export default class AppModel {
 
       return { data: content, error: false, errorText: '' };
     } catch (e) {
-      return { 'error': true, 'errorText': 'Ошибка при получении слов. Попробуйте еще раз попозже' };
+      return { error: true, errorText: 'Ошибка при получении слов. Попробуйте еще раз попозже' };
     }
   }
 }
-
-
-
-
-
-
 
 
 // {
