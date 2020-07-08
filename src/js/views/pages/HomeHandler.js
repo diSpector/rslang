@@ -3,22 +3,18 @@ const HomeHandler = {
   isWrongWord: false,
 
   settings: {
-    sentenceTranslate: null,
-    audioAutoplay: null,
+    sentenceTranslate: true,
+    audioAutoplay: true,
   },
 
   playAudio: () => {
-    if (HomeHandler.settings.audioAutoplay === true) {
-      const wordAudio = new Audio(HomeHandler.currentWord.audio);
-      const wordAudioExample = new Audio(HomeHandler.currentWord.audioExample);
-      const wordAudioMeaning = new Audio(HomeHandler.currentWord.audioMeaning);
-      wordAudio.play();
-      setTimeout(() => wordAudioExample.play(), 1000);
-      setTimeout(() => wordAudioMeaning.play(), 7000);
-      wordAudioMeaning.onended = () => console.log('Next card');
-    } else {
-      console.log('Next card');
-    }
+    const wordAudio = new Audio(HomeHandler.currentWord.audio);
+    const wordAudioExample = new Audio(HomeHandler.currentWord.audioExample);
+    const wordAudioMeaning = new Audio(HomeHandler.currentWord.audioMeaning);
+    wordAudio.play();
+    setTimeout(() => wordAudioExample.play(), 1000);
+    setTimeout(() => wordAudioMeaning.play(), 7000);
+    wordAudioMeaning.onended = () => console.log('Next card');
   },
 
   showTranslate: () => {
@@ -32,9 +28,13 @@ const HomeHandler = {
     const cardInput = document.querySelector('.learn--card__input');
     cardInput.innerText = HomeHandler.currentWord.word;
     cardInput.removeAttribute('contenteditable');
-
-    HomeHandler.playAudio();
-    HomeHandler.showTranslate();
+    if (HomeHandler.settings.audioAutoplay === true) {
+      HomeHandler.playAudio();
+    } else if (HomeHandler.settings.sentenceTranslate === true) {
+      HomeHandler.showTranslate();
+    } else {
+      console.log('Next card');
+    }
   },
 
   setWrongLetters: () => {
@@ -134,32 +134,41 @@ const HomeHandler = {
     });
   },
 
-  setSettings: () => {
-    const headerSettings = document.querySelectorAll('.learn--card__header > div');
-    headerSettings.forEach((elem) => {
-      if (elem.classList.contains('learn--card__icon-book')) {
-        if (elem.classList.contains('learn--card__icon-inactive')) {
-          HomeHandler.settings.sentenceTranslate = false;
-        } else {
-          HomeHandler.settings.sentenceTranslate = true;
-        }
-      }
-      if (elem.classList.contains('learn--card__icon-headphones')) {
-        if (elem.classList.contains('learn--card__icon-inactive')) {
-          HomeHandler.settings.audioAutoplay = false;
-        } else {
-          HomeHandler.settings.audioAutoplay = true;
-        }
-      }
-    });
+  saveSettingsToLocalStorage: () => {
+    localStorage.setItem('homeSettings', JSON.stringify(HomeHandler.settings));
+  },
+
+  setSettingsToHTML: () => {
+    const translateIcon = document.querySelector('.learn--card__icon-book');
+    const audioIcon = document.querySelector('.learn--card__icon-headphones');
+    if (HomeHandler.settings.sentenceTranslate === false) {
+      translateIcon.classList.add('learn--card__icon-inactive');
+    }
+    if (HomeHandler.settings.audioAutoplay === false) {
+      audioIcon.classList.add('learn--card__icon-inactive');
+    }
+  },
+
+  initSettings: () => {
+    if (localStorage.getItem('homeSettings') === null) HomeHandler.saveSettingsToLocalStorage();
+    else HomeHandler.settings = JSON.parse(localStorage.getItem('homeSettings'));
+
+    HomeHandler.addSettingsClickHandler();
+    HomeHandler.setSettingsToHTML();
   },
 
   addSettingsClickHandler: () => {
     const headerSettings = document.querySelector('.learn--card__header');
     headerSettings.addEventListener('click', ({ target }) => {
       if (target.classList.contains('learn--card__icon-book')) {
-        console.log('translate');
+        target.classList.toggle('learn--card__icon-inactive');
+        HomeHandler.settings.sentenceTranslate = !HomeHandler.settings.sentenceTranslate;
       }
+      if (target.classList.contains('learn--card__icon-headphones')) {
+        target.classList.toggle('learn--card__icon-inactive');
+        HomeHandler.settings.audioAutoplay = !HomeHandler.settings.audioAutoplay;
+      }
+      HomeHandler.saveSettingsToLocalStorage();
     });
   },
 
@@ -176,8 +185,7 @@ const HomeHandler = {
     HomeHandler.addCardClickHandler();
     HomeHandler.addCardKeyHandler();
     HomeHandler.addButtonsClickHandler();
-    HomeHandler.addSettingsClickHandler();
-    HomeHandler.setSettings();
+    HomeHandler.initSettings();
   },
 };
 

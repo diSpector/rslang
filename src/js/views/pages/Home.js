@@ -35,7 +35,7 @@ const Home = {
         <section class="learn--card">
             <header class="learn--card__header">
                 <div class="learn--card__icon  learn--card__icon-book" title="Включить/выключить отбражение перевода предложений"></div>
-                <div class="learn--card__icon  learn--card__icon-inactive  learn--card__icon-headphones" title="Включить/выключить автовоспроизведение звука"></div>
+                <div class="learn--card__icon  learn--card__icon-headphones" title="Включить/выключить автовоспроизведение звука"></div>
                 <div class="learn--card__icon  learn--card__icon-brain" title="Поместить слово в группу «Сложные»"></div>
                 <div class="learn--card__icon  learn--card__icon-delete" title="Удалить слово из изучения"></div>
                 <div class="learn--card__icon  learn--card__icon-settings" title="Настройки"></div>
