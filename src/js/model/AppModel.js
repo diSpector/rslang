@@ -1,11 +1,14 @@
-/* eslint-disable quote-props */
-/* eslint-disable max-len */
+import WordsHelper from './helpers/WordsHelper';
+import DateHelper from './helpers/DateHelper';
+
 export default class AppModel {
   constructor() {
     this.searchString = 'https://afternoon-falls-25894.herokuapp.com/words?';
     this.backendURL = 'https://afternoon-falls-25894.herokuapp.com/';
     this.contentBookURL = 'https://raw.githubusercontent.com/dispector/rslang-data/master/data/book';
     this.contentURL = 'https://raw.githubusercontent.com/dispector/rslang-data/master/';
+    this.backendWordIdPrefix = '5e9f5ee35eb9e72bc21';
+    this.backendFirstWordId = '5e9f5ee35eb9e72bc21af4a0';
     this.userName = 'defaultUser';
     this.maxDictionaryLength = 3600;
     this.learnedWordsCounter = 100;
@@ -34,6 +37,9 @@ export default class AppModel {
     this.emailValidator = /^[-.\w]+@(?:[a-z\d]{2,}\.)+[a-z]{2,6}$/;
     this.passwordValidator = /^(?=.*[A-Z])(?=.*[a-z])(?=.*[0-9])(?=.*[+\-_@$!%*?&#.,;:[\]{}])[\S]{8,}$/;
     this.serverErrorMessage = 'Ошибка при обращении к серверу';
+
+    this.wordsHelper = WordsHelper;
+    this.dateHelper = DateHelper;
   }
 
   // change current user to new one
@@ -83,9 +89,9 @@ export default class AppModel {
   }
 
   // utility function, cuts useless word data and sets correct paths for img/mp3 assets
-  reformatWordData(wordData) {
+  reformatWordData(wordData, isDashBeforeId) {
     return {
-      id: wordData.id,
+      id: (!isDashBeforeId) ? wordData.id : wordData._id,
       textExample: wordData.textExample,
       textExampleTranslate: wordData.textExampleTranslate,
       textMeaning: wordData.textMeaning,
@@ -98,6 +104,7 @@ export default class AppModel {
       audioExample: `${this.contentURL}${wordData.audioExample}`,
       image: `${this.contentURL}${wordData.image}`,
       difficulty: wordData.group,
+      userWord: (!isDashBeforeId) ? null : wordData.userWord,
       // wordsPerExampleSentence: wordData.wordsPerExampleSentence,
     };
   }
@@ -418,13 +425,443 @@ export default class AppModel {
     }
   }
 
-  /** сохранить на бэкенде настройки приложения */
+  /** 
+   * сохранить на бэкенде настройки приложения 
+   * 
+   * @param {Object} settingsObj - объект с настройками
+   * settingsObj = {
+   *  newWordsPerDay, // number, кол-во новых слов в день
+   *  maxWordsPerDay, // number, макс кол-во карточек за день
+   *  isWordTranslate, // bool, перевод слова
+   *  isTextMeaning, // bool, предложение с объяснением значения слова
+   *  isTextExample, // bool, предложение с примером использования изучаемого слова
+   *  isTextMeaningTranslate, // bool, перевод предложения с объяснением значения слова
+   *  isTextExampleTranslate, // bool, Перевод предложения с примером использования изучаемого слова
+   *  isTranscription, // bool, транскрипция слова
+   *  isImage, // bool, картинка-ассоциация
+   *  isAnswerButton, // bool, кнопка "Показать ответ"
+   *  isDeleteWordButton, // bool, кнопка "Удалить слово из изучения"
+   *  isMoveToDifficultButton, // bool, кнопка - поместить слово в группу «Сложные»
+   *  isIntervalButtons, // bool, блок кнопок для интервального повторения
+   *  dictionary: {
+   *    example,
+   *    meaning,
+   *    transcription, 
+   *    img,
+   *   }
+   * }
+   * @return bool - успешно ли прошло сохранение настроек
+   * */
   async saveSettings(settingsObj) {
+    const settingsToSave = {
+      wordsPerDay: settingsObj.newWordsPerDay,
+      optional: {
+        maxWordsPerDay: settingsObj.maxWordsPerDay,
+        isWordTranslate: settingsObj.isWordTranslate,
+        isTextMeaning: settingsObj.isTextMeaning,
+        isTextExample: settingsObj.isTextExample,
+        isTextMeaningTranslate: settingsObj.isTextMeaningTranslate,
+        isTextExampleTranslate: settingsObj.isTextExampleTranslate,
+        isTranscription: settingsObj.isTranscription,
+        isImage: settingsObj.isImage,
+        isAnswerButton: settingsObj.isAnswerButton,
+        isDeleteWordButton: settingsObj.isDeleteWordButton,
+        isMoveToDifficultButton: settingsObj.isMoveToDifficultButton,
+        isIntervalButtons: settingsObj.isIntervalButtons,
+        dictionary: {
+          example: settingsObj.dictionary.example,
+          meaning: settingsObj.dictionary.meaning,
+          transcription: settingsObj.dictionary.transcription,
+          img: settingsObj.dictionary.img,
+        },
+      },
+    };
+    try {
+      const url = `${this.backendURL}users/${this.userId}/settings`;
+      const rawResponse = await fetch(url, {
+        method: 'PUT',
+        headers: {
+          Authorization: `Bearer ${this.authToken}`,
+          Accept: 'application/json',
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(settingsToSave),
+      });
+      const content = await rawResponse.json();
+      console.log('content', content);
+      return { error: false, errorText: '' };
+    } catch (e) {
+      return { 'error': true, 'errorText': 'Ошибка при сохранении настроек. Попробуйте еще раз попозже' };
+    }
+  }
+
+  /** 
+   * сохранить настройки словаря (не затронув при этом настройки приложения)
+   * @param {Object} settingsObj - {example, meaning, transcription, img}
+  */
+  async saveDictionarySettings(settingsObj) {
+    const appSettingsRaw = await this.getSettings();
+    const appSettings = appSettingsRaw.data;
+    const newSettings = appSettings;
+    newSettings.dictionary = settingsObj;
+    await this.saveSettings(newSettings);
+  }
+
+  /** сохранить настройки приложения (не затронув настройки словаря) */
+  async saveCardsSettings(settingsObj) {
+    const appSettingsRaw = await this.getSettings();
+    const { dictionary } = appSettingsRaw.data;
+    const newSettings = settingsObj;
+    newSettings.dictionary = dictionary;
+    await this.saveSettings(newSettings);
+  }
+
+  /** получить с бэкенда ВСЕ настройки приложения */
+  async getSettings() {
+    try {
+      const url = `${this.backendURL}users/${this.userId}/settings`;
+      const rawResponse = await fetch(url, {
+        method: 'GET',
+        headers: {
+          Authorization: `Bearer ${this.authToken}`,
+          Accept: 'application/json',
+          'Content-Type': 'application/json',
+        },
+      });
+      const content = await rawResponse.json();
+      const settingsObj = {
+        newWordsPerDay: content.wordsPerDay,
+        maxWordsPerDay: content.optional.maxWordsPerDay,
+        isWordTranslate: content.optional.isWordTranslate,
+        isTextMeaning: content.optional.isTextMeaning,
+        isTextExample: content.optional.isTextExample,
+        isTextMeaningTranslate: content.optional.isTextMeaningTranslate,
+        isTextExampleTranslate: content.optional.isTextExampleTranslate,
+        isTranscription: content.optional.isTranscription,
+        isImage: content.optional.isImage,
+        isAnswerButton: content.optional.isAnswerButton,
+        isDeleteWordButton: content.optional.isDeleteWordButton,
+        isMoveToDifficultButton: content.optional.isMoveToDifficultButton,
+        isIntervalButtons: content.optional.isIntervalButtons,
+        dictionary: content.optional.dictionary,
+      };
+      return { data: settingsObj, error: false, errorText: '' };
+    } catch (e) {
+      return { 'error': true, 'errorText': 'Ошибка при получении настроек. Попробуйте еще раз попозже' };
+    }
+  }
+
+  /** 
+   * получить с бэкенда все изученные пользователем слова
+   * */
+  async getAllLearnedWordsFromBackend() {
+    try {
+      const url = `${this.backendURL}users/${this.userId}/words`;
+      const rawResponse = await fetch(url, {
+        method: 'GET',
+        headers: {
+          Authorization: `Bearer ${this.authToken}`,
+          Accept: 'application/json',
+          'Content-Type': 'application/json',
+        },
+      });
+      const content = await rawResponse.json();
+      return { data: content, error: false, errorText: '' };
+    } catch (e) {
+      return { 'error': true, 'errorText': 'Ошибка при получении слов. Попробуйте еще раз попозже' };
+    }
+  }
+
+  /**
+   * получить все слова за сегодня (изученные + новые), с учетом интервалов
+   */
+  async getWordsForDay() {
+    const settings = await this.getSettings();
+    const { data: { maxWordsPerDay, newWordsPerDay } } = settings;
+    const needToBeLearnedWords = maxWordsPerDay - newWordsPerDay;
+    const learnedWordsObj = await this.getAllLearnedWordsFromBackend();
+    /** @var learnedWords - все выученные слова - массив [
+     * { difficulty: string, // сложность - normal|hard
+     *   wordId: string, // id данного слова на бэкенде
+     *   optional: {
+     *     wordId: number, // id слова в bookN.js
+     *     state: string, // none|deleted,
+     *     date: dateTime, // none|dateTime - дата следующего повторения  
+     *    }
+     *  }
+     * ] 
+     * */
+    const { data: allLearnedWordsWithDeleted } = learnedWordsObj;
+    /** оставляем только слова без метки "deleted" */
+    const allLearnedWords = this.wordsHelper.removeDeletedWords(allLearnedWordsWithDeleted);
+    
+    // добавить проверку на непустоту
+    
+    const dateToday = this.dateHelper.getBeutifyTodayDate();
+    /** сначала берем слова с сегодняшней датой */
+    const wordsWithDateToday = this.wordsHelper.filterWordsWithDate(allLearnedWords, dateToday);
+
+    /** ищем слова, у которых дата не указана */
+    const wordsWithoutDate = this.wordsHelper.filterWordsWithDate(allLearnedWords, "none");
+
+    /** ищем слова, у которых дата указана и она не сегодня, чтобы добить ими массив */
+    const wordsWithDateSpecified = this.wordsHelper
+      .filterWordsDateSpecNotToday(allLearnedWords, dateToday);
+
+    const wordsArraysObj = {
+      todayWords: wordsWithDateToday,
+      withoutDateWords: wordsWithoutDate,
+      withDateWords: wordsWithDateSpecified,
+    };
+
+    /** получаем максимальный массив из выученных слов (но не более, чем needToBeLearnedWords) */
+    const resLearnedArr = this.wordsHelper.formLearnedArray(wordsArraysObj, needToBeLearnedWords);
+
+    const wordsIds = (resLearnedArr.length !== 0)
+      ? this.wordsHelper.getWordsIds(resLearnedArr)
+      : [this.backendFirstWordId];
+    // const wordsIdsFromBook = this.wordsHelper.getIdsFromBook(resLearnedArr);
+
+    const wordsRaw = await this.getAggregateUserWords(wordsIds);
+    const words = wordsRaw.data[0].paginatedResults
+      .map((word) => this.reformatWordData(word, true));
+
+    const resWordsArr = this.wordsHelper.prepareArrayForOutput(words);
+
+    const convertIdsFromHex = this.wordsHelper.convertIdsFromHex(wordsIds);
+
+    const maxId = Math.max(...convertIdsFromHex);
+    const idsArr = this.wordsHelper.createArrOfIds(
+      newWordsPerDay, 
+      maxId + 1, 
+      this.backendWordIdPrefix
+    );
+
+    // const newWordsObj = await this.getNewWords(newWordsPerDay, maxId);
+    // const { data: newWordsRaw } = newWordsObj;
+    // const newWordsArr = newWordsRaw.map((wordObj) => this.reformatWordData(wordObj));
+    const resNewWordsArr = this.wordsHelper.addNewMark(idsArr);
+
+    const returnArray = resWordsArr.concat(resNewWordsArr);
+    const shuffledReturnArray = this.wordsHelper.shuffleArray(returnArray);
+    return shuffledReturnArray;
 
   }
 
-  /** получить с бэкенда настройки приложения */
-  async getSettings () {
+  /** получить слова по агрегированному запросу - объект, в котором есть ВСЁ */
+  async getAggregateUserWords(wordsIdsArr) {
+    const aggrObj = this.wordsHelper.getAggrWordsIds(wordsIdsArr);
+    try {
+      const url = `${this.backendURL}users/${this.userId}/aggregatedWords?wordsPerPage=50&filter=${JSON.stringify(aggrObj)}`;
+      const rawResponse = await fetch(url, {
+        method: 'GET',
+        headers: {
+          Authorization: `Bearer ${this.authToken}`,
+          Accept: 'application/json',
+          'Content-Type': 'application/json',
+        },
+      });
+      const content = await rawResponse.json();
 
+      return { data: content, error: false, errorText: '' };
+    } catch (e) {
+      return { 'error': true, 'errorText': 'Ошибка при получении слов. Попробуйте еще раз попозже' };
+    }
+  }
+
+  // /** 
+  //  * вернуть слова с гитхаба - либо с одной книги, либо с двух (если нужно склеить)
+  //  * 
+  //  * @param {Number} count - количество слов, которые нужно получить,
+  //  * @param {Number} begin - с какого id начать отдавать эти слова
+  //  * 
+  //  * @return {Array} - массив объектов слов
+  //  * */
+  // async getNewWords(count, begin) {
+  //   const bookNumberStart = Math.floor(begin / 600) + 1;
+  //   const bookNumberEnd = Math.floor((begin + count) / 600) + 1;
+  //   let words = [];
+  //   const relativeBegin = begin - ((bookNumberStart - 1) * 600);
+  //   if (bookNumberStart === bookNumberEnd) {
+  //     words = await this.getWordsFromBook(bookNumberStart, count, relativeBegin);
+  //     return words;
+  //   } else {
+  //     const wordsBegin = await this.getWordsFromBook(bookNumberStart, 600 - relativeBegin, relativeBegin);
+  //     const wordsEnd = await this.getWordsFromBook(bookNumberEnd, count - (600 - relativeBegin), 0);
+  //     return wordsBegin.concat(wordsEnd);
+  //   }
+  // }
+
+  // /** вернуть с гитхаба count слов, начиная с begin */
+  // async getWordsFromBook(bookNumber, count, begin) {
+  //   try {
+  //     const url = `${this.contentBookURL}${bookNumber}.json`;
+  //     const response = await fetch(url);
+  //     const data = await response.json();
+  //     const resArr = data.slice(begin, begin + count);
+  //     return { data: resArr, 'error': false, 'errorText': '' };
+  //   } catch (e) {
+  //     return { 'error': true, 'errorText': this.serverErrorMessage };
+  //   }
+  // }
+
+  /** получить слово с бэкенда */
+  async getNextWord(wordObj) {
+    const { id } = wordObj;
+    const wordRaw = await this.getWordById(id);
+    return this.reformatWordData(wordRaw.data);
+  }
+
+  /** обработать угаданное слово - Нажатие на кнопку "Далее"
+   * @param {Object} wordObj - объект слова
+   * wordObj = {
+   *   audio: String // адрес аудио-файла слова
+   *   audioExample: String // адрес аудио-файла предожения
+   *   audioMeaning: String // адрес аудио-файла объяснения
+   *   difficulty: String // normal|hard|undefined - сложность слова
+   *   id: String // "5e9f5ee35eb9e72bc21af4a0" - id слова на бэкенде
+   *   image: String // адрес файла с картинкой
+   *   isNew: Boolean // новое слово или изученное
+   *   textExample: String // предложение со словом
+   *   textExampleTranslate: String // перевеод предложения со словом
+   *   textMeaning: String // значение слова
+   *   textMeaningTranslate: String // перевод значения слова
+   *   transcription: String // "[ǽlkəhɔ̀ːl]" транскрипция слова
+   *   userWord: Object // {difficulty: "normal", optional: {…}} - объект слова с датой и сложностью
+   *   word: String // "alcohol" - само слово
+   *   wordTranslate: String // "алкоголь" - перевод слова
+   * }
+  */
+  async processSolvedWord(wordObj) {
+    if (!wordObj.isNew) { // если слово уже изучено, ничего не делаем
+      return;
+    }
+    const { id } = wordObj;
+    const saveWordObj = {
+      difficulty: 'normal',
+      optional: {
+        wordId: id,
+        state: 'none',
+        date: 'none',
+      }
+    };
+
+    const done = await this.createLearnedWord(id, saveWordObj);
+    console.log('done', done);
+  }
+
+  /** добавить слово в слова пользователя на бэкенде */
+  async createLearnedWord(wordId, wordObj) {
+    try {
+      const url = `${this.backendURL}users/${this.userId}/words/${wordId}`;
+      const rawResponse = await fetch(url, {
+        method: 'POST',
+        headers: {
+          Authorization: `Bearer ${this.authToken}`,
+          Accept: 'application/json',
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(wordObj),
+      });
+      const content = await rawResponse.json();
+
+      return { data: content, error: false, errorText: '' };
+    } catch (e) {
+      return { 'error': true, 'errorText': 'Ошибка при получении слов. Попробуйте еще раз попозже' };
+    }
+  }
+
+  /** получить слово с бэкенда по id */
+  async getWordById(id) {
+    console.log('id', id);
+    const url = `${this.backendURL}words/${id}?noAssets=true`;
+    try {
+      const rawResponse = await fetch(url, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+      const content = await rawResponse.json();
+
+      return { data: content, error: false, errorText: '' };
+    } catch (e) {
+      return { 'error': true, 'errorText': 'Ошибка при получении слов. Попробуйте еще раз попозже' };
+    }
   }
 }
+
+
+
+
+
+
+
+
+// {
+//   "wordsPerDay": 20,
+//   "optional": {
+//     "maxWordsPerDay": 40,
+//     "isWordTranslate": true,
+//     "isTextMeaning": true,
+//     "isTextExample": true,
+//     "isTextMeaningTranslate": true,
+//     "isTextExampleTranslate": true,
+//     "isTranscription": true,
+//     "isImage": false,
+//     "isAnswerButton": false,
+//     "isDeleteWordButton": false,
+//     "isMoveToDifficultButton": false,
+//     "isIntervalButtons": false,
+//         "dictionary": {
+//           "example": true,
+//           "meaning": true,
+//           "transcription": true,
+//           "img": true,
+//         }
+//   }
+// }
+
+
+// from Home.js
+// console.log('word', word);
+// const t0 = performance.now();
+
+// const login = await model.loginUser({email: '66group@gmail.com', password: 'Gfhjkm_123'});
+// console.log('login', login);
+// const settings = {
+//   newWordsPerDay: 15, // Количество новых слов в день
+//   maxWordsPerDay: 35, // Максимальное количество карточек в день
+//   isWordTranslate: true, // Перевод слова
+//   isTextMeaning: true, // Предложение с объяснением значения слова
+//   isTextExample: true, // Предложение с примером использования изучаемого слова
+//   isTextMeaningTranslate: true, // Перевод предложения с объяснением значения слова
+//   isTextExampleTranslate: true, // Перевод предложения с примером использования изучаемого слова
+//   isTranscription: true, // Транскрипция слова
+//   isImage: true, // Картинка-ассоциация
+//   isAnswerButton: true, // Кнопка "Показать ответ"
+//   isDeleteWordButton: true, // Кнопка "Удалить слово из изучения"
+//   isMoveToDifficultButton: true, // Кнопка - поместить слово в группу «Сложные»
+//   isIntervalButtons: true, // Блок кнопок для интервального повторения
+// };
+
+// await model.saveCardsSettings(settings);
+
+// await model.saveDictionarySettings({
+//   example: false,
+//   meaning: false,
+//   transcription: false,
+//   img: false,
+// });
+// const settingsGet = await model.getSettings();
+// console.log('settingsGet', settingsGet);
+// const words = await model.getWordsForDay();
+// console.log('words', words);
+// // await model.processSolvedWord(words[0]);
+// const word1 = await model.getNextWord(words[0]);
+// console.log('word1', word1)
+
+// const word2 = await model.getNextWord(words[1]);
+// console.log('word2', word2)
+// const t1 = performance.now();
+// console.log("Call to doSomething took " + (t1 - t0) + " milliseconds.")
