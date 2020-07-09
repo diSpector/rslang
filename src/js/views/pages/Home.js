@@ -53,7 +53,12 @@ const Home = {
                         <p class="learn--card__textExampleTranslate  learn--card__textExampleTranslate-hidden"></p>
                     </div>
                 </div>
-                <div class="learn--card__input" contenteditable></div>
+
+                <div class="learn--card__inputWrapper">
+                    <div class="learn--card__input" contenteditable></div>
+                    <div class="learn--card__enterAnswer" title="Ввести слово"></div>
+                </div>
+
                 <p class="learn--card__transcription  learn--card__transcription-hidden"></p>
                 <p class="learn--card__wordTranslate"></p>
             </main>
@@ -285,6 +290,12 @@ const Home = {
     }
   },
 
+  clearTranslation(elementClass, hiddenClass) {
+    const element = document.querySelector(`.${elementClass}`);
+    element.classList.add(hiddenClass);
+    element.textContent = '';
+  },
+
   renderCard() {
     // информация на карточке
     this.renderElement(Home.settings.isWordTranslate, null, 'learn--card__wordTranslate', 'learn--card__wordTranslate-hidden', this.currentWord.wordTranslate);
@@ -299,8 +310,13 @@ const Home = {
     this.renderElement(Home.settings.isMoveToDifficultButton, null, 'learn--card__icon-brain', 'learn--card__icon-hidden');
     this.renderElement(Home.settings.isAnswerButton, null, 'learn--button-show', 'learn--button-hidden');
     this.renderElement(Home.settings.isIntervalButtons, null, 'learn--card__complexity', 'learn--card__complexity-hidden');
-    // переводы предложений
+
+    // кнопка "вкл/выкл отображение переводов предложения"
     this.renderElement(Home.settings.isTextMeaning, Home.settings.isTextExample, 'learn--card__icon-book', 'learn--card__icon-hidden');
+
+    // очистить и скрыть переводы
+    this.clearTranslation('learn--card__textMeaningTranslate', 'learn--card__textMeaningTranslate-hidden');
+    this.clearTranslation('learn--card__textExampleTranslate', 'learn--card__textExampleTranslate-hidden');
   },
 
   generateNextCard: async () => {
