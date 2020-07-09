@@ -150,7 +150,6 @@
 }
 
 .learn--card__sentences {
-    margin: 10px;
     
     @include media-mobile-big {
         text-align: center;
@@ -161,7 +160,7 @@
 .learn--card__textMeaningTranslate,
 .learn--card__textExample,
 .learn--card__textExampleTranslate {
-    margin-top: 0;
+    margin: 0 10px 15px;
 
     &-hidden {
         display: none;
