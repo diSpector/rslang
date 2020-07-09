@@ -1,7 +1,7 @@
 import Utils from '../../../../services/Utils';
 import '../../../../../css/pages/games/allGames.scss';
 import '../../../../../css/pages/games/speakit/speakit.scss';
-import Game from '../game';
+import Game from '../Game';
 import AppModel from '../../../../model/AppModel';
 
 const SpeakIt = {

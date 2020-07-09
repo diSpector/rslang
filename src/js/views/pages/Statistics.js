@@ -1,7 +1,8 @@
 import '../../../css/pages/statistics.scss';
+import AppModel from '../../model/AppModel'
 
 const Statistics = {
-  render: async (model) => {
+  render: async () => {
     const view = `
     <section class="statistic statistic__background">
     <div class="statistic__card">
@@ -19,6 +20,9 @@ const Statistics = {
     return view;
   },
   afterRender: async () => {
+    const model = new AppModel();
+    const words = await model.getWordsMappedByDates();
+    console.log(words);
     const canvas = document.getElementById('canvas');
     const ctx = canvas.getContext('2d');
     const learnedWordsСount = [720, 1050];
@@ -52,7 +56,7 @@ const Statistics = {
     }
 
     //добавляем подписи к графику
-    ctx.font = "small-caps 15px Arial";
+    ctx.font = 'small-caps 15px Arial';
     for (let i = 0; i < 6; i += 1) {
       ctx.fillText((5 - i) * 20 + "%", 38.5, i * 52 + 19);
       ctx.beginPath();
