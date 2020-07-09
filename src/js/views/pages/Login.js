@@ -14,6 +14,9 @@ const Login = {
           <input type="text" class="login--email__input" placeholder="Email">
           <p class="login__card_label">Введите пароль</p>
           <input type="text" class="login--password__input" placeholder="Пароль">
+          <div class="login__card_error">
+            <p class="login__card_errorMessage"></p>
+          </div>
           <div class="login__card_buttons">
             <button class="login__card_button button-signin hidden">Зарегистрироваться</button>
             <button class="login__card_button button-login">Войти</button>
@@ -26,12 +29,15 @@ const Login = {
     return view;
   },
   afterRender: async (model) => {
-/*     const emailInput = document.querySelector('.login--email__input');
+  /*     const emailInput = document.querySelector('.login--email__input');
     const passwordInput = document.querySelector('.login--password__input');
  */
     const createUserButton = document.querySelector('.button-signin');
     const loginUserButton = document.querySelector('.button-login');
     const controlLogin = document.querySelector('.login__card_control');
+    const errorMessage = document.querySelector('.login__card_errorMessage'); // место куда выводить сообщение об ошибке
+
+    errorMessage.innerHTML = 'Введен неверный логин или пароль. Проверьте данные и попробуйте ещё раз.';
 
     controlLogin.addEventListener('click', ({ target }) => {
       if (!target.classList.contains('selected')) {
@@ -49,14 +55,14 @@ const Login = {
       console.log(target.classList);
     });
     createUserButton.addEventListener('click', async () => {
-/*       const responce = await model.createUser({ email: emailInput.value, password: passwordInput.value });
+    /* const responce = await model.createUser({ email: emailInput.value, password: passwordInput.value });
       if (responce.error) {
       } else {
         logOutput.innerHTML = 'user created';
       } */
     });
     loginUserButton.addEventListener('click', async () => {
-/*       console.log(emailInput.value + passwordInput.value);
+    /*       console.log(emailInput.value + passwordInput.value);
       const responce = await model.loginUser({ email: emailInput.value, password: passwordInput.value });
       if (responce.error) {
         logOutput.innerHTML = responce.errorText;
