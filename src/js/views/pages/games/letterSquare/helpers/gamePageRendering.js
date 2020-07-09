@@ -3,7 +3,7 @@ export default function gamePageRendering() {
   <section class="allGames__startScreen letterSquare letterSquare__startScreen">
     <h1 class="allGames__heading letterSquare__heading">Буквенный квадрат</h1>
       <p class="allGames--description letterSquare--description">Буквенный квадрат — классическое упражнение для запоминания новых слов.</p>
-      <div class="allGames__choice letterSquare__choice">
+      <div class="allGames allGames__choice">
             <p class="allGames__choice_learn select">Игра с изученными словами</p>
             <p class="allGames__choice_new">Игра с новыми словами</p>
             <div class="allGames__choice_levels hidden">
@@ -14,6 +14,7 @@ export default function gamePageRendering() {
                 <option value="3">3</option>
                 <option value="4">4</option>
                 <option value="5">5</option>
+                <option value="6">6</option>
               </select>
               <label>Раунд:</label>
               <select name="pages" id="pages">
