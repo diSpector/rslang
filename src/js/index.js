@@ -13,6 +13,7 @@ import Dictionary from './views/pages/Dictionary';
 import Games from './views/pages/Games';
 import Promo from './views/pages/Promo';
 import Team from './views/pages/Team';
+import Cards from './views/pages/Cards';
 
 import Error404 from './views/pages/Error404';
 
@@ -32,6 +33,7 @@ const model = new AppModel();
 // 'маршрут' : 'файл страницы для этого маршрута'
 const routes = {
   '/': Home, // Главная,
+  '/cards': Cards, // Карточки изучения слов
   '/login': Login, // Авторизация/Регистрация
   '/stats': Statistics, // Статистика,
   '/dictionary/:id': Dictionary, // Словарь,
