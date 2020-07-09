@@ -53,7 +53,12 @@ const Home = {
                         <p class="learn--card__textExampleTranslate  learn--card__textExampleTranslate-hidden"></p>
                     </div>
                 </div>
-                <div class="learn--card__input" contenteditable></div>
+
+                <div class="learn--card__inputWrapper">
+                    <div class="learn--card__input" contenteditable></div>
+                    <div class="learn--card__enterAnswer" title="Ввести слово"></div>
+                </div>
+
                 <p class="learn--card__transcription  learn--card__transcription-hidden"></p>
                 <p class="learn--card__wordTranslate"></p>
             </main>

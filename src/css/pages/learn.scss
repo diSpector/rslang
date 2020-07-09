@@ -174,6 +174,12 @@
     font-style: normal;
 }
 
+.learn--card__inputWrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
 .learn--card__input {
     width: 150px;
     margin-bottom: 10px;
@@ -189,6 +195,23 @@
     overflow: hidden;
     overflow-wrap: normal;
     transition: 1s ease;
+}
+
+.learn--card__enterAnswer {
+    position: absolute;
+    right: -35px;
+    top: 0;
+    margin: 5px 0;
+    background-size: contain;
+    width: 25px;
+    height: 25px;
+    background-image: url('../../img/learn/enter-word.svg');
+    cursor: pointer;
+    transition: transform 0.1s;
+
+    &:hover {
+        transform: scale(1.1);
+    }
 }
 
 .learn--card__transcription {
