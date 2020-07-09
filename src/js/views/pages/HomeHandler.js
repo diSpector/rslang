@@ -1,6 +1,8 @@
 const HomeHandler = {
   currentWord: null,
   isWrongWord: false,
+  model: null,
+  generateNextCard: null,
 
   settings: {
     sentenceTranslate: true,
@@ -14,7 +16,7 @@ const HomeHandler = {
     wordAudio.play();
     setTimeout(() => wordAudioExample.play(), 1000);
     setTimeout(() => wordAudioMeaning.play(), 7000);
-    wordAudioMeaning.onended = () => console.log('Next card');
+    wordAudioMeaning.onended = () => HomeHandler.generateNextCard();
   },
 
   showTranslate: () => {
@@ -28,12 +30,11 @@ const HomeHandler = {
     const cardInput = document.querySelector('.learn--card__input');
     cardInput.innerText = HomeHandler.currentWord.word;
     cardInput.removeAttribute('contenteditable');
+    cardInput.style.backgroundColor = 'rgb(145, 247, 112)';
     if (HomeHandler.settings.audioAutoplay === true) {
       HomeHandler.playAudio();
     } else if (HomeHandler.settings.sentenceTranslate === true) {
       HomeHandler.showTranslate();
-    } else {
-      console.log('Next card');
     }
   },
 
@@ -87,16 +88,16 @@ const HomeHandler = {
     const card = document.querySelector('.learn--card');
     card.addEventListener('click', ({ target }) => {
       if (target.classList.contains('learn--card__complexity-repeat')) {
-        console.log('Repeat word');
+        HomeHandler.model.setIntervalAsAgain(HomeHandler.currentWord.id);
       }
       if (target.classList.contains('learn--card__complexity-hard')) {
-        console.log('Hard word');
+        HomeHandler.model.setIntervalAsHard(HomeHandler.currentWord.id);
       }
       if (target.classList.contains('learn--card__complexity-well')) {
-        console.log('Well word');
+        HomeHandler.model.setIntervalAsGood(HomeHandler.currentWord.id);
       }
       if (target.classList.contains('learn--card__complexity-easy')) {
-        console.log('Easy word');
+        HomeHandler.model.setIntervalAsEasy(HomeHandler.currentWord.id);
       }
     });
   },
@@ -117,18 +118,28 @@ const HomeHandler = {
     };
   },
 
+  clearInput: () => {
+    const cardInput = document.querySelector('.learn--card__input');
+    cardInput.style.width = '';
+    cardInput.style.backgroundColor = '';
+    cardInput.innerText = '';
+    cardInput.setAttribute('contenteditable', 'true');
+  },
+
   addButtonsClickHandler: () => {
     const learnButtons = document.querySelector('.learn--buttons');
     learnButtons.addEventListener('click', ({ target }) => {
       if (target.classList.contains('learn--button-show')) {
         HomeHandler.correctAnswer();
+        HomeHandler.model.processSolvedWord(HomeHandler.currentWord);
       }
       if (target.classList.contains('learn--button-next')) {
         const userWord = document.querySelector('.learn--card__input').innerText;
         if (userWord === HomeHandler.currentWord.word) {
-          HomeHandler.correctAnswer();
+          HomeHandler.generateNextCard();
+          HomeHandler.clearInput();
         } else if (userWord !== '') {
-          console.log('Wrong answer');
+          HomeHandler.wrongAnswer();
         }
       }
     });
@@ -160,13 +171,19 @@ const HomeHandler = {
   addSettingsClickHandler: () => {
     const headerSettings = document.querySelector('.learn--card__header');
     headerSettings.addEventListener('click', ({ target }) => {
-      if (target.classList.contains('learn--card__icon-book')) {
+      if (target.classList.contains('learn--card__icon-book') || target.classList.contains('learn--card__icon-headphones')) {
         target.classList.toggle('learn--card__icon-inactive');
-        HomeHandler.settings.sentenceTranslate = !HomeHandler.settings.sentenceTranslate;
+        if (target.classList.contains('learn--card__icon-book')) HomeHandler.settings.sentenceTranslate = !HomeHandler.settings.sentenceTranslate;
+        if (target.classList.contains('learn--card__icon-headphones')) HomeHandler.settings.audioAutoplay = !HomeHandler.settings.audioAutoplay;
+        HomeHandler.saveSettingsToLocalStorage();
       }
-      if (target.classList.contains('learn--card__icon-headphones')) {
-        target.classList.toggle('learn--card__icon-inactive');
-        HomeHandler.settings.audioAutoplay = !HomeHandler.settings.audioAutoplay;
+      if (target.classList.contains('learn--card__icon-brain')) {
+        HomeHandler.model.addWordToHard(HomeHandler.currentWord.id);
+        target.classList.add('learn--card__icon-active');
+      }
+      if (target.classList.contains('learn--card__icon-delete')) {
+        HomeHandler.model.addWordToDeleted(HomeHandler.currentWord.id);
+        target.classList.add('learn--card__icon-active');
       }
       HomeHandler.saveSettingsToLocalStorage();
     });
@@ -179,8 +196,14 @@ const HomeHandler = {
     cardInput.style.width = `${inputWidth}px`;
   },
 
-  initHomeHandler: (word) => {
+  initHomeHandler: async (word, model, generateNextCard) => {
+    console.log(generateNextCard);
+    await model.loginUser({ email: '66group@gmail.com', password: 'Gfhjkm_123' });
+    console.log(word);
     HomeHandler.currentWord = word;
+    HomeHandler.model = model;
+    HomeHandler.generateNextCard = generateNextCard;
+
     HomeHandler.setInputWidthAndFocus();
     HomeHandler.addCardClickHandler();
     HomeHandler.addCardKeyHandler();
