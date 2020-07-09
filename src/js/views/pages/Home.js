@@ -264,9 +264,9 @@ const Home = {
   },
 
   generateNextCard: async () => {
-    const newtWordObj = Home.dayWords.pop();
-    Home.currentWord = await Home.model.getNextWord(newtWordObj);
-
+    console.log(Home.dayWords, 'all words in next');
+    Home.currentWord = Home.dayWords.pop();
+    // Home.currentWord = await Home.model.getNextWord(newtWordObj);
     Home.renderCard();
 
     HomeHandler.initHomeHandler(Home.currentWord, Home.model, Home.generateNextCard);
@@ -276,8 +276,9 @@ const Home = {
     Home.model = model;
     await model.loginUser({ email: '66group@gmail.com', password: 'Gfhjkm_123' });
     Home.dayWords = await model.getWordsForDay();
-    const newtWordObj = Home.dayWords.pop();
-    Home.currentWord = await model.getNextWord(newtWordObj);
+    console.log(Home.dayWords, 'all words');
+    Home.currentWord = await Home.dayWords.pop();
+    console.log(Home.currentWord, 'word in home');
 
     Home.initSettings();
     Home.renderCard();

@@ -111,7 +111,6 @@ const HomeHandler = {
         if (userWord === HomeHandler.currentWord.word) {
           HomeHandler.correctAnswer();
         } else if (userWord !== '') {
-          console.log('Wrong answer');
           HomeHandler.wrongAnswer();
         }
       }
@@ -152,11 +151,15 @@ const HomeHandler = {
   setSettingsToHTML: () => {
     const translateIcon = document.querySelector('.learn--card__icon-book');
     const audioIcon = document.querySelector('.learn--card__icon-headphones');
+    const brainIcon = document.querySelector('.learn--card__icon-headphones');
     if (HomeHandler.settings.sentenceTranslate === false) {
       translateIcon.classList.add('learn--card__icon-inactive');
     }
     if (HomeHandler.settings.audioAutoplay === false) {
       audioIcon.classList.add('learn--card__icon-inactive');
+    }
+    if (HomeHandler.currentWord.userWord.difficulty === 'hard') {
+      brainIcon.classList.add('learn--card__icon-active');
     }
   },
 
@@ -197,9 +200,7 @@ const HomeHandler = {
   },
 
   initHomeHandler: async (word, model, generateNextCard) => {
-    console.log(generateNextCard);
     await model.loginUser({ email: '66group@gmail.com', password: 'Gfhjkm_123' });
-    console.log(word);
     HomeHandler.currentWord = word;
     HomeHandler.model = model;
     HomeHandler.generateNextCard = generateNextCard;
