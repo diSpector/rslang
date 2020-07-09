@@ -20,6 +20,8 @@ const Home = {
   // },
   settings: null,
   currentWord: null,
+  dayWords: null,
+  model: null,
 
   render: async () => {
     const view = `
@@ -43,17 +45,17 @@ const Home = {
             </header>
             <main class="learn--card__content">
                 <div class="learn--card__wrapper">
-                    <img class="learn--card__image" src="https://raw.githubusercontent.com/dispector/rslang-data/master/files/06_0102.jpg">
+                    <img class="learn--card__image">
                     <div class="learn--card__sentences">
-                        <p class="learn--card__textMeaning">An <i>attribute</i> is a characteristic of a person or thing.</p>
-                        <p class="learn--card__textMeaningTranslate  learn--card__textMeaningTranslate-hidden">Атрибут является характеристикой человека или вещи</p>
-                        <p class="learn--card__textExample">He isn’t very clever, but he does have some other positive <b>attributes</b>.</p>
-                        <p class="learn--card__textExampleTranslate  learn--card__textExampleTranslate-hidden">Он не очень умен, но у него есть некоторые другие положительные качества</p>
+                        <p class="learn--card__textMeaning"></p>
+                        <p class="learn--card__textMeaningTranslate  learn--card__textMeaningTranslate-hidden"></p>
+                        <p class="learn--card__textExample"></p>
+                        <p class="learn--card__textExampleTranslate  learn--card__textExampleTranslate-hidden"></p>
                     </div>
                 </div>
                 <div class="learn--card__input" contenteditable></div>
-                <p class="learn--card__transcription  learn--card__transcription-hidden">[ǽtribjùːt]</p>
-                <p class="learn--card__wordTranslate">атрибут</p>
+                <p class="learn--card__transcription  learn--card__transcription-hidden"></p>
+                <p class="learn--card__wordTranslate"></p>
             </main>
             <footer class="learn--card__complexity">
                 <span class="learn--card__complexity-repeat">Снова</span>
@@ -301,21 +303,32 @@ const Home = {
     this.renderElement(Home.settings.isTextMeaning, Home.settings.isTextExample, 'learn--card__icon-book', 'learn--card__icon-hidden');
   },
 
+  generateNextCard: async () => {
+    const newtWordObj = Home.dayWords.pop();
+    Home.currentWord = await Home.model.getNextWord(newtWordObj);
+
+    Home.renderCard();
+
+    HomeHandler.initHomeHandler(Home.currentWord, Home.model, Home.generateNextCard);
+  },
+
   afterRender: async (model) => {
     await model.loginUser({ email: '66group@gmail.com', password: 'Gfhjkm_123' });
     const settingsGetRaw = await model.getSettings();
     const { data: settings } = settingsGetRaw;
     Home.settings = settings;
 
-    Home.currentWord = await model.getNewUnknownWord();
-    console.log(Home.currentWord);
+    Home.model = model;
+    await model.loginUser({ email: '66group@gmail.com', password: 'Gfhjkm_123' });
+    Home.dayWords = await model.getWordsForDay();
+    const newtWordObj = Home.dayWords.pop();
+    Home.currentWord = await model.getNextWord(newtWordObj);
 
     Home.initSettings(model);
     Home.renderCard();
 
-    HomeHandler.initHomeHandler(Home.currentWord);
+    HomeHandler.initHomeHandler(Home.currentWord, model, Home.generateNextCard);
   },
-
 };
 
 export default Home;

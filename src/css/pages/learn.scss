@@ -114,6 +114,10 @@
     &-hidden {
         display: none;
     }
+
+    &-active {
+        filter: invert(1);
+    }
 }
 
 .learn--card__content {
