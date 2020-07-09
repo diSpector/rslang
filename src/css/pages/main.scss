@@ -1,0 +1,118 @@
+@import '../abstract/constants.scss';
+@import '../abstract/mixins.scss';
+
+.mainPage__content_promo {
+  display: flex;
+  margin-bottom: 8px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.mainPage_promo_text {
+  max-width: 500px;
+  margin: auto;
+  font-size: 2rem;
+}
+
+.mainPage_promo_image {
+  height: 450px;
+  width: 500px;
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+  background-image: url(../../img/main/people.png);
+}
+
+.mainPage__content_blocks {
+  display: flex;
+  flex-wrap: wrap;
+  width: 100%;
+  justify-content: center;
+}
+
+.mainPage-smallCard {
+  width: 23%;
+  height: 150px;
+  margin: 1%;
+  border-radius: 5px;
+  background-size: cover;
+  background-position: center;
+}
+
+.mainPage-bigCard {
+  width: 48%;
+  height: 316px;
+  margin: 1%;
+  border-radius: 5px;
+  background-size: cover;
+  background-position: center;
+}
+
+.mainPage_block-statistics {
+  background-image: url(../../img/main/statistics.png);
+}
+
+.mainPage_block-promo {
+  background-image: url(../../img/main/promo.png);
+}
+
+.mainPage_block-team {
+  background-image: url(../../img/main/aboutTeam.png);
+}
+
+.mainPage_block-card {
+  background-image: url(../../img/main/card.png);
+}
+
+.mainPage_block-dictionary {
+  margin-top: -158px;
+  background-image: url(../../img/main/dictionary.png);
+}
+
+.mainPage_block-game {
+  background-image: url(../../img/main/game.png);
+}
+
+.mainPage_promo_button {
+  button {
+    cursor: pointer;
+    margin: 10px;
+    height: 35px;
+    color: white;
+    border: 0;
+    outline: none;
+    border-radius: 16px;
+    transition: 0.1s;
+    font-size: 2rem;
+  }
+}
+
+.mainPage_button-login {
+  width: 100px;
+  background: $buttonCorrect;
+  box-shadow: -3px -3px $buttonCorrectShadow inset;
+  &:active{
+    background: $buttonCorrectActive;
+    box-shadow: 3px 3px $buttonCorrectActiveShadow inset;
+  }
+  &:hover{
+    background: $buttonCorrectHover;
+  }
+}
+
+.mainPage_button-signin {
+  width: 200px;
+  background: #fde28e;
+  box-shadow: -3px -3px #e2c774 inset;
+  &:active{
+    background: #efc74d;
+    box-shadow: 3px 3px #caa433 inset;
+  }
+  &:hover{
+    background: #ffe9a6;
+  }
+}
+
+.mainPage_promo_button {
+  text-align: center;
+}
