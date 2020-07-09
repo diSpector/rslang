@@ -97,23 +97,75 @@ const Dictionary = {
       const wordButtonContainer = createNewElement('div', 'wordButtonContainer');
       newWord.append(wordButtonContainer);
 
-      newWord.classList.add(wordObj.word);
+      const sameHardWord = document.querySelector(`.dictionary--hardWords .${wordObj.word}`);
 
       if (mode === 'deleted') {
         const wordRestoreButton = createNewElement('div', 'wordRestoreButton', '', 'Восстановить');
         wordButtonContainer.append(wordRestoreButton);
         wordRestoreButton.onclick = () => {
           newWord.remove();
+          if (sameHardWord) {
+            sameHardWord.remove();
+            constructCurd(wordObj, 'hard');
+          }
           constructCurd(wordObj, 'current');
+          model.removeWordFromDeleted(wordObj.id);
           console.log('restore');
         };
+        if (sameHardWord) {
+          const wordCurrentButton = createNewElement('div', 'wordCurrentButton', '', 'В несложные');
+          wordButtonContainer.append(wordCurrentButton);
+          wordCurrentButton.onclick = () => {
+            newWord.remove();
+            sameHardWord.remove();
+            constructCurd(wordObj, 'deleted');
+            model.addWordToNormal(wordObj.id);
+            console.log('current');
+          };
+          newWord.classList.add('hardInDeleted');
+          // Устонавливаем onclick для карточек из блока Hard
+          const sameHardWordButtonContainer = sameHardWord.querySelector('.wordButtonContainer');
+          const sameHardRestoreButton = createNewElement('div', 'wordRestoreButton', '', 'Восстановить');
+          sameHardWordButtonContainer.append(sameHardRestoreButton);
+
+          const sameHardCurrentButton = createNewElement('div', 'wordCurrentButton', '', 'В несложные');
+          sameHardWordButtonContainer.append(sameHardCurrentButton);
+
+          sameHardRestoreButton.onclick = () => {
+            newWord.remove();
+            sameHardWord.remove();
+            constructCurd(wordObj, 'hard');
+            constructCurd(wordObj, 'current');
+            model.removeWordFromDeleted(wordObj.id);
+            console.log('restore');
+          };
+
+          sameHardCurrentButton.onclick = () => {
+            newWord.remove();
+            sameHardWord.remove();
+            constructCurd(wordObj, 'deleted');
+            model.addWordToNormal(wordObj.id);
+            console.log('Current');
+          };
+        } else {
+          const wordHardButton = createNewElement('div', 'wordHardButton', '', 'В сложные');
+          wordButtonContainer.append(wordHardButton);
+          wordHardButton.onclick = () => {
+            newWord.remove();
+            constructCurd(wordObj, 'hard');
+            constructCurd(wordObj, 'deleted');
+            model.addWordToHard(wordObj.id);
+            console.log('Diff');
+          };
+          newWord.classList.add('deleted');
+        }
+
 
         const deletedWordsContainer = document.querySelector('.dictionary--deletedWords');
         deletedWordsContainer.append(newWord);
         newWord.classList.add('deleted');
       }
       if (mode === 'current') {
-        const sameHardWord = document.querySelector(`.${wordObj.word}`);
         // ставим onclick на кнопку удаления
         const wordDeleteButton = createNewElement('div', 'wordDeleteButton', '', 'Удалить');
         wordButtonContainer.append(wordDeleteButton);
@@ -123,6 +175,7 @@ const Dictionary = {
             sameHardWord.remove();
           }
           constructCurd(wordObj, 'deleted');
+          model.addWordToDeleted(wordObj.id);
           console.log('Del');
         };
 
@@ -133,22 +186,32 @@ const Dictionary = {
             newWord.remove();
             sameHardWord.remove();
             constructCurd(wordObj, 'current');
+            model.addWordToNormal(wordObj.id);
             console.log('current');
           };
           newWord.classList.add('hardInCurrent');
           // Устонавливаем onclick для карточек из блока Hard
-          const sameHarddeleteButton = sameHardWord.querySelector('.wordDeleteButton');
-          sameHarddeleteButton.onclick = () => {
+          const sameHardWordButtonContainer = sameHardWord.querySelector('.wordButtonContainer');
+          const sameHardDeleteButton = createNewElement('div', 'wordDeleteButton', '', 'Удалить');
+          sameHardWordButtonContainer.append(sameHardDeleteButton);
+
+          const sameHardCurrentButton = createNewElement('div', 'wordCurrentButton', '', 'В несложные');
+          sameHardWordButtonContainer.append(sameHardCurrentButton);
+
+          sameHardDeleteButton.onclick = () => {
             newWord.remove();
             sameHardWord.remove();
+            constructCurd(wordObj, 'hard');
             constructCurd(wordObj, 'deleted');
+            model.addWordToDeleted(wordObj.id);
             console.log('Del');
           };
-          const sameHardCurrentButton = sameHardWord.querySelector('.wordCurrentButton');
+
           sameHardCurrentButton.onclick = () => {
             newWord.remove();
             sameHardWord.remove();
             constructCurd(wordObj, 'current');
+            model.addWordToNormal(wordObj.id);
             console.log('Current');
           };
         } else {
@@ -158,6 +221,7 @@ const Dictionary = {
             newWord.remove();
             constructCurd(wordObj, 'hard');
             constructCurd(wordObj, 'current');
+            model.addWordToHard(wordObj.id);
             console.log('Diff');
           };
           newWord.classList.add('current');
@@ -167,28 +231,20 @@ const Dictionary = {
         currentWordsContainer.append(newWord);
       }
       if (mode === 'hard') {
-        const wordDeleteButton = createNewElement('div', 'wordDeleteButton', '', 'Удалить');
-        wordButtonContainer.append(wordDeleteButton);
-
-        const wordCurrentButton = createNewElement('div', 'wordCurrentButton', '', 'В несложные');
-        wordButtonContainer.append(wordCurrentButton);
-
         const hardWordsContainer = document.querySelector('.dictionary--hardWords');
         hardWordsContainer.append(newWord);
         newWord.classList.add('hard');
+        newWord.classList.add(wordObj.word);
       }
       applaySettingsToOneCard(newWord);
     }
 
     async function start() {
-      const currentWords = await model.getWordsForDictionary();
-      console.log(currentWords);
-      const hardWords = await model.getSetOfWordsCustomLength(1, 2, 10);
-      const deletedWords = await model.getSetOfWordsCustomLength(1, 3, 10);
+      const { allWords: currentWords, hardWords, deletedWords } = await model.getWordsForDictionary();
 
-      hardWords.forEach((word) => {
+      console.log(currentWords, hardWords, deletedWords);
+      await hardWords.forEach((word) => {
         constructCurd(word, 'hard');
-        constructCurd(word, 'current');
       });
 
       currentWords.forEach((word) => {
