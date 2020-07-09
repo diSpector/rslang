@@ -61,16 +61,6 @@ const Sprint = {
               <option value="18">18</option>
               <option value="19">19</option>
               <option value="20">20</option>
-              <option value="21">21</option>
-              <option value="22">22</option>
-              <option value="23">23</option>
-              <option value="24">24</option>
-              <option value="25">25</option>
-              <option value="26">26</option>
-              <option value="27">27</option>
-              <option value="28">28</option>
-              <option value="29">29</option>
-              <option value="30">30</option>
             </select>
           </div>
         </div>
@@ -157,9 +147,10 @@ const Sprint = {
       const isNewWords = document.querySelector('.allGames__choice_new').classList.contains('select');
 
       const level = document.querySelector('#levels').value;
-      const round = document.querySelector('#pages').value;
+      let round = document.querySelector('#pages').value;
 
       if (level && round && isNewWords) {
+        round -= 1;
         generateNewWord(model, round, level);
       } else {
         generateLearnWord(model);

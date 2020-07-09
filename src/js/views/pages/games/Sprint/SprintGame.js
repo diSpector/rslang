@@ -11,10 +11,8 @@ let wordNumber = 0;
 let arrayWord;
 let round;
 let level;
-let lengthWord = 30;
-const lengthRound = 30;
+const lengthRound = 19;
 const lengthLevel = 6;
-let newWord;
 let checkAnswer = true;
 
 
@@ -42,7 +40,7 @@ const check = (count) => {
   checkAnswer = false;
   setTimeout(() => {
     checkAnswer = true;
-  }, 500)
+  }, 670);
   if (count % 2 === 0) {
     correctAudio.play();
     countCorrect += 1;
@@ -52,18 +50,18 @@ const check = (count) => {
     obj = {};
     const k = Number(document.querySelector('.sprint--game__result_points').innerText);
     if (countCorrect >= 4) {
-      document.querySelector('.sprint--game__result_addPoints').classList.remove('hiddn');
+      document.querySelector('.sprint--game__result_addPoints').classList.remove('hide');
       document.querySelector('.sprint--game__result_points').innerHTML = k + 20;
       document.querySelector('.sprint--game__result_addPoints').innerHTML = '+20';
-      document.querySelector('.sprint--card__list2').classList.remove('hidden');
+      document.querySelector('.sprint--card__list2').classList.remove('hide');
     } else {
-      document.querySelector('.sprint--game__result_addPoints').classList.remove('hiddn');
+      document.querySelector('.sprint--game__result_addPoints').classList.remove('hide');
       document.querySelector('.sprint--game__result_points').innerHTML = k + 10;
       document.querySelector('.sprint--game__result_addPoints').innerHTML = '+10';
       document.querySelector('.sprint--card__title').children[countCorrect - 1].classList.add('active');
     }
     setTimeout(() => {
-      document.querySelector('.sprint--game__result_addPoints').classList.add('hiddn');
+      document.querySelector('.sprint--game__result_addPoints').classList.add('hide');
     }, 300);
     return 1;
   }
@@ -143,6 +141,7 @@ const generateStatistic = () => {
       document.querySelector('.sprint--end__message').classList.remove('hidden');
     }
   };
+
   document.querySelector('.sprint--end__slide_statistic').onclick = () => {
     document.querySelector('.sprint--end__slide_statistic').classList.add('active');
     document.querySelector('.sprint--end__slide_main').classList.remove('active');
@@ -167,120 +166,76 @@ const timerw = () => {
   }
 };
 
-const nextWord = (model) => {
-  if (newWord) {
-    wordNumber += 1;
-    wordNumber = 0;
-    round += 1;
-    if (round > lengthRound) {
-      round = 0;
-      level += 1;
-      if (level > lengthLevel) {
-        level = lengthLevel;
-      }
+const nextWord = () => {
+  round += 1;
+  if (round > lengthRound) {
+    round = 0;
+    level += 1;
+    if (level > lengthLevel) {
+      level = lengthLevel;
     }
-    wordNumber = 0;
-    generateNewWord(model, round, level);
-  } else {
-    document.querySelector('.sprint--card__title').innerHTML = '<p>Игра закончена</p>';
-    document.querySelector('.sprint--card__list').classList.add('hidden');
-    document.querySelector('.sprint--card__list2').classList.add('hidden');
-    document.querySelector('.sprint--card__word').innerHTML = 'Все изученные вами слова закончились.';
-    document.querySelector('.sprint--card__word').classList.add('warn');
-    document.querySelector('.sprint--button__correct').classList.add('hidden');
-    document.querySelector('.sprint--button__error').classList.add('hidden');
-    document.querySelector('.sprint--button__warn').classList.remove('hidden');
-    document.querySelector('.sprint--game__card').classList.add('warn');
-    document.querySelector('.sprint--game__arrow').classList.add('hidden');
-    document.querySelector('.sprint--game__result').classList.add('hidden');
-    document.querySelector('.sprint--game__time').classList.add('hidden');
-    checkAnswer = false;
   }
-  document.querySelector('.sprint--button__warn').onclick = () => {
-    time = 0;
-  };
 };
+
 const game = (model, data) => {
-    const dataCor = data.correct;
-    const dataErr = data.incorrect[0].wordTranslate;
-    let count = generate([dataCor.word, dataCor.wordTranslate, dataErr, dataCor.audio]);
-    document.querySelector('.sprint--button__correct').onclick = () => {
-      if (checkAnswer) {
+  const dataCor = data.correct;
+  const dataErr = data.incorrect[0].wordTranslate;
+  let count = generate([dataCor.word, dataCor.wordTranslate, dataErr, dataCor.audio]);
+  document.querySelector('.sprint--card__button').addEventListener('click', ({ target }) => {
+    if (checkAnswer) {
+      if (target.classList.contains('sprint--button__correct')) {
         count += 1;
-        check(count);
-        wordNumber += 1;
-        if (wordNumber === lengthWord) {
-          nextWord(model);
-        } else {
-          game(model, arrayWord[wordNumber]);
-        }
-      }
-    };
-    document.querySelector('.sprint--button__error').onclick = () => {
-      if (checkAnswer) {
+      } else if (target.classList.contains('sprint--button__error')) {
         count += 0;
-        check(count);
-        wordNumber += 1;
-        if (wordNumber === lengthWord) {
-          nextWord(model);
-        } else {
-          game(model, arrayWord[wordNumber]);
-        }
       }
-    };
-    document.onkeyup = (event) => {
-      if (time < 60 && checkAnswer) {
+      check(count);
+      wordNumber += 1;
+      game(model, arrayWord[wordNumber]);
+    }
+  });
+  document.onkeyup = (event) => {
+    if (time < 60 && checkAnswer) {
+      if (event.code === 'ArrowLeft' || event.code === 'ArrowRight') {
         if (event.code === 'ArrowLeft') {
           count += 1;
-          document.querySelector('.sprint--game__arrow_left').classList.add('click');
-          setTimeout(() => {
-            document.querySelector('.sprint--game__arrow_left').classList.remove('click');
-          }, 100);
-          check(count);
-          wordNumber += 1;
-          if (wordNumber === lengthWord) {
-            nextWord(model);
-          } else {
-            game(model, arrayWord[wordNumber]);
-          }
         }
         if (event.code === 'ArrowRight') {
           count += 0;
-          check(count);
-          document.querySelector('.sprint--game__arrow_right').classList.add('click');
-          setTimeout(() => {
-            document.querySelector('.sprint--game__arrow_right').classList.remove('click');
-            wordNumber += 1;
-            if (wordNumber === lengthWord) {
-              nextWord(model);
-            } else {
-              game(model, arrayWord[wordNumber]);
-            }
-          }, 100);
         }
+        check(count);
+        wordNumber += 1;
+        game(model, arrayWord[wordNumber]);
+        document.querySelector('.sprint--game__arrow_left').classList.add('click');
+        setTimeout(() => {
+          document.querySelector('.sprint--game__arrow_left').classList.remove('click');
+        }, 100);
       }
     }
-  
+  };
 };
 
 const generateNewWord = (model, choiseRound, choiseLevel) => {
-  newWord = true;
   round = Number(choiseRound);
   level = Number(choiseLevel);
   model.getSetOfWordsAndTranslations(level, round, 30, 1).then((data) => {
     arrayWord = data;
+  });
+  nextWord();
+  model.getSetOfWordsAndTranslations(level, round, 30, 1).then((data) => {
+    arrayWord = arrayWord.concat(data);
+  });
+  nextWord();
+  model.getSetOfWordsAndTranslations(level, round, 30, 1).then((data) => {
+    arrayWord = arrayWord.concat(data);
     game(model, arrayWord[wordNumber]);
   });
 };
 
 const generateLearnWord = (model) => {
-  newWord = false;
-  lengthWord = 100;
   model.getSetOfLearnedWordsAndTranslations(100, 1).then((data) => {
     arrayWord = data;
     game(model, arrayWord[wordNumber]);
   });
 };
-
 
 export { generateNewWord, generateLearnWord, timerw };

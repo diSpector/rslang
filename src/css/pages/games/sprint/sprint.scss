@@ -78,27 +78,27 @@
 }
 .sprint--button__correct{
   font-family: 'Neucha', cursive;
-  background: rgb(64,199,129);
-  box-shadow: -3px -3px rgb(53,167,110) inset;
+  background: $buttonCorrect;
+  box-shadow: -3px -3px $buttonCorrectShadow inset;
   &:active{
-    background: rgb(33,147,90);
-    box-shadow: 3px 3px #17653e inset;
+    background: $buttonCorrectActive;
+    box-shadow: 3px 3px $buttonCorrectActiveShadow inset;
   }
   &:hover{
-    background: rgb(101, 218, 157);
+    background: $buttonCorrectHover;
   }
 }
 
 .sprint--button__error{
   font-family: 'Neucha', cursive;
-  background: #ef5f5f;
-  box-shadow: -3px -3px #c34040 inset;
+  background: $buttonError;
+  box-shadow: -3px -3px $buttonErrorShadow inset;
   &:active{
-    background: #9e2a2a;
-    box-shadow: 3px 3px #7d1a1a inset;
+    background: $buttonErrorActive;
+    box-shadow: 3px 3px $buttonErrorActiveShadow inset;
   }
   &:hover{
-    background: #f77d7d;
+    background: $buttonErrorHover;
   }
 
 }
@@ -250,7 +250,7 @@
 .sprint--game__result_addPoints{
   opacity: 1;
   font-size: 2rem;
-  &.hiddn{
+  &.hide {
     opacity:0;
   }
   transition: 0.2s; 
@@ -416,14 +416,14 @@
   transition: 0.1s;
   font-size: 2rem;
   font-family: 'Neucha', cursive;
-  background: rgb(64,199,129);
-  box-shadow: -3px -3px rgb(53,167,110) inset;
+  background: $buttonCorrect;
+  box-shadow: -3px -3px $buttonCorrectShadow inset;
   &:active{
-    background: rgb(33,147,90);
-    box-shadow: 3px 3px #17653e inset;
+    background: $buttonCorrectActive;
+    box-shadow: 3px 3px $buttonCorrectActiveShadow inset;
   }
   &:hover{
-    background: rgb(101, 218, 157);
+    background: $buttonCorrectHover;
   }
 }
 .sprint--end__statistic_correct_text{
@@ -432,7 +432,7 @@
 }
 .sprint--end__statistic_error_text{
   font-size: 2.5rem;
-  color: #c34040;
+  color: $textError;
 }
 .sprint--statistic__line{
   display: flex;
