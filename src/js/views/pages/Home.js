@@ -3,21 +3,22 @@ import '../../../css/pages/settings.scss';
 import HomeHandler from './HomeHandler';
 
 const Home = {
-  settings: {
-    newWordsPerDay: 10, // Количество новых слов в день
-    maxWordsPerDay: 30, // Максимальное количество карточек в день
-    isWordTranslate: true, // Перевод слова
-    isTextMeaning: true, // Предложение с объяснением значения слова
-    isTextExample: true, // Предложение с примером использования изучаемого слова
-    isTextMeaningTranslate: false, // Перевод предложения с объяснением значения слова
-    isTextExampleTranslate: false, // Перевод предложения с примером использования изучаемого слова
-    isTranscription: false, // Транскрипция слова
-    isImage: true, // Картинка-ассоциация
-    isAnswerButton: true, // Кнопка "Показать ответ"
-    isDeleteWordButton: true, // Кнопка "Удалить слово из изучения"
-    isMoveToDifficultButton: true, // Кнопка - поместить слово в группу «Сложные»
-    isIntervalButtons: true, // Блок кнопок для интервального повторения
-  },
+  // settings: {
+  //   newWordsPerDay: 10, // Количество новых слов в день
+  //   maxWordsPerDay: 30, // Максимальное количество карточек в день
+  //   isWordTranslate: false, // Перевод слова
+  //   isTextMeaning: false, // Предложение с объяснением значения слова
+  //   isTextExample: false, // Предложение с примером использования изучаемого слова
+  //   isTextMeaningTranslate: false, // Перевод предложения с объяснением значения слова
+  //   isTextExampleTranslate: false, // Перевод предложения с примером использования слова
+  //   isTranscription: false, // Транскрипция слова
+  //   isImage: false, // Картинка-ассоциация
+  //   isAnswerButton: false, // Кнопка "Показать ответ"
+  //   isDeleteWordButton: false, // Кнопка "Удалить слово из изучения"
+  //   isMoveToDifficultButton: false, // Кнопка - поместить слово в группу «Сложные»
+  //   isIntervalButtons: false, // Блок кнопок для интервального повторения
+  // },
+  settings: null,
   currentWord: null,
   dayWords: null,
   model: null,
@@ -52,7 +53,12 @@ const Home = {
                         <p class="learn--card__textExampleTranslate  learn--card__textExampleTranslate-hidden"></p>
                     </div>
                 </div>
-                <div class="learn--card__input" contenteditable></div>
+
+                <div class="learn--card__inputWrapper">
+                    <div class="learn--card__input" contenteditable></div>
+                    <div class="learn--card__enterAnswer" title="Ввести слово"></div>
+                </div>
+
                 <p class="learn--card__transcription  learn--card__transcription-hidden"></p>
                 <p class="learn--card__wordTranslate"></p>
             </main>
@@ -72,82 +78,77 @@ const Home = {
 
     <div class="settings">
         <div class="settings--closeBtn"></div>
-        <h2>Настройки</h2>
+        <h2 class="settings--heading">Настройки</h2>
 
         <form class="settings--form" action="#" method="POST">
         <fieldset>
             <legend>Слова для изучения</legend>
+            <div class="settings__error  settings__error-max">Количество новых слов не может быть больше максимального количества карточек</div>
 
-            <div class="settings__newWordsPerDay">
+            <div class="settings__item">
                 <input type="number" id="newWordsPerDay" min="10" max="30" value="15" required>
                 <label for="newWordsPerDay">Количество новых слов в день</label>
             </div>
 
-            <div class="settings__maxWordsPerDay">
+            <div class="settings__item">
                 <input type="number" id="maxWordsPerDay" min="10" max="50" value="30" required>
                 <label for="maxWordsPerDay">Максимальное количество карточек в день</label>
             </div>
         </fieldset>
 
-        <hr>
-
         <fieldset>
             <legend>Информация на карточке</legend>
-            <div class="settings__error">Необходимо выбрать один из вариантов</div>
+            <div class="settings__error  settings__error-info">Необходимо выбрать один из вариантов</div>
 
-            <div class="settings__wordTranslate">
+            <div class="settings__item">
               <input type="checkbox" id="isWordTranslate" checked>
               <label for="isWordTranslate">Перевод слова</label>
             </div>
 
-            <div class="settings__textMeaning">
+            <div class="settings__item">
               <input type="checkbox" id="isTextMeaning" checked>
               <label for="isTextMeaning">Предложение с объяснением значения слова</label>
             </div>
 
-            <div class="settings__textExample">
+            <div class="settings__item">
               <input type="checkbox" id="isTextExample" checked>
               <label for="isTextExample">Предложение с примером использования изучаемого слова</label>
             </div>
         </fieldset>
-
-        <hr>
         
         <fieldset>
             <legend>Дополнительные элементы</legend>
 
-            <div class="settings__transcription">
+            <div class="settings__item">
               <input type="checkbox" id="isTranscription">
               <label for="isTranscription">Транскрипция слова (появится после угадывания слова)</label>
             </div>
 
-            <div class="settings__image">
+            <div class="settings__item">
               <input type="checkbox" id="isImage" checked>
               <label for="isImage">Картинка-ассоциация</label>
             </div>
         </fieldset>
-
-        <hr>
         
         <fieldset>
             <legend>Кнопки (дополнительный функционал)</legend>
 
-            <div class="settings__showAnswer">
+            <div class="settings__item">
               <input type="checkbox" id="isAnswerButton" checked>
               <label for="isAnswerButton">Показать ответ</label>
             </div>
 
-            <div class="settings__deleteWord">
+            <div class="settings__item">
               <input type="checkbox" id="isDeleteWordButton" checked>
               <label for="isDeleteWordButton">Удалить слово из изучения</label>
             </div>
 
-            <div class="settings__difficult">
+            <div class="settings__item">
               <input type="checkbox" id="isMoveToDifficultButton" checked>
               <label for="isMoveToDifficultButton">Поместить слово в группу «Сложные»</label>
             </div>
 
-            <div class="settings__intervalButtons">
+            <div class="settings__item">
               <input type="checkbox" id="isIntervalButtons" checked>
               <label for="isIntervalButtons">Блок кнопок для интервального повторения</label>
             </div>
@@ -181,13 +182,21 @@ const Home = {
     return !!((isWordTranslate || isTextMeaning || isTextExample));
   },
 
-  showError() {
-    const error = document.querySelector('.settings__error');
+  // is maxWordsPerDay bigger than newWordsPerDay
+  isMaxBiggerThanNew() {
+    const maxWordsPerDay = document.querySelector('#maxWordsPerDay').value;
+    const newWordsPerDay = document.querySelector('#newWordsPerDay').value;
+
+    return (maxWordsPerDay >= newWordsPerDay);
+  },
+
+  showError(errorClass) {
+    const error = document.querySelector(`.${errorClass}`);
     error.classList.add('settings__error-show');
   },
 
-  hideError() {
-    const error = document.querySelector('.settings__error');
+  hideError(errorClass) {
+    const error = document.querySelector(`.${errorClass}`);
     error.classList.remove('settings__error-show');
   },
 
@@ -211,27 +220,63 @@ const Home = {
     };
   },
 
-  saveSettings() {
+  // валидация настроек
+  isValid() {
+    this.hideError('settings__error-info');
+    this.hideError('settings__error-max');
+
+    if (!this.isMaxBiggerThanNew()) {
+      this.showError('settings__error-max');
+      return false;
+    }
+
+    if (!this.isInfoChecked()) {
+      this.showError('settings__error-info');
+      return false;
+    }
+
+    return true;
+  },
+
+  saveSettings(model) {
     const form = document.querySelector('.settings--form');
     form.addEventListener('submit', (event) => {
       event.preventDefault();
-      this.hideError();
+      this.hideError('settings__error-info');
+      this.hideError('settings__error-max');
 
-      if (this.isInfoChecked()) {
-        console.log('save settings to backend');
+      if (this.isValid()) {
+        model.saveCardsSettings(this.settings);
+        console.log('saved settings', this.settings);
         Home.renderCard();
-      } else {
-        this.showError();
       }
     });
   },
 
-  initSettings() {
+  renderSettings() {
+    document.querySelector('#newWordsPerDay').value = this.settings.newWordsPerDay;
+    document.querySelector('#maxWordsPerDay').value = this.settings.maxWordsPerDay;
+
+    document.querySelector('#isWordTranslate').checked = this.settings.isWordTranslate;
+    document.querySelector('#isTextMeaning').checked = this.settings.isTextMeaning;
+    document.querySelector('#isTextExample').checked = this.settings.isTextExample;
+
+    document.querySelector('#isTranscription').checked = this.settings.isTranscription;
+    document.querySelector('#isImage').checked = this.settings.isImage;
+
+    document.querySelector('#isAnswerButton').checked = this.settings.isAnswerButton;
+    document.querySelector('#isDeleteWordButton').checked = this.settings.isDeleteWordButton;
+    document.querySelector('#isMoveToDifficultButton').checked = this.settings.isMoveToDifficultButton;
+    document.querySelector('#isIntervalButtons').checked = this.settings.isIntervalButtons;
+  },
+
+  initSettings(model) {
     Home.showSettingsToggle();
     Home.closeSettings();
 
+    Home.renderSettings();
     Home.changeSettings();
-    Home.saveSettings();
+    Home.saveSettings(model);
   },
 
   renderElement(flag1, flag2, elementClass, hiddenClass, innerHtml = null, src = null) {
@@ -243,6 +288,12 @@ const Home = {
     } else {
       element.classList.add(hiddenClass);
     }
+  },
+
+  clearTranslation(elementClass, hiddenClass) {
+    const element = document.querySelector(`.${elementClass}`);
+    element.classList.add(hiddenClass);
+    element.textContent = '';
   },
 
   renderCard() {
@@ -259,8 +310,13 @@ const Home = {
     this.renderElement(Home.settings.isMoveToDifficultButton, null, 'learn--card__icon-brain', 'learn--card__icon-hidden');
     this.renderElement(Home.settings.isAnswerButton, null, 'learn--button-show', 'learn--button-hidden');
     this.renderElement(Home.settings.isIntervalButtons, null, 'learn--card__complexity', 'learn--card__complexity-hidden');
-    // переводы предложений
+
+    // кнопка "вкл/выкл отображение переводов предложения"
     this.renderElement(Home.settings.isTextMeaning, Home.settings.isTextExample, 'learn--card__icon-book', 'learn--card__icon-hidden');
+
+    // очистить и скрыть переводы
+    this.clearTranslation('learn--card__textMeaningTranslate', 'learn--card__textMeaningTranslate-hidden');
+    this.clearTranslation('learn--card__textExampleTranslate', 'learn--card__textExampleTranslate-hidden');
   },
 
   generateNextCard: async () => {
@@ -273,6 +329,11 @@ const Home = {
   },
 
   afterRender: async (model) => {
+    await model.loginUser({ email: '66group@gmail.com', password: 'Gfhjkm_123' });
+    const settingsGetRaw = await model.getSettings();
+    const { data: settings } = settingsGetRaw;
+    Home.settings = settings;
+
     Home.model = model;
     await model.loginUser({ email: '66group@gmail.com', password: 'Gfhjkm_123' });
     Home.dayWords = await model.getWordsForDay();
@@ -280,12 +341,11 @@ const Home = {
     Home.currentWord = await Home.dayWords.pop();
     console.log(Home.currentWord, 'word in home');
 
-    Home.initSettings();
+    Home.initSettings(model);
     Home.renderCard();
 
     HomeHandler.initHomeHandler(Home.currentWord, model, Home.generateNextCard);
   },
-
 };
 
 export default Home;

@@ -150,7 +150,6 @@
 }
 
 .learn--card__sentences {
-    margin: 10px;
     
     @include media-mobile-big {
         text-align: center;
@@ -161,7 +160,7 @@
 .learn--card__textMeaningTranslate,
 .learn--card__textExample,
 .learn--card__textExampleTranslate {
-    margin-top: 0;
+    margin: 0 10px 15px;
 
     &-hidden {
         display: none;
@@ -173,6 +172,12 @@
     color: #586187;
     font-weight: bold;
     font-style: normal;
+}
+
+.learn--card__inputWrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
 }
 
 .learn--card__input {
@@ -190,6 +195,23 @@
     overflow: hidden;
     overflow-wrap: normal;
     transition: 1s ease;
+}
+
+.learn--card__enterAnswer {
+    position: absolute;
+    right: -35px;
+    top: 0;
+    margin: 5px 0;
+    background-size: contain;
+    width: 25px;
+    height: 25px;
+    background-image: url('../../img/learn/enter-word.svg');
+    cursor: pointer;
+    transition: transform 0.1s;
+
+    &:hover {
+        transform: scale(1.1);
+    }
 }
 
 .learn--card__transcription {
