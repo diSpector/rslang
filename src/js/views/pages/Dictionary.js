@@ -181,7 +181,8 @@ const Dictionary = {
     }
 
     async function start() {
-      const currentWords = await model.getSetOfWordsCustomLength(1, 1, 10);
+      const currentWords = await model.getWordsForDictionary();
+      console.log(currentWords);
       const hardWords = await model.getSetOfWordsCustomLength(1, 2, 10);
       const deletedWords = await model.getSetOfWordsCustomLength(1, 3, 10);
 
@@ -212,7 +213,7 @@ const Dictionary = {
 
     async function getSettings() {
       // авторизация
-      await model.loginUser({ email: '66group@gmail.com', password: 'Gfhjkm_123' });
+
 
       const settingsGetRaw = await model.getSettings();
       const { data: allSettings } = settingsGetRaw;
@@ -285,6 +286,7 @@ const Dictionary = {
     }
 
     async function go() {
+      await model.loginUser({ email: '66group@gmail.com', password: 'Gfhjkm_123' });
       setEventListeners();
       await getSettings();
       await start();
