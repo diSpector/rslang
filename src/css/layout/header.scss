@@ -111,7 +111,8 @@
     display: flex;
     align-items: center;
     justify-content: space-around;
-    padding: 10px;
+    padding: 8px;
+    height: 55px;
   }
 
   .header__logo{
@@ -145,14 +146,14 @@
     display: flex;
     flex-wrap: wrap;
     justify-content: space-around;
-    padding: 10px 0;   
+      
   }
 
   .header__navItem {
     display: inline;
     text-transform: uppercase;
     text-decoration: none;
-    margin: 10px;
+    margin: 5px 10px;
   }
   
   .header__navItem a {
@@ -183,8 +184,8 @@
       display: block;
       position: relative;
       width: 260px;
-      background-color: #fde18e50;
-      margin-top: 63px;
+      background-color: #fde18ec4;
+      margin-top: 71px;
     }
 
     .header__navItem a {
