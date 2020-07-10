@@ -40,11 +40,10 @@ const routes = {
   '/games/:id': Games, // Мини-игры,
   '/promo': Promo, // О приложении,
   '/team': Team, // О команде,
-
 };
 
 // список страниц, которые должны быть доступны НЕавторизованному пользователю
-const allowedToGuestRoutes = ['/login', '/team', '/', '/main'];
+const allowedToGuestRoutes = ['/login', '/team', '/', '/promo'];
 
 // роутер - разбирает ссылку из адресной строки, ищет совпадение
 // в объекте routes, загружает соответствующий элемент
