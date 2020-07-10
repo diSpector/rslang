@@ -181,18 +181,22 @@ const game = (model, data) => {
   const dataCor = data.correct;
   const dataErr = data.incorrect[0].wordTranslate;
   let count = generate([dataCor.word, dataCor.wordTranslate, dataErr, dataCor.audio]);
-  document.querySelector('.sprint--card__button').addEventListener('click', ({ target }) => {
+  document.querySelector('.sprint--button__correct').onclick = () => {
     if (checkAnswer) {
-      if (target.classList.contains('sprint--button__correct')) {
-        count += 1;
-      } else if (target.classList.contains('sprint--button__error')) {
-        count += 0;
-      }
+      count += 1;
       check(count);
       wordNumber += 1;
       game(model, arrayWord[wordNumber]);
     }
-  });
+  };
+  document.querySelector('.sprint--button__error').onclick = () => {
+    if (checkAnswer) {
+      count += 0;
+      check(count);
+      wordNumber += 1;
+      game(model, arrayWord[wordNumber]);
+    }
+  };
   document.onkeyup = (event) => {
     if (time < 60 && checkAnswer) {
       if (event.code === 'ArrowLeft' || event.code === 'ArrowRight') {
