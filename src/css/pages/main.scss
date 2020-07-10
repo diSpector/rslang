@@ -24,6 +24,10 @@
   background-repeat: no-repeat;
   background-position: center;
   background-image: url(../../img/main/people.png);
+  @include media-tablet {
+    height:300px;
+    margin-top: 20px;
+  }
 }
 
 .mainPage__content_blocks {
@@ -70,6 +74,10 @@
       width: 55px;
     }
   }
+  @include media-tablet {
+    width: 48%;
+    margin: 1%;
+  }
 }
 
 .mainPage-bigCard {
@@ -85,6 +93,9 @@
     font-size: 3rem;
     margin: 10px;
   }  
+  @include media-tablet {
+    width: 98%;
+  }
 }
 
 .mainPage-card-shadow {
@@ -129,6 +140,10 @@
 .mainPage_block-dictionary {
   margin-top: -158px;
   background-image: url(../../img/main/dictionary.png);
+  @include media-tablet {
+    margin: 1%;
+  }
+
 }
 
 .mainPage_block-game {
@@ -251,6 +266,11 @@
 .mainPage_message-card_description {
   margin: 20px;
   font-size: 1.5rem;
+}
+
+.mainPage-button-link {
+  text-decoration: none;
+  outline: none;
 }
 
 
