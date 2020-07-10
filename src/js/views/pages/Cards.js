@@ -22,12 +22,13 @@ const Cards = {
   currentWord: null,
   dayWords: null,
   model: null,
+  addPercent: null,
 
   render: async () => {
     const view = `
     <div class="learn  wrapper">
         <section class="learn--progress">
-            <div class="learn--progress__done">10</div>
+            <div class="learn--progress__done">0</div>
             <div class="learn--progress__background">
                 <div class="learn--progress__bar"></div>
             </div>
@@ -318,13 +319,30 @@ const Cards = {
     this.clearTranslation('learn--card__textExampleTranslate');
   },
 
+  addProgress: () => {
+    const progressNumber = document.querySelector('.learn--progress__done');
+    const progressBar = document.querySelector('.learn--progress__bar');
+    const progressTotal = document.querySelector('.learn--progress__total');
+    const currentProgress = Number(progressTotal.innerText) - Cards.dayWords.length;
+    progressNumber.innerText = currentProgress;
+    progressBar.style.width = `${Number(progressBar.style.width.slice(0, -1)) + Cards.addPercent}%`;
+  },
+
+  initProgress: () => {
+    const progressTotal = document.querySelector('.learn--progress__total');
+    const progressBar = document.querySelector('.learn--progress__bar');
+    const numberOfWords = Cards.dayWords.length;
+    progressTotal.innerText = numberOfWords;
+    progressBar.style.width = '0%';
+    Cards.addPercent = 100 / numberOfWords;
+  },
+
   generateNextCard: async () => {
     const ourWordObj = Cards.dayWords.pop();
     Cards.currentWord = await Cards.model.getNextWord(ourWordObj);
-    console.log(Cards.currentWord, 'backend');
-    console.log(ourWordObj, 'our word');
 
     Cards.renderCard();
+    Cards.addProgress();
 
     CardsHandler.initCardHandler(Cards.currentWord, ourWordObj,
       Cards.model, Cards.generateNextCard, Cards.settings);
@@ -339,13 +357,14 @@ const Cards = {
     Cards.dayWords = await model.getWordsForDay();
     const ourWordObj = Cards.dayWords.pop();
     Cards.currentWord = await model.getNextWord(ourWordObj);
-    console.log(Cards.currentWord, 'backend');
-    console.log(ourWordObj, 'our word');
 
+    console.log(Cards.dayWords);
     Cards.initSettings(model);
     Cards.renderCard();
+    Cards.initProgress();
 
-    CardsHandler.initCardHandler(Cards.currentWord, ourWordObj, model, Cards.generateNextCard, Cards.settings);
+    CardsHandler.initCardHandler(Cards.currentWord, ourWordObj, model,
+      Cards.generateNextCard, Cards.settings);
   },
 };
 
