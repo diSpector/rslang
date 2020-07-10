@@ -14,8 +14,12 @@ const Home = {
                       RS Lang - это приложение для веселого и эффективного изучения английского языка. Узнавай новые слова, закрепляй их с помощью мини-игр, зарабатывай очки и отслеживай свой прогресс, когда тебе удобно!
                     </p>
                     <div class="mainPage_promo_button">
-                      <button class="mainPage_button-login" onclick="location.href='/#/login'">Войти</button>
-                      <button class="mainPage_button-signin" onclick="location.href='/#/login'">Зарегистироваться</button>
+                      <a class="mainPage-button-link" href="#/login">
+                        <button class="mainPage_button-login">Войти</button>
+                      </a>
+                      <a class="mainPage-button-link" href="#/login">
+                        <button class="mainPage_button-signin">Зарегистироваться</button>
+                      </a>
                     </div>
                   </div>
                   <div class="mainPage_promo_description"></div>
@@ -27,12 +31,14 @@ const Home = {
                       <button class="mainPage_message-buttonClose"></button>
                     </div>
                     <p class="mainPage_message-card_description">Для того чтобы перейти в этот раздел, необходимо авторизоваться.</p>
-                    <button class="mainPage_message-card_button" onclick="location.href='/#/login'">Войти</button>
+                    <a class="mainPage-card-link" href="#/login">
+                      <button class="mainPage_message-card_button">Войти</button>
+                    </a>
                   </div>
                 </div>
                 <div class="mainPage__content_blocks">
                   <div class="mainPage_block-card mainPage-bigCard"">
-                    <h2 class="mainPage_block-title">Карточки</h2>
+                    <h2 class="mainPage_block-title">Изучение слов</h2>
                     <a class="mainPage-card-link" href="#/cards"></a>
                     <div class="mainPage-card-shadow"></div>
                     <div class="mainPage-card-locking"></div>
@@ -79,7 +85,7 @@ const Home = {
       document.querySelectorAll('.mainPage-card-shadow').forEach((item) => {
         item.classList.add('hidden');
       });
-      document.querySelector('.mainPage__content_promo').classList.add('hidden');
+      document.querySelector('.mainPage_promo_button').classList.add('hidden');
     } else {
       document.querySelectorAll('mainPage-card-link').forEach((item) => {
         item.removeAttribute('href');
