@@ -8,11 +8,12 @@
   width: 100vw;
   z-index: 4;
   top: 0;
- 
 
+  .burger{
+    
+  }
   .open-close-btn {
     position: relative;
-    left: 5px;
     text-decoration: none;
     z-index:10;
   }
@@ -109,16 +110,15 @@
   .header__content {
     display: flex;
     align-items: center;
-    justify-content: space-between;
-    padding: 10px 0;
+    justify-content: space-around;
+    padding: 10px;
   }
 
   .header__logo{
     display: block;
-    margin-right: auto;
-    margin-left: auto;
+    margin: 0 auto;
     width: 120px;
-    padding:0 20px;
+    padding: 10px;
     flex-shrink: 0;
   }
   
@@ -132,6 +132,7 @@
   
   .overlay {
     display: flex;
+    margin: 0 auto;
   }
   
   @media(max-width: 1035px){
@@ -141,14 +142,12 @@
   }
 
   .overlay-content {
-    
     display: flex;
     flex-wrap: wrap;
-    justify-content: space-between;
+    justify-content: space-around;
     padding: 10px 0;   
   }
 
-  
   .header__navItem {
     display: inline;
     text-transform: uppercase;
@@ -185,8 +184,7 @@
       position: relative;
       width: 260px;
       background-color: #fde18e50;
-      margin-top: 70px;
-      margin-bottom: 131px;
+      margin-top: 63px;
     }
 
     .header__navItem a {
