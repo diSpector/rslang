@@ -234,7 +234,6 @@ const CardsHandler = {
   },
 
   initCardHandler: async (word, ourWordObj, model, generateNextCard, settings) => {
-    await model.loginUser({ email: '66group@gmail.com', password: 'Gfhjkm_123' });
     CardsHandler.currentWord = word;
     CardsHandler.model = model;
     CardsHandler.generateNextCard = generateNextCard;

@@ -331,7 +331,6 @@ const Cards = {
   },
 
   afterRender: async (model) => {
-    await model.loginUser({ email: '66group@gmail.com', password: 'Gfhjkm_123' });
     const settingsGetRaw = await model.getSettings();
     const { data: settings } = settingsGetRaw;
     Cards.settings = settings;
