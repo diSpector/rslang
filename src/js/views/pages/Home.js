@@ -31,7 +31,7 @@ const Home = {
                       <button class="mainPage_message-buttonClose"></button>
                     </div>
                     <p class="mainPage_message-card_description">Для того чтобы перейти в этот раздел, необходимо авторизоваться.</p>
-                    <a class="mainPage-card-link" href="#/login">
+                    <a class="mainPage-message-link" href="#/login">
                       <button class="mainPage_message-card_button">Войти</button>
                     </a>
                   </div>
