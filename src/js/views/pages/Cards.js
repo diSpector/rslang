@@ -337,7 +337,28 @@ const Cards = {
     Cards.addPercent = 100 / numberOfWords;
   },
 
+  stopGame: () => {
+    const cardHeader = document.querySelector('.learn--card__header');
+    const cardContent = document.querySelector('.learn--card__content');
+    const showAnswerButton = document.querySelector('.learn--button-show');
+    const progressBar = document.querySelector('.learn--progress');
+    progressBar.remove();
+    showAnswerButton.classList.add('learn--button-hidden');
+    cardHeader.innerHTML = '<div>Ура! На сегодня всё.</div>';
+    cardContent.innerHTML = `<div>Есть ещё новые карточки, но дневной лимит исчерпан. Вы можете увеличить лимит в настройках, но, 
+                                пожалуйста, имейте в виду, что чем больше новых 
+                                карточек вы просмотрите, тем больше вам надо будет повторять в ближайшее
+                                время. Для обучения сверх обычного расписания, нажмите кнопку 'Учить ещё' ниже.
+                              </div>
+                              <button>Настройки</button>
+                              <button>Учить ещё</button>
+    `;
+  },
+
   generateNextCard: async () => {
+    if (Cards.dayWords.length === 0) {
+      Cards.stopGame();
+    }
     const ourWordObj = Cards.dayWords.pop();
     Cards.currentWord = await Cards.model.getNextWord(ourWordObj);
 

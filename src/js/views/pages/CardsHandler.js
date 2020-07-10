@@ -46,10 +46,16 @@ const CardsHandler = {
     intervalButtons.classList.add('learn--card__complexity-hidden');
   },
 
+  closeShowAnswerButton: () => {
+    const showAnswerButton = document.querySelector('.learn--button-show');
+    showAnswerButton.classList.add('learn--button-hidden');
+  },
+
   correctAnswer: () => {
     CardsHandler.isWordCorrect = true;
     const cardInput = document.querySelector('.learn--card__input');
     CardsHandler.showCorrectButtons();
+    CardsHandler.closeShowAnswerButton();
     CardsHandler.model.processSolvedWord(CardsHandler.ourWordObj);
     cardInput.innerText = CardsHandler.currentWord.word;
     cardInput.removeAttribute('contenteditable');
