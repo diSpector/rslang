@@ -13,7 +13,7 @@ const Login = {
           <p class="login__card_label">Введите email</p>
           <input type="text" class="login--email__input" placeholder="Email">
           <p class="login__card_label">Введите пароль</p>
-          <input type="text" class="login--password__input" placeholder="Пароль">
+          <input type="password" class="login--password__input" placeholder="Пароль">
           <div class="login__card_error">
             <p class="login__card_errorMessage"></p>
           </div>
@@ -29,17 +29,51 @@ const Login = {
     return view;
   },
   afterRender: async (model) => {
-  /*     const emailInput = document.querySelector('.login--email__input');
+    const emailInput = document.querySelector('.login--email__input');
     const passwordInput = document.querySelector('.login--password__input');
- */
+
     const createUserButton = document.querySelector('.button-signin');
     const loginUserButton = document.querySelector('.button-login');
     const controlLogin = document.querySelector('.login__card_control');
-    const errorMessage = document.querySelector('.login__card_errorMessage'); // место куда выводить сообщение об ошибке
+    const errorMessage = document.querySelector('.login__card_errorMessage');
 
-    errorMessage.innerHTML = 'Введен неверный логин или пароль. Проверьте данные и попробуйте ещё раз.';
+    const outputError = (text) => {
+      errorMessage.innerHTML = text;
+    };
+
+    const clearError = () => {
+      errorMessage.innerHTML = '';
+    };
+
+    const getUserData = () => ({
+      email: emailInput.value,
+      password: passwordInput.value,
+    });
+
+    const createUser = async () => {
+      const userData = getUserData();
+      // создаем нового пользователя, авторизуем, добавляем его данные в localStorage
+      const newUser = await model.createAndSetUser(userData);
+      if (newUser.error) {
+        outputError(newUser.errorText);
+        return;
+      }
+      model.redirectToMain();
+    };
+
+    const loginUser = async () => {
+      const userData = getUserData();
+      // авторизуем пользователя, добавляем его данные в localStorage
+      const authUser = await model.loginAndSetUser(userData);
+      if (authUser.error) {
+        outputError(authUser.errorText);
+        return;
+      }
+      model.redirectToMain();
+    };
 
     controlLogin.addEventListener('click', ({ target }) => {
+      clearError();
       if (!target.classList.contains('selected')) {
         target.classList.add('selected');
         if (target.classList.contains('control-login')) {
@@ -52,24 +86,10 @@ const Login = {
           document.querySelector('.button-login').classList.add('hidden');
         }
       }
-      console.log(target.classList);
     });
-    createUserButton.addEventListener('click', async () => {
-    /* const responce = await model.createUser({ email: emailInput.value, password: passwordInput.value });
-      if (responce.error) {
-      } else {
-        logOutput.innerHTML = 'user created';
-      } */
-    });
-    loginUserButton.addEventListener('click', async () => {
-    /*       console.log(emailInput.value + passwordInput.value);
-      const responce = await model.loginUser({ email: emailInput.value, password: passwordInput.value });
-      if (responce.error) {
-        logOutput.innerHTML = responce.errorText;
-      } else {
-        logOutput.innerHTML = JSON.stringify(responce.data);
-      } */
-    });
+
+    createUserButton.addEventListener('click', createUser);
+    loginUserButton.addEventListener('click', loginUser);
   },
 };
 
