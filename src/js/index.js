@@ -13,7 +13,6 @@ import Dictionary from './views/pages/Dictionary';
 import Games from './views/pages/Games';
 import Promo from './views/pages/Promo';
 import Team from './views/pages/Team';
-import Main from './views/pages/Main';
 import Cards from './views/pages/Cards';
 
 import Error404 from './views/pages/Error404';
@@ -41,11 +40,10 @@ const routes = {
   '/games/:id': Games, // Мини-игры,
   '/promo': Promo, // О приложении,
   '/team': Team, // О команде,
-  '/main': Main, // Главная страница,
 };
 
 // список страниц, которые должны быть доступны НЕавторизованному пользователю
-const allowedToGuestRoutes = ['/login', '/team', '/', '/main'];
+const allowedToGuestRoutes = ['/login', '/team', '/', '/promo'];
 
 // роутер - разбирает ссылку из адресной строки, ищет совпадение
 // в объекте routes, загружает соответствующий элемент
