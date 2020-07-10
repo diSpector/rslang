@@ -6,6 +6,9 @@
   margin-bottom: 8px;
   justify-content: center;
   flex-wrap: wrap;
+  &.hidden {
+    display: none;
+  }
 }
 
 .mainPage_promo_text {
@@ -30,22 +33,74 @@
   justify-content: center;
 }
 
+.mainPage-card-locking {
+  height: 70px;
+  width: 70px;
+  background-size: cover;
+  background-image: url(../../img/main/lock.png) ;
+  position: absolute;
+  margin: 5px;
+  top: calc(50% - 35px);
+  right: calc(50% - 45px);
+  &:hover {
+    height: 78px;
+    width: 78px;
+  }
+  &.hidden {
+    display: none;
+  }
+}
+
 .mainPage-smallCard {
+  cursor: pointer;
   width: 23%;
   height: 150px;
   margin: 1%;
   border-radius: 5px;
   background-size: cover;
   background-position: center;
+  position: relative;
+  .mainPage-card-locking {
+    height: 50px;
+    width: 50px;
+    top: calc(50% - 25px);
+    right: calc(50% - 35px);
+    &:hover {
+      height: 55px;
+      width: 55px;
+    }
+  }
 }
 
 .mainPage-bigCard {
+  cursor: pointer;
   width: 48%;
   height: 316px;
   margin: 1%;
   border-radius: 5px;
   background-size: cover;
   background-position: center;
+  position: relative;
+  .mainPage_block-title {
+    font-size: 3rem;
+    margin: 10px;
+  }  
+}
+
+.mainPage-card-shadow {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  background-color: rgba($color: #000000, $alpha: 0.6);
+  border-radius: 5px;
+
+}
+
+.mainPage_block-title {
+  font-size: 2rem;
+  margin:10px;
+  color: #4d4c61;
 }
 
 .mainPage_block-statistics {
@@ -116,3 +171,68 @@
 .mainPage_promo_button {
   text-align: center;
 }
+
+.mainPage__content_message {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 1;
+  background-color: rgba(8,15,26,.59);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  &.hidden {
+    display: none;
+  }
+ }
+
+.mainPage_message-card {
+  width: 280px;
+  text-align: center;
+  height: 200px;
+  overflow: hidden;
+  background-color: white;
+  border-radius: 15px;
+  box-shadow:3px 3px 3px darkgrey;
+  margin:auto;
+}
+
+.mainPage_message-card_button {
+  cursor: pointer;
+  height: 35px;
+  color: white;
+  border: 0;
+  outline: none;
+  border-radius: 4px;
+  transition: 0.1s;
+  font-size: 2rem;
+  width: 90%;
+  background: $buttonCorrect;
+  box-shadow: -3px -3px $buttonCorrectShadow inset;
+  &:active{
+    background: $buttonCorrectActive;
+    box-shadow: 3px 3px $buttonCorrectActiveShadow inset;
+  }
+  &:hover{
+    background: $buttonCorrectHover;
+  }
+}
+
+.mainPage_message-card_title {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  background-color: #fde28e;
+  height: 50px;
+  font-size: 2rem;
+}
+
+.mainPage_message-card_description {
+  margin: 20px;
+  font-size: 1.5rem;
+}
+
+
