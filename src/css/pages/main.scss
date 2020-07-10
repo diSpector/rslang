@@ -94,12 +94,19 @@
   top: 0;
   background-color: rgba($color: #000000, $alpha: 0.6);
   border-radius: 5px;
+}
 
+.mainPage-card-link, .mainPage-card-linkAll {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  border-radius: 5px;
 }
 
 .mainPage_block-title {
   font-size: 2rem;
-  margin:10px;
+  margin: 10px;
   color: #4d4c61;
 }
 
@@ -223,11 +230,22 @@
 .mainPage_message-card_title {
   display: flex;
   align-items: center;
-  justify-content: center;
+  justify-content: space-around;
   width: 100%;
   background-color: #fde28e;
   height: 50px;
   font-size: 2rem;
+}
+
+.mainPage_message-buttonClose {
+  background: none;
+  background-image: url(../../img/main/close.png);
+  background-size: cover;
+  cursor: pointer;
+  outline: none;
+  border: 0;
+  height: 20px;
+  width: 20px;
 }
 
 .mainPage_message-card_description {
