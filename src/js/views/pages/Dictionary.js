@@ -49,9 +49,7 @@ const Dictionary = {
       return container;
     }
 
-
-    async function constructCurd(wordObj, mode) {
-      const newWord = createNewElement('div', 'wordCard');
+    function createCommonElementsForCards(wordObj, newWord) {
       const wordData = createNewElement('div', 'wordData');
       newWord.append(wordData);
 
@@ -86,14 +84,25 @@ const Dictionary = {
 
       const newWordProgress = createNewElement('div', 'progress', 'Осталось повторить слово 100 раз');
       longRead.append(newWordProgress);
-
-
       const wordImg = createNewElement('img', 'wordImg');
       wordImg.src = wordObj.image;
       const newWordImg = createNewElement('div', 'imgContainer');
       newWordImg.append(wordImg);
       wordData.append(newWordImg);
+    }
+    function changeSettingForOneCard(block, divSelector) {
+      block.querySelector(divSelector).classList.add('hidden');
+    }
+    function applaySettingsToOneCard(block) {
+      if (!settings.example) changeSettingForOneCard(block, '.example');
+      if (!settings.meaning) changeSettingForOneCard(block, '.meaning');
+      if (!settings.transcription) changeSettingForOneCard(block, '.transcription');
+      if (!settings.img) changeSettingForOneCard(block, '.imgContainer');
+    }
 
+    async function constructCurd(wordObj, mode) {
+      const newWord = createNewElement('div', 'wordCard');
+      createCommonElementsForCards(wordObj, newWord);
       const wordButtonContainer = createNewElement('div', 'wordButtonContainer');
       newWord.append(wordButtonContainer);
 
@@ -110,7 +119,6 @@ const Dictionary = {
           }
           constructCurd(wordObj, 'current');
           model.removeWordFromDeleted(wordObj.id);
-          console.log('restore');
         };
         if (sameHardWord) {
           const wordCurrentButton = createNewElement('div', 'wordCurrentButton', '', 'В несложные');
@@ -120,7 +128,6 @@ const Dictionary = {
             sameHardWord.remove();
             constructCurd(wordObj, 'deleted');
             model.addWordToNormal(wordObj.id);
-            console.log('current');
           };
           newWord.classList.add('hardInDeleted');
           // Устонавливаем onclick для карточек из блока Hard
@@ -137,7 +144,6 @@ const Dictionary = {
             constructCurd(wordObj, 'hard');
             constructCurd(wordObj, 'current');
             model.removeWordFromDeleted(wordObj.id);
-            console.log('restore');
           };
 
           sameHardCurrentButton.onclick = () => {
@@ -145,7 +151,6 @@ const Dictionary = {
             sameHardWord.remove();
             constructCurd(wordObj, 'deleted');
             model.addWordToNormal(wordObj.id);
-            console.log('Current');
           };
         } else {
           const wordHardButton = createNewElement('div', 'wordHardButton', '', 'В сложные');
@@ -155,11 +160,8 @@ const Dictionary = {
             constructCurd(wordObj, 'hard');
             constructCurd(wordObj, 'deleted');
             model.addWordToHard(wordObj.id);
-            console.log('Diff');
           };
-          newWord.classList.add('deleted');
         }
-
 
         const deletedWordsContainer = document.querySelector('.dictionary--deletedWords');
         deletedWordsContainer.append(newWord);
@@ -176,7 +178,6 @@ const Dictionary = {
           }
           constructCurd(wordObj, 'deleted');
           model.addWordToDeleted(wordObj.id);
-          console.log('Del');
         };
 
         if (sameHardWord) {
@@ -187,7 +188,6 @@ const Dictionary = {
             sameHardWord.remove();
             constructCurd(wordObj, 'current');
             model.addWordToNormal(wordObj.id);
-            console.log('current');
           };
           newWord.classList.add('hardInCurrent');
           // Устонавливаем onclick для карточек из блока Hard
@@ -204,7 +204,6 @@ const Dictionary = {
             constructCurd(wordObj, 'hard');
             constructCurd(wordObj, 'deleted');
             model.addWordToDeleted(wordObj.id);
-            console.log('Del');
           };
 
           sameHardCurrentButton.onclick = () => {
@@ -212,7 +211,6 @@ const Dictionary = {
             sameHardWord.remove();
             constructCurd(wordObj, 'current');
             model.addWordToNormal(wordObj.id);
-            console.log('Current');
           };
         } else {
           const wordHardButton = createNewElement('div', 'wordHardButton', '', 'В сложные');
@@ -222,7 +220,6 @@ const Dictionary = {
             constructCurd(wordObj, 'hard');
             constructCurd(wordObj, 'current');
             model.addWordToHard(wordObj.id);
-            console.log('Diff');
           };
           newWord.classList.add('current');
         }
@@ -235,14 +232,15 @@ const Dictionary = {
         hardWordsContainer.append(newWord);
         newWord.classList.add('hard');
         newWord.classList.add(wordObj.word);
+        console.log(wordObj);
       }
       applaySettingsToOneCard(newWord);
     }
 
     async function start() {
-      const { allWords: currentWords, hardWords, deletedWords } = await model.getWordsForDictionary();
+      const wordsForDictionary = await model.getWordsForDictionary();
+      const { allWords: currentWords, hardWords, deletedWords } = wordsForDictionary;
 
-      console.log(currentWords, hardWords, deletedWords);
       await hardWords.forEach((word) => {
         constructCurd(word, 'hard');
       });
@@ -268,38 +266,17 @@ const Dictionary = {
     }
 
     async function getSettings() {
-      // авторизация
-
-
       const settingsGetRaw = await model.getSettings();
       const { data: allSettings } = settingsGetRaw;
       settings = allSettings.dictionary;
-      /*
-      settings = JSON.parse(localStorage.getItem('dictionarySettings'));
-      if (!settings) {
-        settings = {
-          example: true,
-          meaning: true,
-          transcription: true,
-          img: true,
-        };
-      } */
+
       if (!settings.example) changeSetting('.dictionarry--buttonExample');
       if (!settings.meaning) changeSetting('.dictionarry--buttonExplanation');
       if (!settings.transcription) changeSetting('.dictionarry--buttonTranscription');
       if (!settings.img) changeSetting('.dictionarry--buttonImg');
     }
 
-    function changeSettingForOneCard(block, divSelector) {
-      block.querySelector(divSelector).classList.add('hidden');
-    }
 
-    function applaySettingsToOneCard(block) {
-      if (!settings.example) changeSettingForOneCard(block, '.example');
-      if (!settings.meaning) changeSettingForOneCard(block, '.meaning');
-      if (!settings.transcription) changeSettingForOneCard(block, '.transcription');
-      if (!settings.img) changeSettingForOneCard(block, '.imgContainer');
-    }
     function clickSettings(target) {
       if (target.classList.contains('dictionarry--buttonExample')) {
         settings.example = !settings.example;
@@ -318,7 +295,6 @@ const Dictionary = {
         changeSetting('.dictionarry--buttonImg', '.imgContainer');
       }
       model.saveDictionarySettings(settings);
-      // localStorage.setItem('dictionarySettings', JSON.stringify(settings));
     }
 
     function showPage(target) {
@@ -331,7 +307,6 @@ const Dictionary = {
     }
 
     function setEventListeners() {
-      // const getNewInfoButton = document.querySelector('dictionary--getNewInfo__button');
       const wordsButton = document.querySelector('.dictionary--wordsButton');
       wordsButton.addEventListener('click', ({ target }) => {
         if (target.classList.contains('button')) showPage(target);
@@ -342,10 +317,9 @@ const Dictionary = {
     }
 
     async function go() {
-      await model.loginUser({ email: '66group@gmail.com', password: 'Gfhjkm_123' });
       setEventListeners();
       await getSettings();
-      await start();
+      start();
     }
     go();
   },
