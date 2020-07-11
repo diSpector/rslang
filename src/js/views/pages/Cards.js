@@ -27,6 +27,7 @@ const Cards = {
   render: async () => {
     const view = `
     <div class="learn  wrapper">
+        <section class="learn-loader"></section>
         <section class="learn--progress">
             <div class="learn--progress__done">0</div>
             <div class="learn--progress__background">
@@ -381,6 +382,11 @@ const Cards = {
     `;
   },
 
+  removeLoader: () => {
+    const loader = document.querySelector('.learn-loader');
+    loader.remove();
+  },
+
   generateNextCard: async () => {
     if (Cards.dayWords.length === 0) {
       Cards.stopGame();
@@ -411,6 +417,8 @@ const Cards = {
 
     CardsHandler.initCardHandler(Cards.currentWord, ourWordObj, model,
       Cards.generateNextCard, Cards.settings);
+
+    Cards.removeLoader();
   },
 };
 
