@@ -4,6 +4,7 @@
 .allGames {
     font-family: 'Neucha', cursive;
     font-size: 2rem;
+    color: black;
 }
 
 .allGames__startScreen {
@@ -12,11 +13,8 @@
     flex-direction: column;
     justify-content: center;
     align-items: center;
-
     padding: 10px;
-
     height: 100vh;
-
     &-hidden {
         display: none;
     }
@@ -34,31 +32,35 @@
     display: flex;
     flex-wrap: wrap;
     p {
-        text-shadow: 
-            -0   -1px 4px #FFFFFF,
-            0   -1px 4px #FFFFFF,
-            -0    1px 4px #FFFFFF,
-            0    1px 4px #FFFFFF;
-        margin: 0 auto auto;
-        cursor: pointer;
-        text-align: center;
-        width: 220px;
-        padding: 8px;
-        border: 1px solid transparent;
-        border-radius: 6px;
-        &.select {
-            border: 1px solid #90d890;
-        }
-        &:hover {
-            background: rgba($color: #90d890, $alpha: 0.3);
-        }
+      text-shadow: 
+          -0   -1px 4px #FFFFFF,
+           0   -1px 4px #FFFFFF,
+          -0    1px 4px #FFFFFF,
+           0    1px 4px #FFFFFF;
+      margin: 0 auto auto;
+      cursor: pointer;
+      text-align: center;
+      width: 220px;
+      padding: 8px;
+      border-radius: 6px;
+      &.select {
+        border: 1px solid #90d890;
+      }
+      &:hover {
+        background: rgba($color: #90d890, $alpha: 0.3);
+      }
     }
     @include media-tablet {
+<<<<<<< HEAD
         width: 300px;
         height: 120px;
+=======
+      width: 300px;
+      height: 110px;
+>>>>>>> develop
     }
     @include media-mobile-big {
-        width: 95%;
+      width: 95%;
     }
 }
 
@@ -67,6 +69,28 @@
     width: 100%;
     &.hidden{
         visibility: hidden;
+    }
+}
+
+.allGames__startBtn {
+    cursor: pointer;
+    width: 90px;
+    margin: 10px;
+    height: 35px;
+    border: 0;
+    outline: none;
+    border-radius: 3px;
+    transition: 0.1s;
+    font-size: 2rem;
+    font-family: 'Neucha', cursive;
+    background: #fde28e;
+    box-shadow: -3px -3px #e2c774 inset;
+    &:active{
+      background: #efc74d;
+      box-shadow: 3px 3px #caa433 inset;
+    }
+    &:hover{
+      background: #ffe9a6;
     }
 }
 
