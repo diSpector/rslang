@@ -215,8 +215,8 @@ const CardsHandler = {
       CardsHandler.hideCorrectButtons();
       if (userWord === CardsHandler.currentWord.word) {
         CardsHandler.clearInput();
-        CardsHandler.generateNextCard();
         CardsHandler.statistic.cardsCompleted += 1;
+        CardsHandler.generateNextCard();
       } else if (userWord !== '') {
         CardsHandler.wrongAnswer();
       }
