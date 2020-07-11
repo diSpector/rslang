@@ -40,8 +40,10 @@ const routes = {
   '/games/:id': Games, // Мини-игры,
   '/promo': Promo, // О приложении,
   '/team': Team, // О команде,
-
 };
+
+// список страниц, которые должны быть доступны НЕавторизованному пользователю
+const allowedToGuestRoutes = ['/login', '/team', '/', '/promo'];
 
 // роутер - разбирает ссылку из адресной строки, ищет совпадение
 // в объекте routes, загружает соответствующий элемент
@@ -51,6 +53,16 @@ const router = async () => {
   const header = null || document.querySelector('.header');
   const content = null || document.querySelector('.content');
   const footer = null || document.querySelector('.footer');
+
+  // нормальная реализация редиректа есть в AuthHelper, но это не его ответственность, а роутера
+  const redirectToLogin = () => {
+    window.location.replace(`${window.location.origin}/#/login`);
+  };
+  const redirectToPage = (pageName) => {
+    window.location.replace(`${window.location.origin}/#/${pageName}`);
+  };
+  // авторизован пользователь или нет
+  const isUserLogged = await model.checkUser();
 
   // для каждого элемента вызывается метод render(), чтобы создать html-разметку,
   // а затем - afterRender(), чтобы повесить на разметку обработчики событий
@@ -68,6 +80,18 @@ const router = async () => {
   const verb = request.verb ? `/${request.verb}` : '';
 
   const parsedURL = `${resource}${id}${verb}`;
+
+  /* если пользователь запрашивает страницу, разрешенную только авторизованным,
+  проверяем, авторизован ли он. Если нет - перенаправляем на /login */
+  if (!allowedToGuestRoutes.includes(resource) && !isUserLogged) {
+    redirectToLogin();
+    return;
+  }
+  /** если пользователь авторизован, запретить ему страницу авторизации/регистрации */
+  if (resource === '/login' && isUserLogged) {
+    redirectToPage('');
+    return;
+  }
 
   // Найти совпадение в объекте routes, и загрузить нужную страницу (или 404, если совпадения нет)
   const page = routes[parsedURL] ? routes[parsedURL] : Error404;

@@ -1,5 +1,6 @@
 import WordsHelper from './helpers/WordsHelper';
 import DateHelper from './helpers/DateHelper';
+import AuthHelper from './helpers/AuthHelper';
 
 export default class AppModel {
   constructor() {
@@ -40,6 +41,15 @@ export default class AppModel {
 
     this.wordsHelper = WordsHelper;
     this.dateHelper = DateHelper;
+    this.authHelper = AuthHelper;
+
+    this.getTokenAndId();
+  }
+
+  getTokenAndId() {
+    const userSettings = this.getUserFromLocalStorage();
+    this.authToken = (userSettings && userSettings.token) ? userSettings.token : null;
+    this.userId = (userSettings && userSettings.userId) ? userSettings.userId : null;
   }
 
   // change current user to new one
@@ -354,6 +364,9 @@ export default class AppModel {
         },
         body: JSON.stringify(user),
       });
+      if (rawResponse.status !== 200) {
+        return { error: true, errorText: 'Пользователь с таким email уже существует' };
+      }
       const content = await rawResponse.json();
       return { data: content, error: false, errorText: '' };
     } catch (e) {
@@ -376,21 +389,90 @@ export default class AppModel {
         },
         body: JSON.stringify(user),
       });
+      if (rawResponse.status !== 200) {
+        return { error: true, errorText: 'Неверный логин/пароль' };
+      }
       const content = await rawResponse.json();
       //console.log(content);
       return { data: content, error: false, errorText: '' };
     } catch (e) {
-      return { error: true, errorText: this.serverErrorMessage };
+      return { error: true, errorText: 'Сервер авторизации недоступен' };
     }
+  }
+
+  /** авторизовать пользователя и сохранить его данные в localStorage
+   * @param {Object} user {email: ... , password: ...} - данные пользователя из формы
+   * @return {Object} {userId: ..., token: ..., refreshToken: ...}
+  */
+  async loginAndSetUser(user) {
+    const userData = await this.loginUser(user);
+    if (!userData.error) {
+      this.saveUserToLocalStorage(userData.data);
+    }
+
+    return userData;
+  }
+
+  /** создать пользователя, авторизовать, сохранить его данные в localStorage,
+   * дать настройки словаря и карточек по умолчанию
+   * @param {Object} user {email: ... , password: ...} - данные пользователя из формы
+   * @return {Object} {userId: ..., token: ..., refreshToken: ...}
+  */
+  async createAndSetUser(user) {
+    const userData = await this.createUser(user);
+    if (!userData.error) {
+      await this.loginAndSetUser(user);
+    }
+
+    const defaultWordsSettings = this.wordsHelper.getDefaultWordsSettings();
+    await this.saveSettings(defaultWordsSettings);
+
+    return userData;
+  }
+
+  /** сохранить данные пользователя в localStorage
+   * т.к. ничего кроме данных авторизации не планируется, перетираем все
+   * @param {Object} user {userId: ..., token: ..., refreshToken: ...}
+  */
+  saveUserToLocalStorage({ userId, token, refreshToken }) {
+    const userSettings = {
+      userId,
+      token,
+      refreshToken,
+    };
+    localStorage.setItem('rslang66', JSON.stringify(userSettings));
+  }
+
+  /** стереть все даныне пользователя из localStorage */
+  resetLocalStorage() {
+    localStorage.setItem('rslang66', null);
+  }
+
+  /** "разлогинить пользователя" - стереть его данные из localStorage */
+  logOutUser() {
+    this.resetLocalStorage();
+    this.authHelper.redirectToMain();
+  }
+
+  /** получить данные пользователя из localStorage
+   * @return {Object|null} - {userId: ..., token: ..., refreshToken: ...} или null
+  */
+  getUserFromLocalStorage() {
+    const userSettings = JSON.parse(localStorage.getItem('rslang66'));
+    return userSettings;
   }
 
   // служебная функция для валидации вводимых данных пользователя
   validateUserData(user) {
     if (!user.email || !this.emailValidator.test(user.email)) {
-      return { error: true, errorText: 'Enter correct email please', valid: false };
+      return { error: true, errorText: 'Введен некорректный email-адрес', valid: false };
     }
     if (!user.password || !this.passwordValidator.test(user.password)) {
-      return { error: true, errorText: 'Enter correct password please', valid: false };
+      return {
+        error: true,
+        errorText: 'Пароль должен содержать 8 символов, 1 цифру, 1 букву, 1 спецсимвол',
+        valid: false,
+      };
     }
     return { error: false, errorText: '', valid: true };
   }
@@ -538,6 +620,11 @@ export default class AppModel {
           'Content-Type': 'application/json',
         },
       });
+      if (rawResponse.status !== 200) {
+        const defaultWordsSettings = this.wordsHelper.getDefaultWordsSettings();
+        await this.saveSettings(defaultWordsSettings);
+        return { data: defaultWordsSettings, error: false, errorText: '' };
+      }
       const content = await rawResponse.json();
       const settingsObj = {
         newWordsPerDay: content.wordsPerDay,
@@ -1048,6 +1135,23 @@ export default class AppModel {
     } catch (e) {
       return { error: true, errorText: 'Ошибка при получении слов. Попробуйте еще раз попозже' };
     }
+  }
+
+  /** АВТОРИЗАЦИЯ */
+
+  /** проверить, что в localStorage есть данные и они валидны (токен действует) */
+  async checkUser() {
+    const isUserLogged = await this.authHelper.checkUser();
+    return isUserLogged;
+  }
+
+  /** перенаправить на страницу  */
+  redirectToLogin() {
+    this.authHelper.redirectToLogin();
+  }
+
+  redirectToMain() {
+    this.authHelper.redirectToMain();
   }
 }
 
