@@ -31,7 +31,7 @@ const Promo = {
         </div>
         <div class="promo__content_card promo__content-block">
           <div class="promo__content_card-text content-block-text">
-            <h2 class="promo__content_card-title">Изучения слов</h2>
+            <h2 class="promo__content_card-title">Изучение слов</h2>
             <p class="promo__content_card-description">
             Каждый день ты будешь изучать как новые слова, так и повторять те, которые были на предыдущих тренировках, чтобы не терять прогресс. По мере продвижения, слова будут становиться сложнее, а ты – опытнее. 
             </p>

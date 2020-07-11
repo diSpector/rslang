@@ -11,6 +11,9 @@
   @include media-tablet {
     background-image: url(../../img/promo/bannerMobile.png);
   }
+  @include media-mobile-big {
+    height: 350px;
+  }
 
 }
 
@@ -36,7 +39,7 @@
   }
   @include media-mobile-big {
     font-size: 1.8rem;
-    padding-top: 93px;
+    padding-top: 71px;
     span {
       font-size: 2.3rem;
     }
@@ -71,10 +74,12 @@
 .promo__content_text-title {
   color:#2d374c;
   font-size: 3rem;
+  text-align: center;
 }
 
 .promo__content_advantage-title {
   font-size: 2.5rem;
+  color:#2d374c;
 }
 
 .promo__content_text {
@@ -82,6 +87,9 @@
   text-align: justify;
   margin: 100px auto;
   width: 85%;
+  @include media-mobile-big {
+    margin: 0 auto 50px auto;
+  }
 
 }
 
@@ -158,7 +166,7 @@
     width: 53%;
   }
   @include media-tablet {
-    width: 100%;
+    width: 94%;
   }
 }
 
@@ -203,7 +211,7 @@
   }
   @include media-tablet {
     height: 100%;
-    width: calc(100% - 85px);  
+    width: calc(96% - 85px);  
   }
 
 }
@@ -248,7 +256,7 @@
     margin-top: 35px;
   }
   @include media-tablet {
-    margin: 0;
+    margin: auto;
   }
 }
 
