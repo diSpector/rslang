@@ -217,8 +217,6 @@ const Cards = {
       if (event.target.type === 'number') {
         this.settings[key] = Number(event.target.value);
       }
-
-      console.log('settings', this.settings);
     };
   },
 
@@ -243,14 +241,12 @@ const Cards = {
   saveSettings(model) {
     const form = document.querySelector('.settings--form');
     form.addEventListener('submit', (event) => {
-      console.log(this.settings.isTranscription);
       event.preventDefault();
       this.hideError('settings__error-info');
       this.hideError('settings__error-max');
 
       if (this.isValid()) {
         model.saveCardsSettings(this.settings);
-        console.log('saved settings', this.settings);
         Cards.renderCard();
       }
     });
@@ -373,7 +369,7 @@ const Cards = {
                               <div class="learn--card__stopGame">
                                 <div class="stopGame__statistic">
                                   <p>Карточек завершено: ${CardsHandler.statistic.cardsCompleted}</p>
-                                  <p>Правильные ответы: ${percentOfCorrect}%</p>
+                                  <p>Правильные ответы: ${Math.trunc(percentOfCorrect)}%</p>
                                   <p>Новые слова: ${CardsHandler.statistic.newWords}</p>
                                   <p>Самая длинная серия правильных ответов: ${CardsHandler.statistic.bestCorrectSeries}</p>
                                 </div>
@@ -393,10 +389,21 @@ const Cards = {
     loader.remove();
   },
 
-  generateNextCard: async () => {
+  getRandomInRange: (min, max) => {
+    return Math.floor(Math.random() * (max - min + 1)) + min;
+  },
+
+  repeateWord: (word) => {
+    const wordIndex = Cards.getRandomInRange(0, Cards.dayWords.length - 1);
+    Cards.dayWords = [...Cards.dayWords.splice(0, wordIndex), word, ...Cards.dayWords.splice(1)];
+  },
+
+  generateNextCard: async (wordToRepeat) => {
     if (Cards.dayWords.length === 0) {
       Cards.stopGame();
     }
+    if (wordToRepeat && !Cards.dayWords.includes(wordToRepeat)) Cards.repeateWord(wordToRepeat);
+
     const ourWordObj = Cards.dayWords.pop();
     Cards.currentWord = await Cards.model.getNextWord(ourWordObj);
 

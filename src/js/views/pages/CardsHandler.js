@@ -7,6 +7,7 @@ const CardsHandler = {
   homeSettings: null,
   isWordCorrect: false,
   isGuessedOnFirstTry: true,
+  wordToRepeat: null,
 
   statistic: {
     cardsCompleted: 0,
@@ -90,7 +91,7 @@ const CardsHandler = {
     wordTranscription.innerText = '';
   },
 
-  correctAnswer: () => {
+  correctAnswer: async () => {
     CardsHandler.isWordCorrect = true;
     const cardInput = document.querySelector('.learn--card__input');
 
@@ -107,6 +108,7 @@ const CardsHandler = {
     CardsHandler.addWordTranscription();
 
     CardsHandler.model.processSolvedWord(CardsHandler.ourWordObj);
+    await CardsHandler.model.increaseTodayWordsCount();
     cardInput.innerText = CardsHandler.currentWord.word;
     cardInput.removeAttribute('contenteditable');
     cardInput.style.backgroundColor = 'rgb(145, 247, 112)';
@@ -153,6 +155,7 @@ const CardsHandler = {
   },
 
   wrongAnswer: () => {
+    CardsHandler.wordToRepeat = CardsHandler.ourWordObj;
     CardsHandler.setWrongLetters();
     CardsHandler.isGuessedOnFirstTry = false;
     CardsHandler.statistic.currentCorrectSeries = -1;
@@ -168,6 +171,7 @@ const CardsHandler = {
 
   CardClickHandler: ({ target }) => {
     if (target.classList.contains('learn--card__complexity-repeat')) {
+      CardsHandler.wordToRepeat = CardsHandler.ourWordObj;
       CardsHandler.model.setIntervalAsAgain(CardsHandler.currentWord.id);
     }
     if (target.classList.contains('learn--card__complexity-hard')) {
@@ -230,7 +234,7 @@ const CardsHandler = {
         CardsHandler.clearInput();
         CardsHandler.clearWordTranscription();
         CardsHandler.statistic.cardsCompleted += 1;
-        CardsHandler.generateNextCard();
+        CardsHandler.generateNextCard(CardsHandler.wordToRepeat);
       } else if (userWord !== '') {
         CardsHandler.wrongAnswer();
       }
@@ -345,6 +349,7 @@ const CardsHandler = {
     CardsHandler.generateNextCard = generateNextCard;
     CardsHandler.homeSettings = settings;
 
+    CardsHandler.wordToRepeat = null;
     CardsHandler.isGuessedOnFirstTry = true;
     CardsHandler.isWordCorrect = false;
     CardsHandler.setInputWidthAndFocus();
