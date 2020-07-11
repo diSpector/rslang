@@ -27,6 +27,7 @@ const Cards = {
   render: async () => {
     const view = `
     <div class="learn  wrapper">
+        <section class="learn-loader"></section>
         <section class="learn--progress">
             <div class="learn--progress__done">0</div>
             <div class="learn--progress__background">
@@ -377,8 +378,13 @@ const Cards = {
                                   время.</p>
                                 <p>Для обучения сверх обычного расписания, нажмите кнопку «Учить ещё» ниже.</p>
                               </div>
-                              <button class="learn--button  learn--button-learnMore">Учить ещё</button>
+                              <button class="learn--button  learn--button-learnMore" onclick="document.location.reload()>Учить ещё</button>
     `;
+  },
+
+  removeLoader: () => {
+    const loader = document.querySelector('.learn-loader');
+    loader.remove();
   },
 
   generateNextCard: async () => {
@@ -405,13 +411,14 @@ const Cards = {
     const ourWordObj = Cards.dayWords.pop();
     Cards.currentWord = await model.getNextWord(ourWordObj);
 
-    console.log(Cards.dayWords);
     Cards.initSettings(model);
     Cards.renderCard();
     Cards.initProgress();
 
     CardsHandler.initCardHandler(Cards.currentWord, ourWordObj, model,
       Cards.generateNextCard, Cards.settings);
+
+    Cards.removeLoader();
   },
 };
 

@@ -51,11 +51,21 @@ const CardsHandler = {
     showAnswerButton.classList.add('learn--button-hidden');
   },
 
+  insertSentenceWithWord: () => {
+    const textMeaning = document.querySelector('.learn--card__textMeaning');
+    const textExample = document.querySelector('.learn--card__textExample');
+    textMeaning.innerHTML = CardsHandler.currentWord.textMeaning;
+    textExample.innerHTML = CardsHandler.currentWord.textExample;
+  },
+
   correctAnswer: () => {
     CardsHandler.isWordCorrect = true;
     const cardInput = document.querySelector('.learn--card__input');
+
+    CardsHandler.insertSentenceWithWord();
     CardsHandler.showCorrectButtons();
     CardsHandler.closeShowAnswerButton();
+
     CardsHandler.model.processSolvedWord(CardsHandler.ourWordObj);
     cardInput.innerText = CardsHandler.currentWord.word;
     cardInput.removeAttribute('contenteditable');
@@ -114,30 +124,32 @@ const CardsHandler = {
     return metrics.width;
   },
 
+  CardClickHandler: ({ target }) => {
+    if (target.classList.contains('learn--card__complexity-repeat')) {
+      CardsHandler.model.setIntervalAsAgain(CardsHandler.currentWord.id);
+    }
+    if (target.classList.contains('learn--card__complexity-hard')) {
+      CardsHandler.model.setIntervalAsHard(CardsHandler.currentWord.id);
+    }
+    if (target.classList.contains('learn--card__complexity-well')) {
+      CardsHandler.model.setIntervalAsGood(CardsHandler.currentWord.id);
+    }
+    if (target.classList.contains('learn--card__complexity-easy')) {
+      CardsHandler.model.setIntervalAsEasy(CardsHandler.currentWord.id);
+    }
+    if (target.classList.contains('learn--card__enterAnswer') && !CardsHandler.isWordCorrect) {
+      const userWord = document.querySelector('.learn--card__input').innerText;
+      if (userWord === CardsHandler.currentWord.word) {
+        CardsHandler.correctAnswer();
+      } else if (userWord !== '') {
+        CardsHandler.wrongAnswer();
+      }
+    }
+  },
+
   addCardClickHandler: () => {
     const card = document.querySelector('.learn--card');
-    card.addEventListener('click', ({ target }) => {
-      if (target.classList.contains('learn--card__complexity-repeat')) {
-        CardsHandler.model.setIntervalAsAgain(CardsHandler.currentWord.id);
-      }
-      if (target.classList.contains('learn--card__complexity-hard')) {
-        CardsHandler.model.setIntervalAsHard(CardsHandler.currentWord.id);
-      }
-      if (target.classList.contains('learn--card__complexity-well')) {
-        CardsHandler.model.setIntervalAsGood(CardsHandler.currentWord.id);
-      }
-      if (target.classList.contains('learn--card__complexity-easy')) {
-        CardsHandler.model.setIntervalAsEasy(CardsHandler.currentWord.id);
-      }
-      if (target.classList.contains('learn--card__enterAnswer') && !CardsHandler.isWordCorrect) {
-        const userWord = document.querySelector('.learn--card__input').innerText;
-        if (userWord === CardsHandler.currentWord.word) {
-          CardsHandler.correctAnswer();
-        } else if (userWord !== '') {
-          CardsHandler.wrongAnswer();
-        }
-      }
-    });
+    card.addEventListener('click', CardsHandler.CardClickHandler);
   },
 
   addCardKeyHandler: () => {
@@ -163,23 +175,25 @@ const CardsHandler = {
     cardInput.setAttribute('contenteditable', 'true');
   },
 
+  buttonsClickHandler: ({ target }) => {
+    if (target.classList.contains('learn--button-show') && !CardsHandler.isWordCorrect) {
+      CardsHandler.correctAnswer();
+    }
+    if (target.classList.contains('learn--button-next')) {
+      const userWord = document.querySelector('.learn--card__input').innerText;
+      CardsHandler.hideCorrectButtons();
+      if (userWord === CardsHandler.currentWord.word) {
+        CardsHandler.generateNextCard();
+        CardsHandler.clearInput();
+      } else if (userWord !== '') {
+        CardsHandler.wrongAnswer();
+      }
+    }
+  },
+
   addButtonsClickHandler: () => {
     const learnButtons = document.querySelector('.learn--buttons');
-    learnButtons.addEventListener('click', ({ target }) => {
-      if (target.classList.contains('learn--button-show') && !CardsHandler.isWordCorrect) {
-        CardsHandler.correctAnswer();
-      }
-      if (target.classList.contains('learn--button-next')) {
-        const userWord = document.querySelector('.learn--card__input').innerText;
-        CardsHandler.hideCorrectButtons();
-        if (userWord === CardsHandler.currentWord.word) {
-          CardsHandler.generateNextCard();
-          CardsHandler.clearInput();
-        } else if (userWord !== '') {
-          CardsHandler.wrongAnswer();
-        }
-      }
-    });
+    learnButtons.addEventListener('click', CardsHandler.buttonsClickHandler);
   },
 
   saveSettingsToLocalStorage: () => {
@@ -211,25 +225,27 @@ const CardsHandler = {
     CardsHandler.setSettingsToHTML();
   },
 
+  SettingsClickHandler: ({ target }) => {
+    if (target.classList.contains('learn--card__icon-book') || target.classList.contains('learn--card__icon-headphones')) {
+      target.classList.toggle('learn--card__icon-inactive');
+      if (target.classList.contains('learn--card__icon-book')) CardsHandler.settings.sentenceTranslate = !CardsHandler.settings.sentenceTranslate;
+      if (target.classList.contains('learn--card__icon-headphones')) CardsHandler.settings.audioAutoplay = !CardsHandler.settings.audioAutoplay;
+      CardsHandler.saveSettingsToLocalStorage();
+    }
+    if (target.classList.contains('learn--card__icon-brain')) {
+      CardsHandler.model.addWordToHard(CardsHandler.currentWord.id);
+      target.classList.add('learn--card__icon-active');
+    }
+    if (target.classList.contains('learn--card__icon-delete')) {
+      CardsHandler.model.addWordToDeleted(CardsHandler.currentWord.id);
+      target.classList.add('learn--card__icon-active');
+    }
+    CardsHandler.saveSettingsToLocalStorage();
+  },
+
   addSettingsClickHandler: () => {
     const headerSettings = document.querySelector('.learn--card__header');
-    headerSettings.addEventListener('click', ({ target }) => {
-      if (target.classList.contains('learn--card__icon-book') || target.classList.contains('learn--card__icon-headphones')) {
-        target.classList.toggle('learn--card__icon-inactive');
-        if (target.classList.contains('learn--card__icon-book')) CardsHandler.settings.sentenceTranslate = !CardsHandler.settings.sentenceTranslate;
-        if (target.classList.contains('learn--card__icon-headphones')) CardsHandler.settings.audioAutoplay = !CardsHandler.settings.audioAutoplay;
-        CardsHandler.saveSettingsToLocalStorage();
-      }
-      if (target.classList.contains('learn--card__icon-brain')) {
-        CardsHandler.model.addWordToHard(CardsHandler.currentWord.id);
-        target.classList.add('learn--card__icon-active');
-      }
-      if (target.classList.contains('learn--card__icon-delete')) {
-        CardsHandler.model.addWordToDeleted(CardsHandler.currentWord.id);
-        target.classList.add('learn--card__icon-active');
-      }
-      CardsHandler.saveSettingsToLocalStorage();
-    });
+    headerSettings.addEventListener('click', CardsHandler.SettingsClickHandler);
   },
 
   setInputWidthAndFocus: () => {
