@@ -78,6 +78,18 @@ const CardsHandler = {
     }
   },
 
+  addWordTranscription: () => {
+    const wordTranscription = document.querySelector('.learn--card__transcription');
+    if (CardsHandler.homeSettings.isTranscription) {
+      wordTranscription.innerText = CardsHandler.currentWord.transcription;
+    }
+  },
+
+  clearWordTranscription: () => {
+    const wordTranscription = document.querySelector('.learn--card__transcription');
+    wordTranscription.innerText = '';
+  },
+
   correctAnswer: () => {
     CardsHandler.isWordCorrect = true;
     const cardInput = document.querySelector('.learn--card__input');
@@ -92,6 +104,7 @@ const CardsHandler = {
     CardsHandler.showCorrectButtons();
     CardsHandler.closeShowAnswerButton();
     CardsHandler.showHeaderIcons();
+    CardsHandler.addWordTranscription();
 
     CardsHandler.model.processSolvedWord(CardsHandler.ourWordObj);
     cardInput.innerText = CardsHandler.currentWord.word;
@@ -215,6 +228,7 @@ const CardsHandler = {
       CardsHandler.hideCorrectButtons();
       if (userWord === CardsHandler.currentWord.word) {
         CardsHandler.clearInput();
+        CardsHandler.clearWordTranscription();
         CardsHandler.statistic.cardsCompleted += 1;
         CardsHandler.generateNextCard();
       } else if (userWord !== '') {

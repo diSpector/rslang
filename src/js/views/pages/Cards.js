@@ -61,7 +61,7 @@ const Cards = {
                     <div class="learn--card__enterAnswer" title="Ввести слово"></div>
                 </div>
 
-                <p class="learn--card__transcription  learn--card__transcription-hidden"></p>
+                <p class="learn--card__transcription"></p>
                 <p class="learn--card__wordTranslate"></p>
             </main>
             <footer class="learn--card__complexity learn--card__complexity-hidden">
@@ -243,6 +243,7 @@ const Cards = {
   saveSettings(model) {
     const form = document.querySelector('.settings--form');
     form.addEventListener('submit', (event) => {
+      console.log(this.settings.isTranscription);
       event.preventDefault();
       this.hideError('settings__error-info');
       this.hideError('settings__error-max');
