@@ -15,7 +15,7 @@
 }
 
 .statistic__card {
-    margin-top: 40px;
+    margin-top: 50px;
     width: 550px;
     height: 550px;
     border: 1px solid black;
@@ -66,14 +66,117 @@
     text-align: center;
 }
 
+.statistic__data {
+    margin-top: -12px;
+    font-size: 2em;
+    font-weight: bold;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.statistic__hidden {
+    display: none;
+  }
+
 #canvas {
     margin-top: 20px;
-    //width: 600px;
-    //height: 300px;
 }
 
 #canvas2 {
-    margin-top: 30px;
+    margin-top: -5px;
     width: 600px;
     height: 300px;
 } 
+
+.statistic__heading--game {
+    color: black;
+    font-size: 2.5em;
+    font-weight: bold;
+    margin-top: 0.8em;
+    text-decoration: none;
+    text-align: center;
+}
+
+#statistic__table {
+    border-radius: 4px;
+    padding-top: 10px;
+    width: 500px;
+    height: 400px;
+}
+
+.statistic__td {
+    border: 1px solid #000000;
+    margin-left: 0px;
+    background-color: white;
+    color: black;
+    padding: 2px;
+    font-size: 1.5em;
+}
+
+@media (max-width: 410px) {  
+    #canvas {
+        margin-top: 20px;
+        width: 300px;
+        height: 150px;
+    }
+    
+    #canvas2 {
+        margin-left: 30px;
+        margin-top: 12px;
+        width: 300px;
+        height: 150px;
+    } 
+    .statistic__card {
+        margin-top: 20px;
+        width: 280px;
+        height: 280px;
+        border-radius: 8px;
+    }
+    
+    .statistic__heading {
+        font-size: 1.2em;
+        font-weight: bold;
+        margin-top: 0.8em;
+        text-decoration: none;
+        text-align: center;
+    }
+    
+    .statistic__wordList {
+        margin-left: 70px;
+        font-size: 1em;
+        color: black;
+        font-weight: bold;
+        text-decoration: underline;
+        cursor: pointer;
+        &:hover{
+            text-decoration: none;
+            color: rgb(56, 56, 56);
+        }
+    }
+    
+    .statistic__numberWordsStudied {
+        font-size: 1em;
+        font-weight: bold;
+        text-decoration: none;
+        text-align: center;
+    }
+    
+    .statistic__percentageLearnedWords {
+        margin-top: -130px;
+        font-size: 1em;
+        font-weight: bold;
+        text-decoration: none;
+        text-align: center;
+    }
+    
+    .statistic__data {
+        margin-top: -12px;
+        font-size: 1em;
+        font-weight: bold;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+    
+}

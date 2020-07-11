@@ -4,12 +4,7 @@ import EnglishPuzzle from './games/english-puzzle/EnglishPuzzle';
 import SpeakIt from './games/speakit/SpeakIt';
 import Savannah from './games/savannah/Savannah';
 // import Sprint from './games/english-puzzle/Sprint';
-<<<<<<< HEAD
 import letterSquare from './games/letterSquare/letterSquare';
-=======
-// import Square from './games/english-puzzle/Square';
-import AllGames from './AllGames';
->>>>>>> 13355c528c8ec8e312d3f00af6a02ec3196811ec
 import Error404 from './Error404';
 
 const gameList = {
@@ -18,12 +13,7 @@ const gameList = {
   speakit: SpeakIt,
   savannah: Savannah,
   // 'sprint'          : Sprint,
-<<<<<<< HEAD
   'letter-square': letterSquare,
-=======
-  // 'square'          : Square,
-  all: AllGames,
->>>>>>> 13355c528c8ec8e312d3f00af6a02ec3196811ec
 };
 
 const Games = {

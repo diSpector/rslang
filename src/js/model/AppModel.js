@@ -112,7 +112,6 @@ export default class AppModel {
 
   // utilty function, gets word data from API by its index
   async getWordDataByIndex(index) {
-<<<<<<< HEAD
     // console.log(index);
     const group = Math.floor(index / 600);
     const page = Math.floor((index - group * 600) / 20);
@@ -123,23 +122,6 @@ export default class AppModel {
     //console.log(data);
     const result = this.reformatWordData(data[wordIndex]);
     return result;
-=======
-    if (index < 0 || index >= this.maxDictionaryLength) {
-      return { error: true, errorText: 'Неверный индекс слова' };
-    }
-    const group = Math.floor(index / this.wordSetLength);
-    const page = Math.floor((index - group * this.wordSetLength) / this.defaultPageLength);
-    const wordIndex = index - (group * this.wordSetLength) - (page * this.defaultPageLength);
-    const url = `${this.searchString}group=${group}&page=${page}`;
-    try {
-      const responce = await fetch(url);
-      const data = await responce.json();
-      const result = this.reformatWordData(data[wordIndex]);
-      return result;
-    } catch (e) {
-      return { error: true, errorText: this.serverErrorMessage };
-    }
->>>>>>> 13355c528c8ec8e312d3f00af6a02ec3196811ec
   }
 
   // выдает случайное слово и 4 неправильных перевода к нему
@@ -395,13 +377,7 @@ export default class AppModel {
         body: JSON.stringify(user),
       });
       const content = await rawResponse.json();
-<<<<<<< HEAD
       //console.log(content);
-=======
-      console.log(content);
-      this.authToken = content.token;
-      this.userId = content.userId;
->>>>>>> 13355c528c8ec8e312d3f00af6a02ec3196811ec
       return { data: content, error: false, errorText: '' };
     } catch (e) {
       return { error: true, errorText: this.serverErrorMessage };
