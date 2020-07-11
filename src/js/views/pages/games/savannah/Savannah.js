@@ -108,7 +108,7 @@ const Savannah = {
   },
 
   goToNextRound(roundIndex, delay) {
-    return setTimeout(() => {
+    return setTimeout(async () => {
       if (roundIndex < (this.gameRoundsCount - 1) && this.mistakesCount < this.maxMistakesCount) {
         this.play(roundIndex + 1);
       } else {
@@ -117,6 +117,7 @@ const Savannah = {
         Utils.clearBlock('.savannah--game');
         this.showStatistics();
         this.clickOnAudioHandler();
+        await this.model.saveStatForGame({ name: 'sv', y: this.correctAnswersCount, n: this.mistakesCount });
       }
     }, delay);
   },
@@ -136,6 +137,33 @@ const Savannah = {
     const correctList = document.querySelector('.savannah--stat__correct .savannah--stat__list');
     correctList.innerHTML = '';
     this.showAnswersList(correctList, this.correctAnswers);
+  },
+
+  initGlobalStatistics() {
+    const globalStat = document.querySelector('.savannah--stat__global');
+    const localStat = document.querySelector('.savannah--stat__local');
+    const globalStatLink = document.querySelector('.savannah--link-globalStat');
+
+    globalStatLink.addEventListener('click', async () => {
+      const stat = await this.model.getStatForGame('sv');
+
+      stat.forEach((item, index) => {
+        const table = document.querySelector('.savannah--stat__global table');
+        const row = document.createElement('tr');
+        row.innerHTML = `
+            <td>${index + 1}</td>
+            <td>${item.y}</td>
+            <td>${item.n}</td>
+            <td>${item.d}</td>
+        `;
+
+        table.append(row);
+      });
+
+      globalStat.classList.remove('savannah--stat__global-hidden');
+      localStat.classList.add('savannah--stat__local-hidden');
+      globalStatLink.classList.add('savannah--link-hidden');
+    });
   },
 
   clickOnAudioHandler() {
@@ -376,33 +404,48 @@ const Savannah = {
             </div>
 
             <div class="savannah--stat  savannah--stat-hidden">
-                <h2 class="savannah--stat__heading">Статистика тренировки</h2>
-                <div class="savannah--stat__answers">
-                    <div class="savannah--stat__errors">
-                        <h3 class="savannah--stat__errorsHeading">Ошибок: <span>1</span></h3>
-                        <ul class="savannah--stat__list">
-                            <li class="savannah--stat__listItem">
-                                <div class="savannah--stat__audio"></div>
-                                <span><b>слово</b> - перевод<span>
-                            </li>
-                            <li class="savannah--stat__listItem">
-                                <div class="savannah--stat__audio"></div>
-                                <span><b>слово</b> - перевод<span>
-                            </li>
-                        </ul>
-                    </div>
-                    <div class="savannah--stat__correct">
-                        <h3 class="savannah--stat__correctHeading">Знаю: <span>1</span></h3>
-                        <ul class="savannah--stat__list">
-                            <li class="savannah--stat__listItem">
-                                <div class="savannah--stat__audio"></div>
-                                <span><b>слово</b> - перевод<span>
-                            </li>
-                        </ul>
+                <div class="savannah--stat__local">
+                    <h2 class="savannah--stat__heading">Статистика тренировки</h2>
+                    <div class="savannah--stat__answers">
+                        <div class="savannah--stat__errors">
+                            <h3 class="savannah--stat__errorsHeading">Ошибок: <span>1</span></h3>
+                            <ul class="savannah--stat__list">
+                                <li class="savannah--stat__listItem">
+                                    <div class="savannah--stat__audio"></div>
+                                    <span><b>слово</b> - перевод<span>
+                                </li>
+                                <li class="savannah--stat__listItem">
+                                    <div class="savannah--stat__audio"></div>
+                                    <span><b>слово</b> - перевод<span>
+                                </li>
+                            </ul>
+                        </div>
+                        <div class="savannah--stat__correct">
+                            <h3 class="savannah--stat__correctHeading">Знаю: <span>1</span></h3>
+                            <ul class="savannah--stat__list">
+                                <li class="savannah--stat__listItem">
+                                    <div class="savannah--stat__audio"></div>
+                                    <span><b>слово</b> - перевод<span>
+                                </li>
+                            </ul>
+                        </div>
                     </div>
                 </div>
+
+                <div class="savannah--stat__global  savannah--stat__global-hidden">
+                    <h2 class="savannah--stat__heading">Глобальная статистика</h2>
+                    <table>
+                        <tr>            
+                            <th>#</th>
+                            <th>Знаю</th>
+                            <th>Ошибок</th>
+                            <th>Дата игры</th>
+                        </tr>
+                    </table>
+                </div>
+
                 <button class="savannah--btn  savannah--btn-continue" onclick="document.location.reload()">Играть еще раз</button>
-                <a class="savannah--link" href="/#/statistic">Смотреть статистику по всем играм</a>
+                <a class="savannah--link  savannah--link-globalStat">Смотреть статистику по игре</a>
                 <a class="savannah--link" href="/">На главную</a>
             </div>
 
@@ -445,6 +488,7 @@ const Savannah = {
     Savannah.toggleSound();
     Savannah.clearGameVariables();
     Game.startGame(() => Savannah.play(roundIndex));
+    Savannah.initGlobalStatistics();
   },
 };
 
