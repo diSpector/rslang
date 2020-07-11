@@ -58,6 +58,17 @@ const CardsHandler = {
     textExample.innerHTML = CardsHandler.currentWord.textExample;
   },
 
+  showHeaderIcons: () => {
+    const iconBrain = document.querySelector('.learn--card__icon-brain');
+    const iconDelete = document.querySelector('.learn--card__icon-delete');
+    if (CardsHandler.homeSettings.isDeleteWordButton) {
+      iconDelete.classList.remove('learn--card__icon-hidden');
+    }
+    if (CardsHandler.homeSettings.isMoveToDifficultButton) {
+      iconBrain.classList.remove('learn--card__icon-hidden');
+    }
+  },
+
   correctAnswer: () => {
     CardsHandler.isWordCorrect = true;
     const cardInput = document.querySelector('.learn--card__input');
@@ -65,6 +76,7 @@ const CardsHandler = {
     CardsHandler.insertSentenceWithWord();
     CardsHandler.showCorrectButtons();
     CardsHandler.closeShowAnswerButton();
+    CardsHandler.showHeaderIcons();
 
     CardsHandler.model.processSolvedWord(CardsHandler.ourWordObj);
     cardInput.innerText = CardsHandler.currentWord.word;
@@ -203,17 +215,23 @@ const CardsHandler = {
   setSettingsToHTML: () => {
     const translateIcon = document.querySelector('.learn--card__icon-book');
     const audioIcon = document.querySelector('.learn--card__icon-headphones');
-    const brainIcon = document.querySelector('.learn--card__icon-headphones');
+    const brainIcon = document.querySelector('.learn--card__icon-brain');
+    const deletedIcon = document.querySelector('.learn--card__icon-delete');
     if (CardsHandler.settings.sentenceTranslate === false) {
       translateIcon.classList.add('learn--card__icon-inactive');
     }
     if (CardsHandler.settings.audioAutoplay === false) {
       audioIcon.classList.add('learn--card__icon-inactive');
     }
-    if (!CardsHandler.ourWordObj.isNew) {
-      if (CardsHandler.ourWordObj.userWord.difficulty === 'hard') {
-        brainIcon.classList.add('learn--card__icon-active');
-      }
+    if (CardsHandler.currentWord.userWord.difficulty === 'hard') {
+      brainIcon.classList.add('learn--card__icon-active');
+    } else {
+      brainIcon.classList.remove('learn--card__icon-active');
+    }
+    if (CardsHandler.currentWord.userWord.optional.state === 'deleted') {
+      deletedIcon.classList.add('learn--card__icon-active');
+    } else {
+      deletedIcon.classList.remove('learn--card__icon-active');
     }
   },
 
@@ -233,12 +251,26 @@ const CardsHandler = {
       CardsHandler.saveSettingsToLocalStorage();
     }
     if (target.classList.contains('learn--card__icon-brain')) {
-      CardsHandler.model.addWordToHard(CardsHandler.currentWord.id);
-      target.classList.add('learn--card__icon-active');
+      if (CardsHandler.currentWord.userWord.difficulty === 'hard') {
+        CardsHandler.model.addWordToNormal(CardsHandler.currentWord.id);
+        target.classList.remove('learn--card__icon-active');
+        CardsHandler.currentWord.userWord.difficulty = 'normal';
+      } else {
+        CardsHandler.model.addWordToHard(CardsHandler.currentWord.id);
+        target.classList.add('learn--card__icon-active');
+        CardsHandler.currentWord.userWord.difficulty = 'hard';
+      }
     }
     if (target.classList.contains('learn--card__icon-delete')) {
-      CardsHandler.model.addWordToDeleted(CardsHandler.currentWord.id);
-      target.classList.add('learn--card__icon-active');
+      if (CardsHandler.currentWord.userWord.optional.state === 'deleted') {
+        CardsHandler.model.removeWordFromDeleted(CardsHandler.currentWord.id);
+        target.classList.remove('learn--card__icon-active');
+        CardsHandler.currentWord.userWord.optional.state = 'none';
+      } else {
+        CardsHandler.model.addWordToDeleted(CardsHandler.currentWord.id);
+        target.classList.add('learn--card__icon-active');
+        CardsHandler.currentWord.userWord.optional.state = 'deleted';
+      }
     }
     CardsHandler.saveSettingsToLocalStorage();
   },
@@ -255,11 +287,26 @@ const CardsHandler = {
     cardInput.style.width = `${inputWidth}px`;
   },
 
+  wordProcessing: () => {
+    if (CardsHandler.ourWordObj.isNew) {
+      CardsHandler.currentWord.userWord = {
+        difficulty: 'normal',
+        optional: {
+          state: 'none',
+        },
+      };
+    } else {
+      CardsHandler.currentWord.userWord = CardsHandler.ourWordObj.userWord;
+    }
+  },
+
   initCardHandler: async (word, ourWordObj, model, generateNextCard, settings) => {
     CardsHandler.currentWord = word;
+    CardsHandler.ourWordObj = ourWordObj;
+    CardsHandler.wordProcessing();
+
     CardsHandler.model = model;
     CardsHandler.generateNextCard = generateNextCard;
-    CardsHandler.ourWordObj = ourWordObj;
     CardsHandler.homeSettings = settings;
 
     CardsHandler.isWordCorrect = false;

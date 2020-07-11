@@ -318,8 +318,8 @@ const Cards = {
     this.renderElement(Cards.settings.isImage, null, 'learn--card__image', 'learn--card__image-hidden', null, this.currentWord.image);
 
     // кнопки
-    this.renderElement(Cards.settings.isDeleteWordButton, null, 'learn--card__icon-delete', 'learn--card__icon-hidden');
-    this.renderElement(Cards.settings.isMoveToDifficultButton, null, 'learn--card__icon-brain', 'learn--card__icon-hidden');
+    this.renderElement(false, null, 'learn--card__icon-delete', 'learn--card__icon-hidden');
+    this.renderElement(false, null, 'learn--card__icon-brain', 'learn--card__icon-hidden');
     this.renderElement(Cards.settings.isAnswerButton, null, 'learn--button-show', 'learn--button-hidden');
     // this.renderElement(Cards.settings.isIntervalButtons, null, 'learn--card__complexity', 'learn--card__complexity-hidden');
 
@@ -378,7 +378,7 @@ const Cards = {
                                   время.</p>
                                 <p>Для обучения сверх обычного расписания, нажмите кнопку «Учить ещё» ниже.</p>
                               </div>
-                              <button class="learn--button  learn--button-learnMore" onclick="document.location.reload()>Учить ещё</button>
+                              <button class="learn--button  learn--button-learnMore" onclick="document.location.reload()">Учить ещё</button>
     `;
   },
 
