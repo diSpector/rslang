@@ -1,5 +1,4 @@
 import '../../../css/pages/statistics.scss';
-import AppModel from '../../model/AppModel'
 
 const Statistics = {
   render: async () => {
@@ -9,7 +8,7 @@ const Statistics = {
       <h1 class="statistic__heading"></h1>
       <div class="statistic__container">
         <div class="statistic__numberWordsStudied"></div>
-        <div class="statistic__wordList">Cписок слов</div>
+        <div class="statistic__wordList"></div>
       </div>
       <canvas id="canvas" width="600px" height="300px"></canvas>
       <p class="statistic__data"></p>
@@ -22,36 +21,20 @@ const Statistics = {
   },
   afterRender: async (model) => {
     await model.loginUser({ email: '66group@gmail.com', password: 'Gfhjkm_123' });
-    //const word = await model.getBothWordsAndCountByDates();
-    //console.log(word);
-    function drawStatistics(nameStatistics, dateAndWords) {
+    const word = await model.getLearnedWordsCountByDates();
+    const words = await model.getLearnedWordsByDates();
+    function drawStatistics(nameStatistics) {
       const canvas = document.getElementById('canvas');
       const ctx = canvas.getContext('2d');
-      const learnedWordsСount = [];
       let percentageLearnedWords = 0;
-      const amountDays = dateAndWords;
+      const amountDays = word;
       const x0 = 80.5;
       const y1 = 280.5;
       let x1 = 480.5;
       let y0 = 10.5;
 
-      /** количество дней */
-      let counter = 0;
-      for (let key in amountDays) {
-        counter += 1;
-      }
-
-      /** даты */
-      let dates = [];
-      for (let key in amountDays) {
-        dates.push(key);
-      }
-
       /** массив количества слов */
-      for (let i = 0; i < amountDays.length; i += 1) {
-        const key = Object.values(amountDays[i]);
-        learnedWordsСount.push(key[0]);
-      }
+      const learnedWordsСount = Object.values(amountDays);
 
       /** рисуем сетку */
       for (let i = 0; i < 6; i += 1) {
@@ -78,7 +61,7 @@ const Statistics = {
       /** добавляем подписи к графику */
       ctx.font = 'small-caps 15px Arial';
       for (let i = 0; i < 6; i += 1) {
-        ctx.fillText((5 - i) * 20 + "%", 38.5, i * 52 + 19);
+        ctx.fillText(`${(5 - i) * 20}%`, 38.5, i * 52 + 19);
         ctx.beginPath();
         ctx.moveTo(30.5, i * 8 + 6);
         ctx.lineTo(30, i * 8 + 6);
@@ -95,16 +78,17 @@ const Statistics = {
 
       /** рисуем график */
       function drawGraph(learnedWordsСount) {
-        for (let i = 0; i < learnedWordsСount.length; i += 1) {
+        const learnedWords = learnedWordsСount;
+        for (let i = 0; i < learnedWords.length; i += 1) {
           for (let j = 0; j < i; j += 1) {
-            learnedWordsСount[i] += learnedWordsСount[j];
+            learnedWords[i] += learnedWords[j];
           }
-          percentageWords(learnedWordsСount[i]);
+          percentageWords(learnedWords[i]);
           ctx.beginPath();
           ctx.moveTo(X, Y);
-          ctx.lineTo((learnedWordsСount[i] * 400) / 3600 + 80, 280
+          ctx.lineTo((learnedWords[i] * 400) / 3600 + 80, 280
             - ((percentageLearnedWords * 270) / 100));
-          X = (learnedWordsСount[i] * 400) / 3600 + 80;
+          X = (learnedWords[i] * 400) / 3600 + 80;
           Y = 280 - ((percentageLearnedWords * 270) / 100);
           ctx.closePath();
           ctx.strokeStyle = 'rgb(0, 90, 5)';
@@ -125,7 +109,6 @@ const Statistics = {
       const ctx2 = canvas2.getContext('2d');
       percentageWords(learnedWordsСount[learnedWordsСount.length - 1]);
       const a = percentageLearnedWords * 5;
-      console.log(a);
 
       ctx2.beginPath();
       ctx2.moveTo(60.5, 10);
@@ -144,64 +127,54 @@ const Statistics = {
       ctx2.strokeStyle = 'rgb(0, 90, 5)';
       ctx2.stroke();
       document.querySelector('.statistic__heading').innerHTML = `${nameStatistics}`;
+      document.querySelector('.statistic__wordList').innerHTML = 'Cписок слов';
       document.querySelector('.statistic__numberWordsStudied').innerHTML = `Всего слов: ${learnedWordsСount[learnedWordsСount.length - 1]}`;
       document.querySelector('.statistic__percentageLearnedWords').innerHTML = `${Math.round(percentageLearnedWords)}% слов любого текста`;
-    }
-    drawStatistics('Статистика изученных слов', [{ '01.07.2020': 52 }, { '02.07.2020': 42 }, { '02.07.2020': 63 }]);
 
+      const wordsDatesList = document.createElement('div');
+      wordsDatesList.setAttribute('class', 'statistic__wordsDatesList statistic__hidden');
+      document.querySelector('.statistic__card').appendChild(wordsDatesList);
 
-    function drawStatisticsforGame(name, array) {
-      const amountDays = array;
-      document.querySelector('.statistic__card').classList.add('statistic__hidden');
-
-      let counter = 0;
-      for (let key in amountDays) {
-        counter += 1;
-      }
-
-      let dates = [];
-      for (let i = 0; i < amountDays.length; i += 1) {
-        for ( var property in amountDays[i] ) {
-          dates.push(property);
-          console.log( property );
+      const wordsArray = Object.entries(words);
+      for (let i = 0; i < wordsArray.length; i += 1) {
+        const dates = document.createElement('div');
+        dates.setAttribute('class', 'statistic__datesItem');
+        dates.innerHTML = `${wordsArray[i][0]}`;
+        document.querySelector('.statistic__wordsDatesList').appendChild(dates);
+        for (let j = 0; j < wordsArray[i][1].length; j += 1) {
+          const wordItem = document.createElement('div');
+          wordItem.setAttribute('class', 'statistic__wordItem');
+          wordItem.innerHTML = `${wordsArray[i][1][j]}`;
+          document.querySelector('.statistic__wordsDatesList').appendChild(wordItem);
         }
       }
-      console.log(dates);
 
-      const heading = document.createElement('h1');
-      heading.setAttribute('class', 'statistic__heading--game');
-      document.querySelector('.statistic').appendChild(heading);
-      heading.innerHTML = `${name}`;
+      const back = document.createElement('div');
+      back.setAttribute('class', 'statistic__back statistic__hidden');
+      back.innerHTML = 'Назад';
+      document.querySelector('.statistic__card').appendChild(back);
 
-     const tableStatisticsGame = document.createElement('table');
-      tableStatisticsGame.setAttribute('id', 'statistic__table');
-      for (let i = 0; i < counter + 1; i += 1) {
-        const tr = document.createElement('tr');
-        for (let j = 0; j < 4; j += 1) {
-          const td = document.createElement('td');
-          td.setAttribute('id', `${i}${j}`);
-          td.setAttribute('class', 'statistic__td');
-          tr.appendChild(td);
-        }
-        tableStatisticsGame.appendChild(tr);
-      }
-      document.querySelector('.statistic').appendChild(tableStatisticsGame);
-      document.getElementById('00').innerHTML = 'Даты игры:';
-      document.getElementById('01').innerHTML = 'Количество сыгранных игр:';
-      document.getElementById('02').innerHTML = 'Правильные ответы:';
-      document.getElementById('03').innerHTML = 'Неправильные ответы:';
+      const wordList = document.querySelector('.statistic__wordList');
+      wordList.onclick = () => {
+        document.querySelector('#canvas').classList.add('statistic__hidden');
+        document.querySelector('#canvas2').classList.add('statistic__hidden');
+        document.querySelector('.statistic__percentageLearnedWords').classList.add('statistic__hidden');
+        document.querySelector('.statistic__wordsDatesList').classList.remove('statistic__hidden');
+        document.querySelector('.statistic__back').classList.remove('statistic__hidden');
+      };
 
-      for (let i = 1; i < counter + 1; i += 1) {
-        const j = 0;
-        document.getElementById(`${i}${j}`).innerHTML = `${dates[i - 1]}`;
-      }
+      const backBtn = document.querySelector('.statistic__back');
+
+      backBtn.onclick = () => {
+        document.querySelector('.statistic__wordsDatesList').classList.add('statistic__hidden');
+        document.querySelector('.statistic__back').classList.add('statistic__hidden');
+        document.querySelector('#canvas').classList.remove('statistic__hidden');
+        document.querySelector('#canvas2').classList.remove('statistic__hidden');
+        document.querySelector('.statistic__percentageLearnedWords').classList.remove('statistic__hidden');
+      };
     }
-
-    drawStatisticsforGame('English puzzle', [{ '01.07.2020': 52 }, { '02.07.2020': 42 }, { '02.07.2020': 63 }]);
-
+    drawStatistics('Статистика изученных слов');
   },
-
-
 };
 
 export default Statistics;
