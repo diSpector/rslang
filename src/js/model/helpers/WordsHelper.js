@@ -212,6 +212,25 @@ const WordsHelper = {
       img: true,
     },
   }),
+
+  /** объект статистики по умолчанию для словаря и карточек */
+  getDefaultStatsObj: () => ({
+    learnedWords: 0,
+    optional: {
+      todayWords: {
+        date: '',
+        counter: 0,
+      },
+      games: {
+        au: [],
+        ep: [],
+        sv: [],
+        si: [],
+        sp: [],
+        sq: [],
+      },
+    },
+  }),
 };
 
 export default WordsHelper;

@@ -24,12 +24,14 @@ export default class AppModel {
     this.numberOfDifficulties = 6;
     this.currentWordSet = [];
     this.gameStatistics = {
+      audition: {},
       englishPuzzle: {},
       savannah: {},
       speakIt: {},
       sprint: {},
       square: {},
     };
+    this.maxDaysStats = 5;
     this.defaultUserEmail = '66group@gmail.com';
     this.defaultUserPassword = 'Gfhjkm_123';
     this.defaultUserId = '5ef6f4c5f3e215001785d617';
@@ -398,7 +400,6 @@ export default class AppModel {
         return { error: true, errorText: 'Неверный логин/пароль' };
       }
       const content = await rawResponse.json();
-      console.log(content);
       this.authToken = content.token;
       this.userId = content.userId;
       return { data: content, error: false, errorText: '' };
@@ -433,6 +434,7 @@ export default class AppModel {
 
     const defaultWordsSettings = this.wordsHelper.getDefaultWordsSettings();
     await this.saveSettings(defaultWordsSettings);
+    await this.saveDefaultStats();
 
     return userData;
   }
@@ -489,7 +491,6 @@ export default class AppModel {
     try {
       const rawResponse = await fetch(`${this.backendURL}users/${this.userId}/statistics`, {
         method: 'PUT',
-        withCredentials: true,
         headers: {
           Authorization: `Bearer ${this.authToken}`,
           Accept: 'application/json',
@@ -498,8 +499,7 @@ export default class AppModel {
         body: JSON.stringify(stats),
       });
       const content = await rawResponse.json();
-      console.log(content);
-      return { error: false, errorText: '' };
+      return content;
     } catch (e) {
       return { error: true, errorText: this.serverErrorMessage };
     }
@@ -517,11 +517,135 @@ export default class AppModel {
         },
       });
       const content = await rawResponse.json();
-      console.log(content);
       return content;
     } catch (e) {
       return { error: true, errorText: this.serverErrorMessage };
     }
+  }
+
+  /** получить статистику по всем играм, если ее нет, сохранить и отдать объект по умолчанию */
+  async getAllStats() {
+    const allStats = await this.getStats();
+    let newStats = { ...allStats };
+    if (!newStats) {
+      newStats = await this.saveDefaultStats();
+    }
+    /** backend возвращает статистику с полем id, но т.к. передавать
+     * его при сохранении нельзя, создаем объект без него */
+    const { learnedWords, optional } = newStats;
+    const returnNewStats = {
+      learnedWords,
+      optional,
+    };
+    return returnNewStats;
+  }
+
+  /** получить статистику по игре
+   * @param {String} gameName - сокращенное название игры
+   * @return {Array} [ - массив объектов за последние 5 игр
+   *  {
+   *    d - дата,
+   *    y - правильных слов,
+   *    n - неправильных слов
+   *  }, ...
+   * ]
+   */
+  async getStatForGame(gameName = 'au') {
+    const allStats = await this.getAllStats();
+    const gameStats = allStats.optional.games[gameName];
+    return gameStats;
+  }
+
+  /** сохранить статистику за игру (1 сеанс)
+   * @param {Object} gameObj - объект игры - {
+   *  name - название игры,
+   *  y - кол-во правильных слов,
+   *  n - кол-во неправильных слов
+   * }
+  */
+  async saveStatForGame({ name, y, n }) {
+    const allStats = await this.getAllStats();
+    const { learnedWords: newLearnedWords, optional: newOptional } = allStats;
+    const gameStats = newOptional.games[name];
+    const sliceDays = (gameStats.length < this.maxDaysStats) ? 0 : 1;
+    const lastGamesStats = gameStats.slice(sliceDays);
+    lastGamesStats.push({
+      d: this.dateHelper.getBeutifyTodayDate(),
+      y,
+      n,
+    });
+    newOptional.games[name] = lastGamesStats;
+
+    const newStats = {
+      learnedWords: newLearnedWords,
+      optional: newOptional,
+    };
+
+    const saved = await this.saveStats(newStats);
+    return saved;
+  }
+
+  /** получить объект для статистики по умолчанию */
+  getDefaultStatsObj() {
+    return this.wordsHelper.getDefaultStatsObj();
+  }
+
+  /** сохранить объект для статистики по умолчанию (при создании польз.) */
+  async saveDefaultStats() {
+    const defaultStatsObj = this.getDefaultStatsObj();
+    const saved = await this.saveStats(defaultStatsObj);
+    return saved;
+  }
+
+  /** получить количество слов, изученных сегодня */
+  async getTodayWordsCount() {
+    const allStats = await this.getAllStats();
+    const todayWordsObj = allStats.optional.todayWords;
+    const { date: dateTrain, counter: dateWordsCount } = todayWordsObj;
+    const todayDate = this.dateHelper.getBeutifyTodayDate();
+    return (dateTrain === todayDate) ? dateWordsCount : 0;
+  }
+
+  /** обновить количество слов на сегодня и общий счетчик слов */
+  async increaseTodayWordsCount() {
+    const allStats = await this.getAllStats();
+    const { learnedWords: newLearnedWords, optional: newOptional } = allStats;
+    const { todayWords: todayWordsObj } = newOptional;
+    const { date: dateTrain, counter: dateWordsCount } = todayWordsObj;
+    const todayDate = this.dateHelper.getBeutifyTodayDate();
+    const isDateToday = (dateTrain === todayDate);
+    const newDate = todayDate;
+    const newCount = (isDateToday) ? (dateWordsCount + 1) : 1;
+    newOptional.todayWords = {
+      date: newDate,
+      counter: newCount,
+    };
+    const newStats = {
+      learnedWords: newLearnedWords,
+      optional: newOptional,
+    };
+
+    const saved = await this.saveStats(newStats);
+    return saved;
+  }
+
+  /** выставить нужно кол-во пройденных слов за сегодня
+   * по умолчанию - сбросить счетчик
+   */
+  async setTodayWordsCount(count = 0) {
+    const allStats = await this.getAllStats();
+    const { learnedWords: newLearnedWords, optional: newOptional } = allStats;
+    newOptional.todayWords = {
+      date: this.dateHelper.getBeutifyTodayDate(),
+      counter: count,
+    };
+    const newStats = {
+      learnedWords: newLearnedWords,
+      optional: newOptional,
+    };
+
+    const saved = await this.saveStats(newStats);
+    return saved;
   }
 
   /**
@@ -587,8 +711,7 @@ export default class AppModel {
         body: JSON.stringify(settingsToSave),
       });
       const content = await rawResponse.json();
-      console.log('content', content);
-      return { error: false, errorText: '' };
+      return content;
     } catch (e) {
       return { error: true, errorText: 'Ошибка при сохранении настроек. Попробуйте еще раз попозже' };
     }
