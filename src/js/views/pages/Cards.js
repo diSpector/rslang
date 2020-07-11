@@ -296,11 +296,22 @@ const Cards = {
     element.textContent = '';
   },
 
+  hideWord(elementSelector) {
+    const element = document.querySelector(elementSelector);
+    if (element) {
+      element.textContent = '[...]';
+    }
+  },
+
   renderCard() {
     // информация на карточке
     this.renderElement(Cards.settings.isWordTranslate, null, 'learn--card__wordTranslate', 'learn--card__wordTranslate-hidden', this.currentWord.wordTranslate);
     this.renderElement(Cards.settings.isTextMeaning, null, 'learn--card__textMeaning', 'learn--card__textMeaning-hidden', this.currentWord.textMeaning);
     this.renderElement(Cards.settings.isTextExample, null, 'learn--card__textExample', 'learn--card__textExample-hidden', this.currentWord.textExample);
+
+    // спрятать изучаемое слово в предложениях-примерах
+    this.hideWord('.learn--card__textMeaning i');
+    this.hideWord('.learn--card__textExample b');
 
     // дополнительные элементы
     this.renderElement(Cards.settings.isImage, null, 'learn--card__image', 'learn--card__image-hidden', null, this.currentWord.image);
@@ -337,21 +348,36 @@ const Cards = {
     Cards.addPercent = 100 / numberOfWords;
   },
 
+  hideIcon(iconSelector) {
+    const icon = document.querySelector(iconSelector);
+    if (icon) {
+      icon.classList.add('learn--card__icon-hidden');
+    }
+  },
+
   stopGame: () => {
-    const cardHeader = document.querySelector('.learn--card__header');
-    const cardContent = document.querySelector('.learn--card__content');
+    Cards.hideIcon('.learn--card__icon-book');
+    Cards.hideIcon('.learn--card__icon-headphones');
+    Cards.hideIcon('.learn--card__icon-brain');
+    Cards.hideIcon('.learn--card__icon-delete');
+
     const showAnswerButton = document.querySelector('.learn--button-show');
-    const progressBar = document.querySelector('.learn--progress');
-    progressBar.remove();
     showAnswerButton.classList.add('learn--button-hidden');
-    cardHeader.innerHTML = '<div>Ура! На сегодня всё.</div>';
-    cardContent.innerHTML = `<div>Есть ещё новые карточки, но дневной лимит исчерпан. Вы можете увеличить лимит в настройках, но, 
-                                пожалуйста, имейте в виду, что чем больше новых 
-                                карточек вы просмотрите, тем больше вам надо будет повторять в ближайшее
-                                время. Для обучения сверх обычного расписания, нажмите кнопку 'Учить ещё' ниже.
+
+    // const progressBar = document.querySelector('.learn--progress');
+    // progressBar.remove();
+
+    const cardContent = document.querySelector('.learn--card__content');
+    cardContent.innerHTML = ` <h2>Ура! На сегодня всё.</h2>
+                              <div class="learn--card__stopGame">
+                                <p>Есть ещё новые карточки, но дневной лимит исчерпан.</p>
+                                <p>Вы можете увеличить лимит в настройках, но, 
+                                  пожалуйста, имейте в виду, что чем больше новых 
+                                  карточек вы просмотрите, тем больше вам надо будет повторять в ближайшее
+                                  время.</p>
+                                <p>Для обучения сверх обычного расписания, нажмите кнопку «Учить ещё» ниже.</p>
                               </div>
-                              <button>Настройки</button>
-                              <button>Учить ещё</button>
+                              <button class="learn--button  learn--button-learnMore">Учить ещё</button>
     `;
   },
 

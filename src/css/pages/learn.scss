@@ -28,7 +28,7 @@
 
     flex-grow: 1;
     border-radius: 10px;
-    background-color: #9bc0c6;
+    background-color: rgba(#ffe9a6, 0.5);
 
     @include media-tablet {
         width: 90%;
@@ -39,7 +39,8 @@
     width: 0%;
     height: 100%;
     border-radius: 10px;
-    background-color: #586187;
+    background-color: #efc74d;
+    transition: ease 1s;
 }
 
 .learn--progress__done,
@@ -66,7 +67,7 @@
     display: flex;
     justify-content: flex-end;
     padding: 5px;
-    background-color: #9bc0c6;
+    background-color: #ffe9a6;
     border-top-left-radius: 10px;
     border-top-right-radius: 10px;
 }
@@ -257,26 +258,21 @@
 .learn--button {
     @include button; 
 
-    &-show {
-        background: transparent;
-        border: 1px solid #9bc0c6;
-    }
-
-    &-next {
-        background: #9bc0c6;     
-        border: 1px solid #9bc0c6; 
-    }
-
-    &-show,
-    &-next {
-        &:hover {
-            background: #586187;
-            border: 1px solid #586187;
-            color: white;
-        }
-    }
-
     &-hidden {
         display: none;
+    }
+
+    background: #fde28e;
+    box-shadow: inset -3px -3px #e2c774;
+    border-radius: 6px;
+    font-size: 2rem;
+
+    &:hover {
+        background: #ffe9a6;
+    }
+
+    &:active {
+        background: #efc74d;
+        box-shadow: inset 3px 3px #caa433;
     }
 }
