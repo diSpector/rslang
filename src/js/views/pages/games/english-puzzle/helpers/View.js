@@ -122,7 +122,7 @@ const View = {
             <th>#</th>
             <th>Знаю</th>
             <th>Не знаю</th>
-            <th>Время игры</th>
+            <th>Дата игры</th>
           </tr>
         </table>
 

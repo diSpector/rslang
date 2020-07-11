@@ -64,7 +64,6 @@ const EnglishPuzzle = {
       )
       : await EnglishPuzzle.appModel.getSetOfLearnedWords(10);
 
-    console.log('words from model', words);
     const allWords = WordsHelper.correctWords(words);
     const solvedWords = WordsHelper.getSolvedBySettings(allWords, gameSettings.round);
     const currentWord = WordsHelper.getCurrentBySettings(allWords, gameSettings.round);
@@ -100,16 +99,12 @@ const EnglishPuzzle = {
   render: async (appModel) => {
     EnglishPuzzle.beforeRender();
     EnglishPuzzle.appModel = appModel;
-    console.log('all settings', EnglishPuzzle.settings);
     const view = View.getHtml();
     return view;
   },
 
   afterRender: () => {
     EnglishPuzzle.loadStart();
-
-    console.log('localStorage', JSON.parse(localStorage.getItem('EnglishPuzzleSettings')));
-    console.log('localStat: ', EnglishPuzzle.settings.localStat);
   },
 
   /** загрузить стартовую страницу */
@@ -634,7 +629,8 @@ const EnglishPuzzle = {
       }
       EnglishPuzzle.processRoundWordClick({ target: draggedEl });
     } catch (error) {
-      console.log('error while drop', error);
+      // return;
+      // console.log('error while drop', error);
     }
   },
 
@@ -833,15 +829,16 @@ const EnglishPuzzle = {
   },
 
   /** наполнить таблицу статистики результатами */
-  fillStats() {
-    const stats = Model.getGlobalStats('english-puzzle');
+  fillStats: async () => {
+    // const stats = Model.getGlobalStats('english-puzzle');
+    const stats = await EnglishPuzzle.appModel.getStatForGame('ep');
     const statsTable = document.querySelector(Config.containers.statsTable);
     stats.forEach((game, i) => {
       const tr = Utils.createBlockInside('tr', '', statsTable);
       Utils.createBlockInside('td', '', tr, i + 1);
-      Utils.createBlockInside('td', '', tr, game.knowCount);
-      Utils.createBlockInside('td', '', tr, game.dontKnowCount);
-      Utils.createBlockInside('td', '', tr, HtmlHelper.beautifyUnixDate(game.date));
+      Utils.createBlockInside('td', '', tr, (game.y || '0'));
+      Utils.createBlockInside('td', '', tr, (game.n || '0'));
+      Utils.createBlockInside('td', '', tr, game.d);
     });
   },
 
@@ -1120,11 +1117,16 @@ const EnglishPuzzle = {
     } else { // собрано все 10 раундов - загрузить картину
       EnglishPuzzle.settings.results = { ...EnglishPuzzle.settings.localStat };
 
-      Model.saveGameToGlobalStat({
-        gameName: 'english-puzzle',
-        date: Date.now(),
-        knowCount: EnglishPuzzle.settings.results.knowWords.length,
-        dontKnowCount: EnglishPuzzle.settings.results.idkWords.length,
+      // Model.saveGameToGlobalStat({
+      //   gameName: 'english-puzzle',
+      //   date: Date.now(),
+      //   knowCount: EnglishPuzzle.settings.results.knowWords.length,
+      //   dontKnowCount: EnglishPuzzle.settings.results.idkWords.length,
+      // });
+      await EnglishPuzzle.appModel.saveStatForGame({
+        name: 'ep',
+        y: EnglishPuzzle.settings.results.knowWords.length,
+        n: EnglishPuzzle.settings.results.idkWords.length,
       });
 
       EnglishPuzzle.deleteLocalStat();

@@ -16,7 +16,7 @@ const Model = {
       const words = await wordsPromise.json();
       return words;
     } catch (e) {
-      console.log('Ошибка при получении слов', e.message);
+      // console.log('Ошибка при получении слов', e.message);
       return null;
     }
   },
@@ -43,7 +43,7 @@ const Model = {
         ? null
         : words.slice(offset, count + offset);
     } catch (e) {
-      console.log('Ошибка при получении слов', e.message);
+      // console.log('Ошибка при получении слов', e.message);
       return null;
     }
   },
@@ -143,7 +143,7 @@ const Model = {
       const picsObj = await picsPromise.json();
       return picsObj;
     } catch (e) {
-      console.log('Ошибка при получении картин', e.message);
+      // console.log('Ошибка при получении картин', e.message);
       return null;
     }
   },
@@ -158,23 +158,22 @@ const Model = {
    *    'dontKnowCount': integer, // кол-во неугаданных слов
    *  }
    * */
-  getGlobalStats(gameName = 'english-puzzle') {
-    console.log('gameName', gameName);
-    return [
-      {
-        // date: '01-01-2020 05:10:25',
-        date: 1593573947363,
-        knowCount: 5,
-        dontKnowCount: 5,
-      },
-      {
-        // date: '04-06-2020 18:20:25',
-        date: 1593573103475,
-        knowCount: 3,
-        dontKnowCount: 7,
-      },
-    ];
-  },
+  // getGlobalStats(gameName = 'english-puzzle') {
+  //   return [
+  //     {
+  //       // date: '01-01-2020 05:10:25',
+  //       date: 1593573947363,
+  //       knowCount: 5,
+  //       dontKnowCount: 5,
+  //     },
+  //     {
+  //       // date: '04-06-2020 18:20:25',
+  //       date: 1593573103475,
+  //       knowCount: 3,
+  //       dontKnowCount: 7,
+  //     },
+  //   ];
+  // },
 
   /**
    * сохранить результат игры в глобальную статистику
@@ -189,9 +188,9 @@ const Model = {
    *    dontKnowCount: integer, // кол-во неугаданных слов
    *  }
    * */
-  saveGameToGlobalStat(gameObj) {
-    console.log('gameObj', gameObj);
-  },
+  // saveGameToGlobalStat(gameObj) {
+  //   console.log('gameObj', gameObj);
+  // },
 };
 
 export default Model;
