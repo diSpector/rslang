@@ -222,10 +222,51 @@ const Audition = {
       <div class="statistic__time">Время игры: ${gameTime.getMinutes()}:${gameTime.getSeconds()}</div>
       <button class="statistic__button" onclick="document.location.reload()">Начать заново</button>
       <button class="statistic__button" onclick="location.href='/'">Перейти на главную страницу</button>
-      <button class="statistic__button" onclick="location.href='/'">Глобальная статистика</button>
+      <button class="statistic__button global">Глобальная статистика</button>
     </section>
     `;
     gameArea.innerHTML += statistic;
+  },
+
+  async setGlobalStatisticData() {
+    const tableBody = document.querySelector('.statTable__body');
+    const statistic = await Audition.settings.model.getStatForGame('au');
+    console.log(statistic);
+    let template = '';
+    statistic.forEach((elem) => {
+      template += `
+        <tr class="statTable__bodyRow">
+          <td class="statTable__bodyData">${elem.d}</td>
+          <td class="statTable__bodyData">${elem.y}</td>
+          <td class="statTable__bodyData">${elem.n}</td>
+        </tr>
+      `;
+    });
+    tableBody.innerHTML = template;
+  },
+
+  generateGlobalStatisticHTML() {
+    const gameArea = document.querySelector('.audition--game');
+    const globalStatistic = `
+    <section class="audition--globalStatistic hidden">
+      <div class="globalStatistic__title">Статистика игры</div>
+      <table class="globalStatistic__statTable">
+        <thead class="statTable__head">
+          <tr class="statTable__headRow">
+            <th class="statTable__headData">Дата игры</th>
+            <th class="statTable__headData">Верных ответов</th>
+            <th class="statTable__headData">Неверных ответов</th>
+          </tr>
+        </thead>
+        <tbody class="statTable__body">
+
+        </tbody>  
+      </table>
+      <button class="globalStatistic__button">Вернуться назад</button>
+    </section>
+    `;
+    gameArea.innerHTML += globalStatistic;
+    Audition.setGlobalStatisticData();
   },
 
   generateProgressBar() {
@@ -258,8 +299,38 @@ const Audition = {
     Audition.addGameClickHandler(wordAudio, correctWord);
   },
 
+  async saveGlobalStatistic() {
+    const CorrectAnswers = Audition.correctAnswers.length;
+    const WrongAnswers = Audition.wrongAnswers.length;
+    console.log('correct: ', CorrectAnswers, 'wrong: ', WrongAnswers);
+    await Audition.settings.model.saveStatForGame({ name: 'au', y: CorrectAnswers, n: WrongAnswers });
+  },
+
+  stopGame() {
+    Audition.generateStatistic('.audition--wordScreen');
+    Utils.removeBlock('.audition--progressBar');
+    Audition.saveGlobalStatistic();
+  },
+
+  addStatisticButtonsHandler() {
+    const statisticScreen = document.querySelector('.audition--statistic');
+    const globalStatisticScreen = document.querySelector('.audition--globalStatistic');
+    const statisticButton = document.querySelector('.statistic__button.global');
+    const globalStatisticButton = document.querySelector('.globalStatistic__button');
+    statisticButton.onclick = () => {
+      statisticScreen.classList.toggle('hidden');
+      globalStatisticScreen.classList.toggle('hidden');
+    };
+    globalStatisticButton.onclick = () => {
+      statisticScreen.classList.toggle('hidden');
+      globalStatisticScreen.classList.toggle('hidden');
+    };
+  },
+
   generateStatistic(prevSlide) {
     Audition.generateStatisticHTML();
+    Audition.generateGlobalStatisticHTML();
+    Audition.addStatisticButtonsHandler();
     Audition.setCorrectAnswers();
     Audition.setWrongAnswers();
     Audition.addStatisticClickHandler();
@@ -319,8 +390,7 @@ const Audition = {
           Audition.generateNextWordSlide('.audition--wordScreen');
           Audition.changeProgressBar();
         } else {
-          Audition.generateStatistic('.audition--wordScreen');
-          Utils.removeBlock('.audition--progressBar');
+          Audition.stopGame();
           document.onkeyup = null;
         }
       }
@@ -355,8 +425,7 @@ const Audition = {
           Audition.generateNextWordSlide('.audition--wordScreen');
           Audition.changeProgressBar();
         } else {
-          Audition.generateStatistic('.audition--wordScreen');
-          Utils.removeBlock('.audition--progressBar');
+          Audition.stopGame();
         }
       } else if (event.target.closest('.wordScreen__button') && Audition.isGameActive) {
         Audition.setClassesForWrongWords(correctWord.wordTranslate);
