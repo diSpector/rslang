@@ -54,7 +54,7 @@
 }
 
 .adavntage-block {
-  width: 200px;
+  width: 201px;
   margin: auto;
   background-size: contain;
   height: 100px;
@@ -69,6 +69,7 @@
 }
 
 .promo__content_text-title {
+  color:#2d374c;
   font-size: 3rem;
 }
 
@@ -77,7 +78,11 @@
 }
 
 .promo__content_text {
+  color:#2d374c;
+  text-align: justify;
   margin: 100px auto;
+  width: 85%;
+
 }
 
 .promo__content_text-description {
@@ -89,6 +94,9 @@
 
 .promo_advantage-fun {
   background-image: url(../../img/promo/block1.png);
+  @include media-tablet {
+    order: 1;
+  }
 }
 
 .promo_advantage-method {
@@ -98,45 +106,106 @@
   .adavntage-block_text {
     margin-top: 47px;
   }
+  @include media-tablet {
+    order: 2;
+  }
+
 }
 
 .promo_advantage-statistics {
   background-image: url(../../img/promo/block3.png);
+  @include media-mobile-big {
+    order: 3;
+  }
+
 }
 
 .promo__content-block {
   display: flex;
+  color:#2d374c;
   flex-wrap: wrap;
   height: 300px;
   width: 100%;
-  font-size: 1.5rem;
-  justify-content: center;
+  font-size: 1.8rem;
+  justify-content: center;  
+  margin: 80px 0;
   @include media-tablet {
     height: 100%;
+    margin: 50px 0;
   }
 }
 
 .content-block-image {
   width: 46%;
   height: 300px;
+  margin: auto;
   background-size: contain;
   background-repeat: no-repeat;
   background-position: center;
   @include media-tablet {
-    width: 80%;
+    width: 100%;
+    height: 200px;
+
   }
 }
 
 .content-block-text {
+  text-align: justify;
   width: 46%;
   margin: auto;
-  @include media-tablet {
-    width: 80%;
+
+  @include media-laptop-small {
+    width: 53%;
   }
+  @include media-tablet {
+    width: 100%;
+  }
+}
+
+.promo__content_next-image {
+  width: 100%;
+  background-image: url(../../img/promo/win.png);
+}
+
+.promo__content_method {
+  margin-bottom: 0;
 }
 
 .promo__content_method-image {
   background-image: url(../../img/promo/learn.png);
+}
+
+.promo__content_hands {
+  @include media-tablet {
+    flex-direction: column-reverse;
+    margin-top: 0;
+  }
+}
+
+.promo__content_hands-image {
+  width: 40%;
+  background-image: url(../../img/promo/book.png);
+  @include media-tablet {
+    height: 200px;
+    width: 100%;
+  }
+}
+
+.promo__content_hands-text {
+  background-size: contain;
+  height: 300px;
+  padding-left: 140px;
+  background-repeat: no-repeat;
+  background-image: url(../../img/promo/boy.png);
+  @include media-laptop-small {
+    width: 48%;
+    padding-left: 85px;
+  }
+  @include media-tablet {
+    height: 100%;
+    width: calc(100% - 85px);  
+  }
+
 }
 
 .promo__content_game-image {
@@ -147,3 +216,69 @@
   background-image: url(../../img/promo/statistic.png);
 }
 
+.promo__content_dictionary {
+  flex-direction: column-reverse;
+}
+
+.promo__content_dictionary-image {
+  background-image: url(../../img/promo/dictionary.png);
+}
+
+.promo__content_card {
+  background-image: url(../../img/promo/card.png);
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+  @include media-tablet {
+    background-image: none;
+    flex-direction: column-reverse;
+  }
+}
+
+.promo__content_card-image {
+  @include media-tablet {
+    background-image: url(../../img/promo/cardMobile.png);
+  }     
+}
+
+.promo__content_card-text {
+  margin-left: 80px;
+  @include media-laptop-small {
+    margin-left: 30px;
+    margin-top: 35px;
+  }
+  @include media-tablet {
+    margin: 0;
+  }
+}
+
+.promo__content_next-text {
+  background-image: url(../../img/promo/title.png);
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+  text-align: center;
+  width: 100%;
+  height: 130px;
+  @include media-mobile-big {
+    background-image: url(../../img/promo/titleMobile.png);
+    height: 180px;
+  }
+}
+
+.promo__content_next-title {
+  color: #b185ea;
+  font-size: 5.1rem;
+  margin: 0;
+  padding-top: 25px;
+}
+
+.promo__content_next {
+  @include media-tablet {
+    margin-bottom: 0;
+    height: 350px;
+  }
+  @include media-mobile-big {
+    height: 410px;
+  }
+}
