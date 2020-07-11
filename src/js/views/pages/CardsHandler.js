@@ -6,6 +6,15 @@ const CardsHandler = {
   ourWordObj: null,
   homeSettings: null,
   isWordCorrect: false,
+  isGuessedOnFirstTry: true,
+
+  statistic: {
+    cardsCompleted: 0,
+    correctAnswers: 0,
+    newWords: 0,
+    currentCorrectSeries: 0,
+    bestCorrectSeries: 0,
+  },
 
   settings: {
     sentenceTranslate: true,
@@ -73,6 +82,12 @@ const CardsHandler = {
     CardsHandler.isWordCorrect = true;
     const cardInput = document.querySelector('.learn--card__input');
 
+    if (CardsHandler.isGuessedOnFirstTry) CardsHandler.statistic.correctAnswers += 1;
+    CardsHandler.statistic.currentCorrectSeries += 1;
+    if (CardsHandler.statistic.currentCorrectSeries
+      > CardsHandler.statistic.bestCorrectSeries) {
+      CardsHandler.statistic.bestCorrectSeries = CardsHandler.statistic.currentCorrectSeries;
+    }
     CardsHandler.insertSentenceWithWord();
     CardsHandler.showCorrectButtons();
     CardsHandler.closeShowAnswerButton();
@@ -126,6 +141,8 @@ const CardsHandler = {
 
   wrongAnswer: () => {
     CardsHandler.setWrongLetters();
+    CardsHandler.isGuessedOnFirstTry = false;
+    CardsHandler.statistic.currentCorrectSeries = -1;
   },
 
   getTextWidth: (text, font) => {
@@ -189,14 +206,17 @@ const CardsHandler = {
 
   buttonsClickHandler: ({ target }) => {
     if (target.classList.contains('learn--button-show') && !CardsHandler.isWordCorrect) {
+      CardsHandler.isGuessedOnFirstTry = false;
+      CardsHandler.statistic.currentCorrectSeries = -1;
       CardsHandler.correctAnswer();
     }
     if (target.classList.contains('learn--button-next')) {
       const userWord = document.querySelector('.learn--card__input').innerText;
       CardsHandler.hideCorrectButtons();
       if (userWord === CardsHandler.currentWord.word) {
-        CardsHandler.generateNextCard();
         CardsHandler.clearInput();
+        CardsHandler.generateNextCard();
+        CardsHandler.statistic.cardsCompleted += 1;
       } else if (userWord !== '') {
         CardsHandler.wrongAnswer();
       }
@@ -304,11 +324,14 @@ const CardsHandler = {
     CardsHandler.currentWord = word;
     CardsHandler.ourWordObj = ourWordObj;
     CardsHandler.wordProcessing();
-
+    if (CardsHandler.ourWordObj.isNew) {
+      CardsHandler.statistic.newWords += 1;
+    }
     CardsHandler.model = model;
     CardsHandler.generateNextCard = generateNextCard;
     CardsHandler.homeSettings = settings;
 
+    CardsHandler.isGuessedOnFirstTry = true;
     CardsHandler.isWordCorrect = false;
     CardsHandler.setInputWidthAndFocus();
     CardsHandler.addCardClickHandler();

@@ -365,12 +365,17 @@ const Cards = {
     const showAnswerButton = document.querySelector('.learn--button-show');
     showAnswerButton.classList.add('learn--button-hidden');
 
-    // const progressBar = document.querySelector('.learn--progress');
-    // progressBar.remove();
-
+    const percentOfCorrect = (CardsHandler.statistic.correctAnswers
+    / CardsHandler.statistic.cardsCompleted) * 100;
     const cardContent = document.querySelector('.learn--card__content');
     cardContent.innerHTML = ` <h2>Ура! На сегодня всё.</h2>
                               <div class="learn--card__stopGame">
+                                <div class="stopGame__statistic">
+                                  <p>Карточек завершено: ${CardsHandler.statistic.cardsCompleted}</p>
+                                  <p>Правильные ответы: ${percentOfCorrect}%</p>
+                                  <p>Новые слова: ${CardsHandler.statistic.newWords}</p>
+                                  <p>Самая длинная серия правильных ответов: ${CardsHandler.statistic.bestCorrectSeries}</p>
+                                </div>
                                 <p>Есть ещё новые карточки, но дневной лимит исчерпан.</p>
                                 <p>Вы можете увеличить лимит в настройках, но, 
                                   пожалуйста, имейте в виду, что чем больше новых 
