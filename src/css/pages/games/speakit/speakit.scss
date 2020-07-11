@@ -432,8 +432,9 @@
         background-color: rgb(244,244,244);
     }
     .global__results{
-        width: 100%;
-        background-color: rgb(244,244,244);
+        max-width: 1024px;
+        margin: 0 auto;
+        background-color: rgbа(244,244,244, 0.5);
     }
     .global__results table{
         width: 100%;
