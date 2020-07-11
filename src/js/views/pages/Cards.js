@@ -405,8 +405,6 @@ const Cards = {
     const ourWordObj = Cards.dayWords.pop();
     Cards.currentWord = await model.getNextWord(ourWordObj);
 
-    console.log(Cards.dayWords);
-    console.log(Cards.currentWord);
     Cards.initSettings(model);
     Cards.renderCard();
     Cards.initProgress();
