@@ -1,5 +1,6 @@
 .footer {
-  background-color: #37383c;
+  background-color: #2d303a;
+  z-index: 3;
 }
 
 .footer__content {
@@ -7,7 +8,7 @@
 }
 
 .footer__links {
-  padding: 20px 0;
+  padding: 0;
 }
 
 .footer__navList {
@@ -23,8 +24,8 @@
 .footer__navItem a {
   text-decoration: none;
   color: #e6e9ee;
-  font-size: 1.5rem;
-  font-weight: 500;
+  font-size: 1.4rem;
+  font-weight: 400;
   &:hover {
     color: orange;
   }
@@ -32,6 +33,6 @@
 
 .footer__copyright {
   color: #e6e9ee;
-  padding: 20px 0;
+  padding: 10px 0;
   font-size: 1.2rem;
 }
