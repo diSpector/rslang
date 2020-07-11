@@ -377,7 +377,7 @@ const Cards = {
                                   время.</p>
                                 <p>Для обучения сверх обычного расписания, нажмите кнопку «Учить ещё» ниже.</p>
                               </div>
-                              <button class="learn--button  learn--button-learnMore">Учить ещё</button>
+                              <button class="learn--button  learn--button-learnMore" onclick="document.location.reload()>Учить ещё</button>
     `;
   },
 
@@ -406,6 +406,7 @@ const Cards = {
     Cards.currentWord = await model.getNextWord(ourWordObj);
 
     console.log(Cards.dayWords);
+    console.log(Cards.currentWord);
     Cards.initSettings(model);
     Cards.renderCard();
     Cards.initProgress();

@@ -51,11 +51,21 @@ const CardsHandler = {
     showAnswerButton.classList.add('learn--button-hidden');
   },
 
+  insertSentenceWithWord: () => {
+    const textMeaning = document.querySelector('.learn--card__textMeaning');
+    const textExample = document.querySelector('.learn--card__textExample');
+    textMeaning.innerHTML = CardsHandler.currentWord.textMeaning;
+    textExample.innerHTML = CardsHandler.currentWord.textExample;
+  },
+
   correctAnswer: () => {
     CardsHandler.isWordCorrect = true;
     const cardInput = document.querySelector('.learn--card__input');
+
+    CardsHandler.insertSentenceWithWord();
     CardsHandler.showCorrectButtons();
     CardsHandler.closeShowAnswerButton();
+
     CardsHandler.model.processSolvedWord(CardsHandler.ourWordObj);
     cardInput.innerText = CardsHandler.currentWord.word;
     cardInput.removeAttribute('contenteditable');
