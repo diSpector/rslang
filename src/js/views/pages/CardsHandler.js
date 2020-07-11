@@ -108,7 +108,6 @@ const CardsHandler = {
     CardsHandler.addWordTranscription();
 
     CardsHandler.model.processSolvedWord(CardsHandler.ourWordObj);
-    await CardsHandler.model.increaseTodayWordsCount();
     cardInput.innerText = CardsHandler.currentWord.word;
     cardInput.removeAttribute('contenteditable');
     cardInput.style.backgroundColor = 'rgb(145, 247, 112)';
@@ -118,6 +117,7 @@ const CardsHandler = {
     if (CardsHandler.settings.sentenceTranslate === true) {
       CardsHandler.showTranslate();
     }
+    await CardsHandler.model.increaseTodayWordsCount();
   },
 
   setWrongLetters: () => {
