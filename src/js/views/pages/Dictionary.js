@@ -82,7 +82,28 @@ const Dictionary = {
       const newWordMeaning = createNewElement('div', 'meaning', wordObj.textMeaning);
       longRead.append(newWordMeaning);
 
-      const newWordProgress = createNewElement('div', 'progress', 'Осталось повторить слово 100 раз');
+      const newWordProgress = createNewElement('div', 'progress');
+
+      const repeats = wordObj.userWord.optional.count;
+      const learnDate = wordObj.userWord.optional.dateLearned.split('-').join('.');
+      const nextDate = wordObj.userWord.optional.date.split('-').join('.');
+
+      const repeatsBlock = createNewElement('div', 'repeat-count');
+      if (repeats === 2 || repeats === 3 || repeats === 4) {
+        repeatsBlock.innerHTML = `Повторялось ${repeats} раза`;
+      } else {
+        repeatsBlock.innerHTML = `Повторялось ${repeats} раз`;
+      }
+
+
+      const learnDateBlock = createNewElement('div', 'next-date', `Выучено ${learnDate}`);
+      const nextDateBlock = createNewElement('div', 'next-date', `Следующее повторение ${nextDate}`);
+
+      newWordProgress.append(learnDateBlock);
+      newWordProgress.append(repeatsBlock);
+      if (nextDate !== 'none') newWordProgress.append(nextDateBlock);
+
+
       longRead.append(newWordProgress);
       const wordImg = createNewElement('img', 'wordImg');
       wordImg.src = wordObj.image;
@@ -232,7 +253,6 @@ const Dictionary = {
         hardWordsContainer.append(newWord);
         newWord.classList.add('hard');
         newWord.classList.add(wordObj.word);
-        console.log(wordObj);
       }
       applaySettingsToOneCard(newWord);
     }
@@ -317,6 +337,7 @@ const Dictionary = {
     }
 
     async function go() {
+      await model.loginUser({ email: '66group@gmail.com', password: 'Gfhjkm_123' });
       setEventListeners();
       await getSettings();
       start();

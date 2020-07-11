@@ -18,7 +18,7 @@ $deletedColor:indianred;
     .dictionarry--navigation{
         font-family: 'Montserrat', sans-serif;
         display:flex;
-        align-items: center;
+        
         justify-content: space-between;
         flex-wrap: wrap;
         @media(max-width: 700px) {
@@ -177,6 +177,7 @@ $deletedColor:indianred;
                         quotes: "“" "”"; 
                     }
                     .progress {
+                        padding-top: 5px;
                         font-size: 14px;
                     } 
                 }
