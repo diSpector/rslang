@@ -5,7 +5,7 @@ import AppModel from '../../model/AppModel';
 const Header = {
   render: async () => {
     const view = /* html */`
-    <div class="header__content">
+    <div class="header__content wrapper">
   <div class="burger">
     <a id="hamburger-icon" class="open-close-btn">
       <span></span>
@@ -17,7 +17,7 @@ const Header = {
   <h1 class="header__logo"><a href="/#">RS Lang</a></h1>
   <div id="myNav" class="overlay">
     <div class="overlay-content">
-      <li class="header__navItem"><a href="#/">Главная</a></li>
+      
       <li class="header__navItem"><a href="#/cards">Изучение слов</a></li>
       <li class="header__navItem"><a href="#/stats">Статистика</a></li>
       <li class="header__navItem"><a href="#/dictionary">Словарь</a></li>

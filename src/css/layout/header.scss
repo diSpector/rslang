@@ -110,14 +110,14 @@
   .header__content {
     display: flex;
     align-items: center;
-    justify-content: space-around;
+    justify-content: space-between;
     padding: 8px;
     height: 55px;
   }
 
   .header__logo{
     display: block;
-    margin: 0 auto;
+    
     width: 120px;
     padding: 10px;
     flex-shrink: 0;
@@ -133,20 +133,19 @@
   
   .overlay {
     display: flex;
-    margin: 0 auto;
+   
   }
   
-  @media(max-width: 1035px){
+  @media(max-width: 1350px){
     .overlay-content {
-    max-width: 670px;
+    max-width: 460px;
     }
   }
 
   .overlay-content {
     display: flex;
     flex-wrap: wrap;
-    justify-content: space-around;
-      
+    justify-content: space-between;
   }
 
   .header__navItem {
