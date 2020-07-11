@@ -1,197 +1,149 @@
-@import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
+@import '../abstract/constants.scss';
+@import '../abstract/mixins.scss';
 
-.promo__background {
-    background-image: url('../../img/common/backgrounds/background9.jpg');
-    background-size: cover;
-    overflow: auto;
-    
-   
-    background-repeat:no-repeat;
-    background-position: center;
+.promo__content_banner {
+  background-image: url(../../img/promo/banner1.png);
+  height: 400px;
+  width: 100%;
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+  @include media-tablet {
+    background-image: url(../../img/promo/bannerMobile.png);
+  }
+
+}
+
+.promo__content_banner-title {
+  padding: 184px calc(12% - 60px);
+  width: 437px;
+  font-size: 2rem;
+  font-weight: 600;
+  span {
+    font-family: 'Neucha';
+    font-size: 2.7rem;
+    color: #EA9C1F;
+    font-weight: 900;
+  }
+  @include media-tablet {
+    max-width: 350px;
+    width: 80%;
+    margin: auto;
+    padding: 62px 0;
+    span {
+      font-size: 2.5rem;
+    }
+  }
+  @include media-mobile-big {
+    font-size: 1.8rem;
+    padding-top: 93px;
+    span {
+      font-size: 2.3rem;
+    }
+    line-height: 1.1;
+  }
 }
 .promo {
-    background-color: #ffffff75;
-    margin: 0 auto;
-    max-width: 1200px;
-    padding: 20px;
-    font-family: 'Roboto', sans-serif;
-    font-size: 18px;
-    
-}
-.promo {
-    
-    h2{
-        font-family: 'Montserrat'
-    }
-    p.quote {
-        margin: 20px;
-        text-align: center;
-        
-        font-style: italic;
-    }
-    q {
-        
-        font-size: 24px;
-        font-family: 'Neucha', sans-serif; /* Шрифт с засечками */
-       // font-style: italic; /* Курсивное начертание текста */
-        color:  rgb(88, 97, 135); /* Синий цвет текста */
-        quotes: "\00ab" "\00bb"; /* Кавычки-елочки */
-       }
-    .part{
-        display: flex;
-        flex-wrap: wrap;
-        justify-content: space-between;
-        
-    }
-    
-    .part div.text {
-        flex-basis: 2;
-       
-        width: 650px;
-    }
-        
-    .img {
-        flex-basis: 1;
-        margin: 0 auto;
-        
-    }
-    
-    .img img {
-          height: 200px;
-          margin: 0 auto;
-    
-    }
-    .promo__games {
-        text-align: center;
-    }
-    .hidden {
-        display: none;
-    }
-    .repeat__button{
-        background-color: white;
-        display: block;
-        margin: 0 auto;
-    }
-    .promo_algoritm {
-        background-color: white;
-    }
-    .promo__game__cards {
-        &{
-            display:flex;
-            width: 1200px;
-        flex-wrap: wrap;
-        justify-content: space-between;
-        align-items: center;
-        margin: 0 auto;
-        }
-        @media(max-width: 1400px) {
-            width: 600px;
-        }
-        @media(max-width: 800px) {
-            width: 400px;
-        }
-        @media(max-width: 440px) {
-            width: auto;
-            flex-direction: column;
-        }
-        & > div {
-            width: 170px;
-            height: 170px;
-            border-radius: 10px;
-            margin: 9px;
-            background-repeat: no-repeat;
-            background-size: 100%;
-            //background-position: absolute;
-            font-family: 'Neucha', cursive;
-            color: #fff;
-            text-align: center;
-            box-shadow: 0 0 5px 1px rgba(0, 0, 0, 0.5);
-
-        }
-        h3 {
-            font-weight: 400;
-            margin-block-start: 0.5em;
-        }
-        .audition {
-            background-color: #9bc0c6;
-            background-image: url(../../img/promo/banners/audition-banner.svg);
-            background-position-y: 65px;
-            
-          }
-        .sprint {
-            background-color: rgb(88, 97, 135);
-            background-image: url(../../img/promo/banners/sprint-banner.svg);  
-            background-position-y: 49px;
-           
-          }
-          .speakit {
-            background-color: rgb(30, 128, 240);
-            background-image: url(../../img/promo/banners/speakit-banner.svg);
-            background-position-y: 49px;
-            
-          }
-          .puzzle {
-            background-color: #c28f80;
-            background-image: url(../../img/promo/banners/english-puzzle-banner.svg);
-            background-position-y: 65px;
-          }
-          .savannah {
-            background-color: darkolivegreen;
-            background-image: url(../../img/promo/banners/savannah-banner.svg);
-            background-size: 130%;
-            background-position: -45px 34px;
-          }
-          .square {
-            background-color: indianred;
-            background-image: url(../../img/promo/banners/square-banner.svg);
-            background-size: 150%;
-            background-position: -30px 39px;
-                       
-          }
-
-        
-
-
-    }
-
-    @media(max-width:1400px) {
-        .part div.img {
-            order: 2;
-        }
-       
-    
-      .img img {
-            height: 150px;
-              
-      }
-     .part div.text{
-          width: auto;
-      }
-     
-    .part {
-        flex-direction: column;
-    }
-    
-    }
-    
-    @media(max-width:500px) {
-        .img img {
-            height: 100px;
-              
-      }
-      & {
-        
-        margin: 0;
-        padding: 20px;
-        
-    }
-    }
-       
-
-
+  text-align: center;
 }
 
+.promo__content_adavntage-blocks {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+}
 
+.adavntage-block {
+  width: 200px;
+  margin: auto;
+  background-size: contain;
+  height: 100px;
+  background-repeat: no-repeat;
+  background-position: center;
+}
 
+.adavntage-block_text {
+  margin-top: 27px;
+  font-size: 4rem;
+  font-family: 'Neucha';
+}
 
+.promo__content_text-title {
+  font-size: 3rem;
+}
+
+.promo__content_advantage-title {
+  font-size: 2.5rem;
+}
+
+.promo__content_text {
+  margin: 100px auto;
+}
+
+.promo__content_text-description {
+  font-size: 2rem;
+  span {
+    text-decoration: underline;
+  }
+}
+
+.promo_advantage-fun {
+  background-image: url(../../img/promo/block1.png);
+}
+
+.promo_advantage-method {
+  width: 250px;
+  height: 140px;
+  background-image: url(../../img/promo/block2.png);
+  .adavntage-block_text {
+    margin-top: 47px;
+  }
+}
+
+.promo_advantage-statistics {
+  background-image: url(../../img/promo/block3.png);
+}
+
+.promo__content-block {
+  display: flex;
+  flex-wrap: wrap;
+  height: 300px;
+  width: 100%;
+  font-size: 1.5rem;
+  justify-content: center;
+  @include media-tablet {
+    height: 100%;
+  }
+}
+
+.content-block-image {
+  width: 46%;
+  height: 300px;
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+  @include media-tablet {
+    width: 80%;
+  }
+}
+
+.content-block-text {
+  width: 46%;
+  margin: auto;
+  @include media-tablet {
+    width: 80%;
+  }
+}
+
+.promo__content_method-image {
+  background-image: url(../../img/promo/learn.png);
+}
+
+.promo__content_game-image {
+  background-image: url(../../img/promo/game.png);
+}
+
+.promo__content_statistic-image {
+  background-image: url(../../img/promo/statistic.png);
+}
 
