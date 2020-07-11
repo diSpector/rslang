@@ -296,11 +296,22 @@ const Cards = {
     element.textContent = '';
   },
 
+  hideWord(elementSelector) {
+    const element = document.querySelector(elementSelector);
+    if (element) {
+      element.textContent = '[...]';
+    }
+  },
+
   renderCard() {
     // информация на карточке
     this.renderElement(Cards.settings.isWordTranslate, null, 'learn--card__wordTranslate', 'learn--card__wordTranslate-hidden', this.currentWord.wordTranslate);
     this.renderElement(Cards.settings.isTextMeaning, null, 'learn--card__textMeaning', 'learn--card__textMeaning-hidden', this.currentWord.textMeaning);
     this.renderElement(Cards.settings.isTextExample, null, 'learn--card__textExample', 'learn--card__textExample-hidden', this.currentWord.textExample);
+
+    // спрятать изучаемое слово в предложениях-примерах
+    this.hideWord('.learn--card__textMeaning i');
+    this.hideWord('.learn--card__textExample b');
 
     // дополнительные элементы
     this.renderElement(Cards.settings.isImage, null, 'learn--card__image', 'learn--card__image-hidden', null, this.currentWord.image);
