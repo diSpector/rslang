@@ -63,7 +63,7 @@ export default function wordFilling(item) {
     if (word.length <= 9 - column) {
       checkEmptyCellsHorizontal(line, column, word);
     } else {
-      horizontalFilling(word);
+      verticalFilling(word);
     }
   }
 
@@ -73,10 +73,9 @@ export default function wordFilling(item) {
     if (word.length <= 9 - line) {
       checkEmptyCellsVertical(line, column, word);
     } else {
-      verticalFilling(word);
+      horizontalFilling(word);
     }
   }
-
   const word = item.split('');
   const random = getRandomInt(2);
   if (random === 1) {
