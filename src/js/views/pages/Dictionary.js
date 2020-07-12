@@ -1,5 +1,4 @@
 import '../../../css/pages/dictionary.scss';
-import AppModel from '../../model/AppModel';
 
 const Dictionary = {
   render: async () => {
@@ -37,8 +36,7 @@ const Dictionary = {
 
     return view;
   },
-  afterRender: async () => {
-    const model = new AppModel();
+  afterRender: async (model) => {
     let settings = null;
 
     function createNewElement(type, selector, innerText, title) {
