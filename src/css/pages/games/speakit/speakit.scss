@@ -1,20 +1,32 @@
-/* @import 'filename.css'; */ /* импорт другого файла стилей (например, шрифта) - вебпак соберет и его*/
-/* @import '~normalize.css'; */ /* тильда означает, что пакет нужно искать в node_modules */
-
 .speak__container{
+    
+    color: black;
     font-size: 18px;
     width: 100%;
    height: 100%;
-    margin: 0 auto;
+    margin: -71px auto 0 auto;
     background-image: url('../../../../img/common/backgrounds/background5.jpg');
     background-size: cover;
+    overflow:hidden;
    
     background-repeat:no-repeat;
     background-position: center;
 }
 
 .speak__container {
+    & > div {
+        overflow-y:scroll;
+        height: 100vh;
+        scrollbar-width: none;
     
+    }
+    & > div::-webkit-scrollbar {
+    width: 0;
+    }
+    
+    .allGames__playScreen-hidden {
+        display: none !important;
+    }
     h1 {
         text-align: center;
     }
@@ -26,9 +38,8 @@
     .start{
        
         width: 100%;
-        height: 100%;
-        padding: 100px;
-        padding-top: 20%;
+        
+        
         box-sizing: border-box;
         /* transition: opacity 0.5s; */
     }
@@ -104,7 +115,7 @@
     
     .game{
         width: 100%;
-        height: 100%;
+        
         padding: 30px;
         box-sizing: border-box;
        
@@ -160,15 +171,18 @@
         display: block;
         box-shadow: 0px 0px 4px 0px;
         margin: 0 auto;
+         border-radius: 10px;
     }
     
     
     .pic__translate{
         
-        font-size: 1.8rem;
+        font-size: 18px;
+        height: 28px;
         text-align: center;
         width: 250px;
-        margin: 20px auto;
+        margin: 15px auto 40px auto;
+        box-sizing: border-box;
     }
     
     .translation-correct{
@@ -180,9 +194,10 @@
     }
     
     .words__container{
-        width: 100%;
+        margin: 0 auto;
+        max-width: 1024px;
         display: flex;
-        justify-content: space-between;
+        justify-content: center;
         flex-wrap: wrap;
     }
     
@@ -192,7 +207,8 @@
         padding: 5px;
         width: 18%;
         min-width: 200px;
-        height: 70px;
+        max-width: 300px;
+        height: 50px;
         margin-bottom: 30px;
         border: 1px solid grey;
         box-shadow: 0px 0px 1px 0px rgba(0,0,0,0.75);
@@ -247,7 +263,7 @@
         color: white;
         font-size: 2.0rem;
         text-align: center;
-        margin-bottom: 20px;
+       
     }
     
     .button{
@@ -260,14 +276,34 @@
         margin: 10px;
     }
     
-    .button__restart{
-        flex-grow: 1;
-      
+    .btn {
+        
+    cursor: pointer;
+    color: black;
+    margin: 10px;
+    padding: 6px 20px;
+    border: 0;
+    outline: none;
+    border-radius: 3px;
+    transition: 0.1s;
+    font-size: inherit;
+    font-family: inherit;
+    background: #fde28e;
+    box-shadow: -3px -3px #e2c774 inset;
+    &:active{
+      background: #efc74d;
+      box-shadow: 3px 3px #caa433 inset;
+    }
+    &:hover{
+      background: #ffe9a6;
+    }
     }
     
     .button__speak,  .button__results{
         width: 50%;
         align-self: center;
+        margin-top: 50px;
+        margin-bottom: 20px;
         
     }
     .button__results{
@@ -277,17 +313,14 @@
         
     }
    
-    .button__next{
-        flex-grow: 1;
-    }
-    .button__startScreen2 {
-         width: 30%;
+  
+    .button__startScreen2, .button__global, .button__startScreen {
+        cursor: pointer;
+        color: black;
         align-self: center;
-        background-color: rgba(255, 200, 100, 0.9)
+        text-decoration: underline;
     }
-    .button__startScreen {
-        flex-grow: 1;
-    }
+    
     
     .button__repeat{
         flex-grow: 1;
@@ -306,7 +339,7 @@
     .results{
         width: 100%;
         margin: 0 auto;
-        padding: 50px;
+        padding: 30px;
         box-sizing: border-box;
         text-align: center;
     }
@@ -315,15 +348,15 @@
         display: flex;
         flex-wrap: wrap;
         justify-content: space-between;
+        width: 300px;
+        margin: 0 auto;
         color: white;
         font-size: 2.0rem;
         text-align: center;
-        margin-bottom: 20px;
+        
     }
     
-    .button__global{
-        flex-grow: 2;
-    }
+    
     
     .results__header{
         text-align: center;
@@ -361,6 +394,9 @@
         background-color: lightgray;
         cursor: pointer;
     }
+    .translate:hover{
+        background-image:none;
+    }
     
     .stat__word .text, .stat__word .transcription, .stat__word .translate{
         width: 30%;
@@ -378,7 +414,12 @@
         margin: 0 auto;
         padding: 50px;
         box-sizing: border-box;
-        height: 100vh;
+               
+    }
+    .global__buttons {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
     }
     
     .global__header{
@@ -390,8 +431,9 @@
         background-color: rgb(244,244,244);
     }
     .global__results{
-        width: 100%;
-        background-color: rgb(244,244,244);
+        max-width: 500px;
+        margin: 0 auto;
+        background-color: rgbа(244,244,244, 0.5);
     }
     .global__results table{
         width: 100%;
@@ -412,43 +454,18 @@
     }
     
     .td__datetime, .td__errors{
-        width: 15%;
+        width: 33%;
     }
     
     .td__words{
-        width: 65%;
+        width: 33%;
     }
     
-    .global__buttons{
-        display: flex;
-        flex-wrap: wrap;
-        justify-content: space-between;
-        color: white;
-        font-size: 2.0rem;
-        text-align: center;
-        margin-bottom: 20px;
-    }
-    .allGames__timerScreen, .allGames__startScreen {
-            height: 100vh;
-        }
-    .allGames__playScreen {
-        height: 100vh;
-    }
-    
-   .button__stats{
-        flex-grow: 1;
-    }
-    @media (max-width: 1120px) {
-        .allGames__playScreen {
-            height: 100%;
-        }
-    }
-    @media (max-width: 1120px) {
-        .allGames__playScreen {
-            height: 100%;
-        }
-    }
+   
 
+    .word {
+        margin: 5px;
+    }
     
     
     @media (max-width: 768px){
@@ -462,6 +479,9 @@
     }
     
     @media (max-width: 510px){
+        .pic__translate{
+            height: 42px;
+        }
         .results__words{
             font-size: 1rem;
             margin: 5px auto;
@@ -472,6 +492,7 @@
             margin-top: 20px;
             img{
                 width: 90%;
+               
             }
         }
         .buttons__container{
@@ -482,12 +503,10 @@
             width: 80%;
         }
     
-        .words__container{
-            justify-content: center;
-        }
-    
+         
         .word{
             width: 100%;
+             
         }
     }
 }
