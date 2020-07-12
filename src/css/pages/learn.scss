@@ -110,6 +110,14 @@
     &-inactive {
         opacity: 0.5;
     }
+
+    &-hidden {
+        display: none;
+    }
+
+    &-active {
+        filter: invert(1);
+    }
 }
 
 .learn--card__content {
@@ -135,10 +143,13 @@
     margin: 10px;
     object-fit: cover;
     border-radius: 50%;
+
+    &-hidden {
+        display: none;
+    }
 }
 
 .learn--card__sentences {
-    margin: 10px;
     
     @include media-mobile-big {
         text-align: center;
@@ -149,7 +160,11 @@
 .learn--card__textMeaningTranslate,
 .learn--card__textExample,
 .learn--card__textExampleTranslate {
-    margin-top: 0;
+    margin: 0 10px 15px;
+
+    &-hidden {
+        display: none;
+    }
 }
 
 .learn--card__textMeaning i,
@@ -157,6 +172,12 @@
     color: #586187;
     font-weight: bold;
     font-style: normal;
+}
+
+.learn--card__inputWrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
 }
 
 .learn--card__input {
@@ -169,11 +190,37 @@
     color: #586187;
     font-size: 2rem;
     font-weight: bold;
+    text-align: center;
+    height: 24px;
+    overflow: hidden;
+    overflow-wrap: normal;
+    transition: 1s ease;
+}
+
+.learn--card__enterAnswer {
+    position: absolute;
+    right: -35px;
+    top: 0;
+    margin: 5px 0;
+    background-size: contain;
+    width: 25px;
+    height: 25px;
+    background-image: url('../../img/learn/enter-word.svg');
+    cursor: pointer;
+    transition: transform 0.1s;
+
+    &:hover {
+        transform: scale(1.1);
+    }
 }
 
 .learn--card__transcription {
     margin: 5px 0;
     color: #1e80f0;
+
+    &-hidden {
+        display: none;
+    }
 }
 
 .learn--card__wordTranslate {
@@ -181,6 +228,10 @@
     color: #586187;
     font-size: 2rem;
     font-weight: bold;
+
+    &-hidden {
+        display: none;
+    }
 }
 
 .learn--card__complexity {
@@ -196,6 +247,10 @@
         &:hover {
             text-decoration: none;
         }
+    }
+
+    &-hidden {
+        display: none;
     }
 }
 
@@ -219,5 +274,9 @@
             border: 1px solid #586187;
             color: white;
         }
+    }
+
+    &-hidden {
+        display: none;
     }
 }
