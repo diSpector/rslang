@@ -407,7 +407,7 @@ const Cards = {
   generateNextCard: async () => {
     Cards.addProgress();
 
-    if (Cards.dayWords.length <= 1) {
+    if (Cards.dayWords.length === 0) {
       Cards.stopGame();
       return;
     }
@@ -433,6 +433,7 @@ const Cards = {
     Cards.model = model;
 
     Cards.dayWords = await model.getWordsForDay();
+    console.log(Cards.dayWords);
     if (wordsAlreadyPlayed !== 0) Cards.dayWords.splice(0, wordsAlreadyPlayed);
     const ourWordObj = Cards.dayWords.pop();
     Cards.currentWord = await model.getNextWord(ourWordObj);
