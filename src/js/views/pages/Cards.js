@@ -403,12 +403,11 @@ const Cards = {
   },
 
   generateNextCard: async () => {
-    Cards.addProgress();
-
     if (Cards.dayWords.length === 0) {
       Cards.stopGame();
       return;
     }
+    Cards.addProgress();
     if (CardsHandler.wordToRepeat && !Cards.dayWords.includes(CardsHandler.wordToRepeat)) {
       Cards.repeateWord(CardsHandler.wordToRepeat);
       CardsHandler.wordToRepeat.isNew = false;
