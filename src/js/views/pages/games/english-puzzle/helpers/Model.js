@@ -110,22 +110,28 @@ const Model = {
   /** сохранить прогресс {level, page, round} */
   saveProgress: async (progressObj) => {
     const userSettings = JSON.parse(localStorage.getItem('EnglishPuzzleSettings'));
-    userSettings.progress = { ...progressObj };
-    localStorage.setItem('EnglishPuzzleSettings', JSON.stringify(userSettings));
+    if (userSettings) {
+      userSettings.progress = { ...progressObj };
+      localStorage.setItem('EnglishPuzzleSettings', JSON.stringify(userSettings));
+    }
   },
 
   /** сохранить конфиг с подсказками */
   saveTips: async (tipsObj) => {
     const userSettings = JSON.parse(localStorage.getItem('EnglishPuzzleSettings'));
-    userSettings.tips = { ...tipsObj };
-    localStorage.setItem('EnglishPuzzleSettings', JSON.stringify(userSettings));
+    if (userSettings) {
+      userSettings.tips = { ...tipsObj };
+      localStorage.setItem('EnglishPuzzleSettings', JSON.stringify(userSettings));
+    }
   },
 
   /** сохранить конфиг с подсказками */
   saveStats: async (statsObj) => {
     const userSettings = JSON.parse(localStorage.getItem('EnglishPuzzleSettings'));
-    userSettings.localStat = { ...statsObj };
-    localStorage.setItem('EnglishPuzzleSettings', JSON.stringify(userSettings));
+    if (userSettings) {
+      userSettings.localStat = { ...statsObj };
+      localStorage.setItem('EnglishPuzzleSettings', JSON.stringify(userSettings));
+    }
   },
 
   getPictureInfoFromGithub: async (level, page) => {
