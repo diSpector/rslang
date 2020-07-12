@@ -20,7 +20,6 @@ const Statistics = {
     return view;
   },
   afterRender: async (model) => {
-    await model.loginUser({ email: '66group@gmail.com', password: 'Gfhjkm_123' });
     const word = await model.getLearnedWordsCountByDates();
     const words = await model.getLearnedWordsByDates();
     function drawStatistics(nameStatistics) {
