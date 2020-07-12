@@ -374,7 +374,7 @@ const Cards = {
     cardContent.innerHTML = ` <div class="learn--card__stopGame">
                               <h2>Ура! На сегодня всё.</h2>
                                 <div class="learn--card__statistic">
-                                  <p class="complited">Карточек завершено: ${CardsHandler.statistic.cardsCompleted}</p>
+                                  <p class="complited">Карточек завершено: ${Cards.settings.maxWordsPerDay}</p>
                                   <p class="correct">Правильные ответы: ${Math.trunc(percentOfCorrect)}%</p>
                                   <p class="new">Новые слова: ${CardsHandler.statistic.newWords}</p>
                                   <p class="series">Самая длинная серия правильных ответов: ${CardsHandler.statistic.bestCorrectSeries}</p>
@@ -398,19 +398,23 @@ const Cards = {
   getRandomInRange: (min, max) => Math.floor(Math.random() * (max - min + 1)) + min,
 
   repeateWord: (word) => {
-    if (Cards.dayWords.length > 2) {
-      const wordIndex = Cards.getRandomInRange(0, Cards.dayWords.length - 1);
-      Cards.dayWords = [...Cards.dayWords.splice(0, wordIndex), word, ...Cards.dayWords.splice(1)];
-    }
+    // if (Cards.dayWords.length > 2) {
+    const wordIndex = Cards.getRandomInRange(0, Cards.dayWords.length - 1);
+    Cards.dayWords = [...Cards.dayWords.splice(0, wordIndex), word, ...Cards.dayWords.splice(1)];
+    // }
   },
 
-  generateNextCard: async (wordToRepeat) => {
+  generateNextCard: async () => {
     Cards.addProgress();
 
     if (Cards.dayWords.length <= 1) {
       Cards.stopGame();
+      return;
     }
-    if (wordToRepeat && !Cards.dayWords.includes(wordToRepeat)) Cards.repeateWord(wordToRepeat);
+    if (CardsHandler.wordToRepeat && !Cards.dayWords.includes(CardsHandler.wordToRepeat)) {
+      Cards.repeateWord(CardsHandler.wordToRepeat);
+      CardsHandler.wordToRepeat.isNew = false;
+    }
 
     const ourWordObj = Cards.dayWords.pop();
     Cards.currentWord = await Cards.model.getNextWord(ourWordObj);
