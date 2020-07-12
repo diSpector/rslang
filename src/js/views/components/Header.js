@@ -63,7 +63,6 @@ const Header = {
         const log = logs;
         log.onclick = () => model.logOutUser();
         log.textContent = 'Выйти';
-        log.setAttribute('href', '#/');
       });
     }
 
