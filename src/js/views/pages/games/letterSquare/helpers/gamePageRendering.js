@@ -74,7 +74,7 @@ export default function gamePageRendering() {
         <div class="letterSquare--statistic__numberWordsFound">Найденные слова: </div>
         <div class="letterSquare--statistic__numberWordsNotFound">Ненайденные слова: </div>
         <button class="letterSquare--statistic__button--play" onclick="document.location.reload()">Играть снова</button>
-        <button class="letterSquare--statistic__button--next" onclick="document.location.reload()">Продолжить</button><br>
+        <button class="letterSquare--statistic__button--next">Продолжить</button><br>
         <a class="letterSquare--statistic__button--back" onclick="location.href='/'">Перейти на главную страницу</a><br>
         <a class="letterSquare--statistic__button--statistics" href='/#/statistic'>Статистика за все игры</a><br>
       </div>

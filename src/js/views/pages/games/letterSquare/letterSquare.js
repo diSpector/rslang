@@ -55,128 +55,109 @@ const letterSquare = {
     let round = 0;
     let difficulty = 0;
     let timer;
-    let time = 120;
+    let time = 5;
+    let arr1 = '';
+    let arr2 = '';
+    const comma = ',';
+    let unfoundWord = [];
+    let foundWord = [];
+    let subStr1 = '';
+    let subStr2 = '';
 
-    const timerw = () => {
-      document.querySelector('.letterSquare--game__time').innerHTML = time;
-      time -= 1;
-      if (time < 0) {
-        clearTimeout(timer);
-        if (document.querySelector('.letterSquare__statistic').classList.contains('letterSquare-hidden')) {
-          generateStatistic();
-        }
-      } else {
-        timer = setTimeout(timerw, 1000);
-      }
-    };
+    function generateStatistic() {
+      unfoundWord = [];
+      arr1 = '';
+      arr2 = '';
+      unfoundWord = document.querySelectorAll('.letterSquare--wordList__itemList');
+      unfoundWord.forEach((item) => {
+        arr2 += item.innerHTML + comma;
+      });
+      foundWord = [];
+      foundWord = document.querySelectorAll('.letterSquare--wordList__foundWord');
+      foundWord.forEach((item) => {
+        arr1 += item.innerHTML + comma;
+      });
+      subStr1 = '';
+      subStr1 = arr1.split(',');
+      subStr1.splice(-1, 1);
+      subStr2 = '';
+      subStr2 = arr2.split(',');
+      subStr2.splice(-1, 1);
 
-    document.querySelector('.allGames__choice_learn').onclick = () => {
-      document.querySelector('.allGames__choice_learn').classList.add('select');
-      document.querySelector('.allGames__choice_new').classList.remove('select');
-      document.querySelector('.allGames__choice_levels').classList.add('hidden');
-    };
-    document.querySelector('.allGames__choice_new').onclick = () => {
-      document.querySelector('.allGames__choice_new').classList.add('select');
-      document.querySelector('.allGames__choice_learn').classList.remove('select');
-      document.querySelector('.allGames__choice_levels').classList.remove('hidden');
-    };
+      document.querySelector('.letterSquare__game').classList.add('letterSquare-hidden');
+      document.querySelector('.letterSquare__statistic').classList.remove('letterSquare-hidden');
 
-    startBtn.addEventListener('click', async () => {
-      const isNewWords = document.querySelector('.allGames__choice_new').classList.contains('select');
-      difficulty = document.getElementById('levels').value;
-      round = document.getElementById('pages').value;
-      if (difficulty && round && isNewWords) {
-        const data = await letterSquare.settings.model.getSetOfWordsAndTranslations(difficulty, round - 1,
-          8, 0);
-        letterSquare.data = letterSquare.reformat(data);
-        data.forEach(element => words.push(element.correct));
-        for (let i = 0; i < words.length; i += 1) {
-          console.log(words[i].word.toString().length);
-          if (words[i].word.toString().length > 9) {
-            words.splice(i, 1);
+      function addingWordsStatistics(selector, words) {
+        console.log(document.querySelector('.letterSquare--statistics__container'));
+        if (document.querySelector('.letterSquare--statistics__container')) {
+          const items = document.querySelectorAll('.letterSquare--statistics__container');
+          console.log(items);
+          for (let i = 0; i < items.length; i += 1) {
+            items[i].remove();
           }
         }
-        console.log(words);
-      } else {
-        const data = await letterSquare.settings.model.getSetOfLearnedWords(8);
-        letterSquare.data = letterSquare.reformat(data);
-        data.forEach(element => words.push(element));
-        for (let i = 0; i < words.length; i += 1) {
-        console.log(words[i].word.toString().length);
-          if (words[i].word.toString().length > 9) {
-            words.splice(i, 1);
-          }
-        }
-        console.log(words);
-      } 
-      startGame();
-    });
-
-    function startGame() {
-      document.querySelector('.allGames__startScreen').classList.add('letterSquare-hidden');
-      document.querySelector('.allGames__timerScreen').classList.remove('allGames__timerScreen-hidden');
-      const timerStart = () => {
-        document.querySelector('.allGames__timer').innerHTML = time1;
-        time1 -= 1;
-        if (time1 < 0) {
-          clearTimeout(timer1);
-          document.querySelector('.letterSquare__game').classList.remove('letterSquare-hidden');
-          document.querySelector('.allGames__timerScreen').classList.add('letterSquare-hidden');
-          playGame(words);
-          timerw();
-        } else {
-          timer1 = setTimeout(timerStart, 1000);
-        }
-      };
-      timerStart();
-    }
-
-
-    function playGame (words) {
-      const numberСell = 10;
-      const playField = document.createElement('table');
-      playField.setAttribute('id', 'myTable');
-      playField.setAttribute('class', `letterSquare--table`);
-      for (let i = 0; i < numberСell; i += 1) {
-        const tr = document.createElement('tr');
-        for (let j = 0; j < numberСell; j += 1) {
-          const td = document.createElement('td');
-          td.setAttribute('id', `${i}${j}`);
-          tr.appendChild(td);
-        }
-        playField.appendChild(tr);
-      }
-
-      document.querySelector('.letterSquare--playingField').appendChild(playField);
-      for (let i = 0; i < words.length; i += 1) {
-        wordFilling(words[i].word);
-      }
-
-      function addingWords(selector, words) {
         const list = document.querySelector(`${selector}`);
         for (let i = 0; i < words.length; i += 1) {
           const listItem = document.createElement('div');
-          listItem.setAttribute('class', 'letterSquare--wordList__itemList');
-          listItem.innerHTML = words[i].word;
+          listItem.setAttribute('class', 'letterSquare--statistics__container');
+          const listItemWord = document.createElement('div');
+          const audio = document.createElement('div');
+          audio.setAttribute('class', 'letterSquare--statistics__audio');
+          audio.setAttribute('id', `${words[i]}`);
+          listItemWord.setAttribute('class', 'letterSquare--statistic__wordList__itemList');
+          listItemWord.innerHTML = words[i];
+          listItem.appendChild(audio);
+          listItem.appendChild(listItemWord);
           list.appendChild(listItem);
         }
       }
 
-      for (let r = 0; r < playField.rows.length; r += 1) {
-        for (let c = 0; c < playField.rows[r].cells.length; c += 1) {
-          if (playField.rows[r].cells[c].innerHTML === '') {
-            let cellValue = '';
-            const alphabet = 'abcdefghijklmnopqrstuvwxyz';
-            while (cellValue.length < 1) { cellValue += alphabet[Math.random() * alphabet.length | 0]; }
-            playField.rows[r].cells[c].innerHTML = cellValue;
-          }
-        }
-      }
-      addingWords('.letterSquare--wordList__list', words);
-      findingWord(words);
+      console.log(subStr1);
+      console.log(subStr2);
+
+      addingWordsStatistics('.letterSquare--statistic__numberWordsFound', subStr1);
+      addingWordsStatistics('.letterSquare--statistic__numberWordsNotFound', subStr2);
+      searchAudio(words);
     }
 
     function findingWord(words) {
+      function check(words) {
+        for (let i = 0; i < words.length; i += 1) {
+          let wordsProto = words[i].word;
+          let wordProto = word;
+          wordsProto = wordsProto.split('').sort().join('');
+          wordProto = wordProto.split('').sort().join('');
+          if (wordsProto === wordProto) {
+            correctAudio.play();
+            const tdGuessedItem = document.querySelectorAll('.td_active');
+            tdGuessedItem.forEach((item) => {
+              item.classList.add('td_guessed');
+            });
+            const worList = document.querySelectorAll('.letterSquare--wordList__itemList');
+            worList.forEach((item) => {
+              if (item.innerHTML.split('').sort().join('') === wordProto) {
+                item.classList.remove('letterSquare--wordList__itemList');
+                item.classList.add('letterSquare--wordList__foundWord');
+              }
+            });
+            guessedWords.push(word);
+            word = '';
+            column = '';
+            line = '';
+            cellNumbers = '';
+            lineSort = '';
+            columnSort = '';
+            counterWord -= 1;
+            if (counterWord === 0) {
+              generateStatistic();
+            }
+            break;
+          } else if (words[i] !== word && i === words.length - 1) {
+            errorAudio.play();
+          }
+        }
+      }
+
       function checkWord(letter, idLetters) {
         word += String(letter);
         cellNumbers += idLetters;
@@ -238,44 +219,7 @@ const letterSquare = {
             }
           }
           check(words);
-        }
-      }
-
-      function check(words) {
-        for (let i = 0; i < words.length; i += 1) {
-          let wordsProto = words[i].word;
-          let wordProto = word;
-          wordsProto = wordsProto.split('').sort().join('');
-          wordProto = wordProto.split('').sort().join('');
-          if (wordsProto === wordProto) {
-            correctAudio.play();
-            const tdGuessedItem = document.querySelectorAll('.td_active');
-            tdGuessedItem.forEach((item) => {
-              item.classList.add('td_guessed');
-            });
-            const worList = document.querySelectorAll('.letterSquare--wordList__itemList');
-            worList.forEach((item) => {
-              if (item.innerHTML.split('').sort().join('') === wordProto) {
-                item.classList.remove('letterSquare--wordList__itemList');
-                item.classList.add('letterSquare--wordList__foundWord');
-              }
-            });
-            guessedWords.push(word);
-            word = '';
-            column = '';
-            line = '';
-            cellNumbers = '';
-            lineSort = '';
-            columnSort = '';
-            counterWord -= 1;
-            if (counterWord === 0) {
-              generateStatistic();
-            }
-            break;
-          } else if (words[i] !== word && i === words.length - 1) {
-            errorAudio.play();
-          }
-        }
+        };
       }
 
       function catchLetters(idLetters) {
@@ -302,49 +246,131 @@ const letterSquare = {
         });
     }
 
-    let arr1 = '';
-    let arr2 = '';
-    const comma = ',';
+    const timerw = () => {
+      document.querySelector('.letterSquare--game__time').innerHTML = time;
+      time -= 1;
+      if (time < 0) {
+        clearTimeout(timer);
+        generateStatistic();
+      } else {
+        timer = setTimeout(timerw, 1000);
+      }
+    };
 
-    function generateStatistic() {
-      const unfoundWord = document.querySelectorAll('.letterSquare--wordList__itemList');
-      unfoundWord.forEach((item) => {
-        arr2 += item.innerHTML + comma;
-      });
-      const foundWord = document.querySelectorAll('.letterSquare--wordList__foundWord');
-      foundWord.forEach((item) => {
-        arr1 += item.innerHTML + comma;
-      });
-      const subStr1 = arr1.split(',');
-      subStr1.splice(-1, 1);
-      const subStr2 = arr2.split(',');
-      subStr2.splice(-1, 1);
+    document.querySelector('.allGames__choice_learn').onclick = () => {
+      document.querySelector('.allGames__choice_learn').classList.add('select');
+      document.querySelector('.allGames__choice_new').classList.remove('select');
+      document.querySelector('.allGames__choice_levels').classList.add('hidden');
+    };
+    document.querySelector('.allGames__choice_new').onclick = () => {
+      document.querySelector('.allGames__choice_new').classList.add('select');
+      document.querySelector('.allGames__choice_learn').classList.remove('select');
+      document.querySelector('.allGames__choice_levels').classList.remove('hidden');
+    };
 
-      document.querySelector('.letterSquare__game').classList.add('letterSquare-hidden');
-      document.querySelector('.letterSquare__statistic').classList.remove('letterSquare-hidden');
+    startBtn.addEventListener('click', async () => {
+      const isNewWords = document.querySelector('.allGames__choice_new').classList.contains('select');
+      difficulty = document.getElementById('levels').value;
+      round = document.getElementById('pages').value;
+      if (difficulty && round && isNewWords) {
+        const data = await letterSquare.settings.model.getSetOfWordsAndTranslations(difficulty,
+          round - 1, 8, 0);
+        letterSquare.data = letterSquare.reformat(data);
+        data.forEach((element) => words.push(element.correct));
+        for (let i = 0; i < words.length; i += 1) {
+          if (words[i].word.toString().length > 9) {
+            words.splice(i, 1);
+          }
+        }
+      } else {
+        const data = await letterSquare.settings.model.getSetOfLearnedWords(8);
+        letterSquare.data = letterSquare.reformat(data);
+        data.forEach((element) => words.push(element));
+        for (let i = 0; i < words.length; i += 1) {
+          if (words[i].word.toString().length > 9) {
+            words.splice(i, 1);
+          }
+        }
+      }
+      startGame('.allGames__startScreen');
+    });
 
-      function addingWordsStatistics(selector, words) {
+    function startGame(screen) {
+      document.querySelector(`${screen}`).classList.add('letterSquare-hidden');
+      document.querySelector('.allGames__timerScreen').classList.remove('allGames__timerScreen-hidden');
+      document.querySelector('.allGames__timerScreen').classList.remove('letterSquare-hidden');
+      const timerStart = () => {
+        document.querySelector('.allGames__timer').innerHTML = time1;
+        time1 -= 1;
+        if (time1 < 0) {
+          clearTimeout(timer1);
+          document.querySelector('.letterSquare__game').classList.remove('letterSquare-hidden');
+          document.querySelector('.allGames__timerScreen').classList.add('letterSquare-hidden');
+          playGame(words);
+          timerw();
+        } else {
+          timer1 = setTimeout(timerStart, 1000);
+        }
+      };
+      timerStart();
+    }
+
+
+    function playGame (words) {
+      if (document.querySelector('#myTable')) {
+        document.querySelector('#myTable').remove();
+      }
+      if (document.querySelector('.letterSquare--wordList__itemList')) {
+        const items = document.querySelectorAll('.letterSquare--wordList__itemList');
+        for (let i = 0; i < items.length; i++) {
+          items[i].remove();
+        }
+      }
+      const numberСell = 10;
+      const playField = document.createElement('table');
+      playField.setAttribute('id', 'myTable');
+      playField.setAttribute('class', 'letterSquare--table');
+      for (let i = 0; i < numberСell; i += 1) {
+        const tr = document.createElement('tr');
+        for (let j = 0; j < numberСell; j += 1) {
+          const td = document.createElement('td');
+          td.setAttribute('id', `${i}${j}`);
+          tr.appendChild(td);
+        }
+        playField.appendChild(tr);
+      }
+
+      document.querySelector('.letterSquare--playingField').appendChild(playField);
+      for (let i = 0; i < words.length; i += 1) {
+        wordFilling(words[i].word);
+      }
+
+      function addingWords(selector, words) {
         const list = document.querySelector(`${selector}`);
         for (let i = 0; i < words.length; i += 1) {
           const listItem = document.createElement('div');
-          listItem.setAttribute('class', '.letterSquare--statistics__container');
-          const listItemWord = document.createElement('div');
-          const audio = document.createElement('div');
-          audio.setAttribute('class', 'letterSquare--statistics__audio');
-          audio.setAttribute('id', `${words[i]}`);
-          listItemWord.setAttribute('class', 'letterSquare--statistic__wordList__itemList');
-          listItemWord.innerHTML = words[i];
-          listItem.appendChild(audio);
-          listItem.appendChild(listItemWord);
+          listItem.setAttribute('class', 'letterSquare--wordList__itemList');
+          listItem.innerHTML = words[i].word;
           list.appendChild(listItem);
         }
       }
 
-      addingWordsStatistics('.letterSquare--statistic__numberWordsFound', subStr1);
-      addingWordsStatistics('.letterSquare--statistic__numberWordsNotFound', subStr2);
+      for (let r = 0; r < playField.rows.length; r += 1) {
+        for (let c = 0; c < playField.rows[r].cells.length; c += 1) {
+          if (playField.rows[r].cells[c].innerHTML === '') {
+            let cellValue = '';
+            const alphabet = 'abcdefghijklmnopqrstuvwxyz';
+            while (cellValue.length < 1) { cellValue += alphabet[Math.random() * alphabet.length | 0]; }
+            playField.rows[r].cells[c].innerHTML = cellValue;
+          }
+        }
+      }
+      addingWords('.letterSquare--wordList__list', words);
+      findingWord(words);
     }
 
     function searchAudio(words) {
+      console.log('asdfghjklfghj');
       document.querySelector('.letterSquare--statistic__card').addEventListener('click', (event) => {
         if (event.target.classList.value === 'letterSquare--statistics__audio') {
           const id = event.target.id;
@@ -356,8 +382,51 @@ const letterSquare = {
           }
         }
       });
-    };
-    searchAudio(words);
+    }
+
+    nextBtn.addEventListener('click', async () => {
+      /** получить следующие level, page, round на основании текущих */
+      difficulty = parseInt(difficulty);
+      round = parseInt(round);
+      const maxLevel = 6;
+      const maxRound = 20;
+      console.log(difficulty);
+      console.log(round);
+
+      if (difficulty < maxLevel && round < maxRound) {
+        round += 1;
+      }
+
+      if (difficulty === maxLevel && round === maxRound) {
+        round = 1;
+        difficulty = 1;
+      }
+
+      if (round === maxRound) {
+        difficulty += 1;
+        round = 1;
+      }
+
+      console.log(difficulty);
+      console.log(round);
+
+      if (difficulty && round) {
+        words = [];
+        time1 = 3;
+        time = 5;
+        const data = await letterSquare.settings.model.getSetOfWordsAndTranslations(difficulty,
+          round - 1, 8, 0);
+        letterSquare.data = letterSquare.reformat(data);
+        data.forEach((element) => words.push(element.correct));
+        for (let i = 0; i < words.length; i += 1) {
+          if (words[i].word.toString().length > 9) {
+            words.splice(i, 1);
+          }
+        }
+        console.log(words);
+        startGame('.letterSquare__statistic');
+      }
+    });
   },
 };
 
