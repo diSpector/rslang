@@ -233,17 +233,15 @@ const Audition = {
     const statistic = await Audition.settings.model.getStatForGame('au');
     console.log(statistic);
     let template = '';
-    let num = 1;
-    statistic.forEach((elem) => {
+    statistic.forEach((elem, num) => {
       template += `
         <tr class="statTable__bodyRow">
-          <td class="statTable__bodyData">${num}</td>
+          <td class="statTable__bodyData">${num + 1}</td>
           <td class="statTable__bodyData">${elem.y}</td>
           <td class="statTable__bodyData">${elem.n}</td>
           <td class="statTable__bodyData">${elem.d}</td>
         </tr>
       `;
-      num += 1;
     });
     tableBody.innerHTML = template;
   },
@@ -310,10 +308,10 @@ const Audition = {
     await Audition.settings.model.saveStatForGame({ name: 'au', y: CorrectAnswers, n: WrongAnswers });
   },
 
-  stopGame() {
-    Audition.generateStatistic('.audition--wordScreen');
+  async stopGame() {
+    await Audition.saveGlobalStatistic();
+    await Audition.generateStatistic('.audition--wordScreen');
     Utils.removeBlock('.audition--progressBar');
-    Audition.saveGlobalStatistic();
   },
 
   addStatisticButtonsHandler() {
