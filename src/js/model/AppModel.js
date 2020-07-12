@@ -400,7 +400,6 @@ export default class AppModel {
         return { error: true, errorText: 'Неверный логин/пароль' };
       }
       const content = await rawResponse.json();
-      console.log(content);
       this.authToken = content.token;
       this.userId = content.userId;
       return { data: content, error: false, errorText: '' };
