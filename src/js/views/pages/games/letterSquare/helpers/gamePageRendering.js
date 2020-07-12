@@ -76,8 +76,24 @@ export default function gamePageRendering() {
         <button class="letterSquare--statistic__button--play" onclick="document.location.reload()">Играть снова</button>
         <button class="letterSquare--statistic__button--next">Продолжить</button><br>
         <a class="letterSquare--statistic__button--back" onclick="location.href='/'">Перейти на главную страницу</a><br>
-        <a class="letterSquare--statistic__button--statistics" href='/#/statistic'>Статистика за все игры</a><br>
+        <a class="letterSquare--statistic__button--statistics">Статистика за все игры</a><br>
       </div>
     </section>
+
+    <section class="letterSquare letterSquare__globalStatistic letterSquare-hidden">
+          <table class="globalStatistic__statTable">
+            <thead class="statTable__head">
+              <tr class="statTable__headRow">
+              <th class="statTable__headData">№</th>
+                <th class="statTable__headData">Верных ответов</th>
+                <th class="statTable__headData">Неверных ответов</th>
+                <th class="statTable__headData">Дата игры</th>
+              </tr>
+            </thead>
+            <tbody class="statTable__body">
+            </tbody>  
+          </table>
+          <button class="globalStatistic__button">Вернуться назад</button>
+        </section>
         `;
 }

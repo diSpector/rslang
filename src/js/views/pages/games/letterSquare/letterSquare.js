@@ -6,10 +6,12 @@ import gamePageRendering from './helpers/gamePageRendering';
 import wordFilling from './helpers/addingWordsToTable';
 
 const letterSquare = {
-
   settings: {
     model: null,
   },
+
+  correctAnswers: [],
+  wrongAnswers: [],
 
   beforeRender() {
     this.clearHeaderAndFooter();
@@ -64,6 +66,7 @@ const letterSquare = {
     let subStr1 = '';
     let subStr2 = '';
 
+
     function generateStatistic() {
       unfoundWord = [];
       arr1 = '';
@@ -88,10 +91,8 @@ const letterSquare = {
       document.querySelector('.letterSquare__statistic').classList.remove('letterSquare-hidden');
 
       function addingWordsStatistics(selector, words) {
-        console.log(document.querySelector('.letterSquare--statistics__container'));
         if (document.querySelector('.letterSquare--statistics__container')) {
           const items = document.querySelectorAll('.letterSquare--statistics__container');
-          console.log(items);
           for (let i = 0; i < items.length; i += 1) {
             items[i].remove();
           }
@@ -114,9 +115,14 @@ const letterSquare = {
 
       console.log(subStr1);
       console.log(subStr2);
+      letterSquare.correctAnswers = subStr1;
+      letterSquare.wrongAnswers = subStr2;
 
       addingWordsStatistics('.letterSquare--statistic__numberWordsFound', subStr1);
       addingWordsStatistics('.letterSquare--statistic__numberWordsNotFound', subStr2);
+
+      letterSquare.saveGlobalStatistic();
+
       searchAudio(words);
     }
 
@@ -370,7 +376,6 @@ const letterSquare = {
     }
 
     function searchAudio(words) {
-      console.log('asdfghjklfghj');
       document.querySelector('.letterSquare--statistic__card').addEventListener('click', (event) => {
         if (event.target.classList.value === 'letterSquare--statistics__audio') {
           const id = event.target.id;
@@ -384,14 +389,24 @@ const letterSquare = {
       });
     }
 
+    const globalStatBtn = document.querySelector('.letterSquare--statistic__button--statistics');
+    const globalStatisticButton = document.querySelector('.globalStatistic__button');
+    globalStatBtn.addEventListener('click', () => {
+      document.querySelector('.letterSquare__statistic').classList.add('letterSquare-hidden');
+      document.querySelector('.letterSquare__globalStatistic').classList.remove('letterSquare-hidden');
+    });
+
+    globalStatisticButton.onclick = () => {
+      document.querySelector('.letterSquare__statistic').classList.remove('letterSquare-hidden');
+      document.querySelector('.letterSquare__globalStatistic').classList.add('letterSquare-hidden');
+    };
+
     nextBtn.addEventListener('click', async () => {
       /** получить следующие level, page, round на основании текущих */
       difficulty = parseInt(difficulty);
       round = parseInt(round);
       const maxLevel = 6;
       const maxRound = 20;
-      console.log(difficulty);
-      console.log(round);
 
       if (difficulty < maxLevel && round < maxRound) {
         round += 1;
@@ -407,9 +422,6 @@ const letterSquare = {
         round = 1;
       }
 
-      console.log(difficulty);
-      console.log(round);
-
       if (difficulty && round) {
         words = [];
         time1 = 3;
@@ -423,10 +435,16 @@ const letterSquare = {
             words.splice(i, 1);
           }
         }
-        console.log(words);
         startGame('.letterSquare__statistic');
       }
     });
+  },
+
+  async saveGlobalStatistic() {
+    const CorrectAnswers = letterSquare.correctAnswers.length;
+    const WrongAnswers = letterSquare.wrongAnswers.length;
+    console.log('correct: ', CorrectAnswers, 'wrong: ', WrongAnswers);
+    await letterSquare.settings.model.saveStatForGame({ name: 'au', y: CorrectAnswers, n: WrongAnswers });
   },
 };
 
