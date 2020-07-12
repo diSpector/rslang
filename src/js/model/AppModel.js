@@ -124,16 +124,21 @@ export default class AppModel {
 
   // utilty function, gets word data from API by its index
   async getWordDataByIndex(index) {
-    // console.log(index);
-    const group = Math.floor(index / 600);
-    const page = Math.floor((index - group * 600) / 20);
-    const wordIndex = index - (group * 600) - (page * 20);
-    const url = `https://afternoon-falls-25894.herokuapp.com/words?group=${group}&page=${page}`;
-    const responce = await fetch(url);
-    const data = await responce.json();
-    //console.log(data);
-    const result = this.reformatWordData(data[wordIndex]);
-    return result;
+    if (index < 0 || index >= this.maxDictionaryLength) {
+      return { error: true, errorText: 'Неверный индекс слова' };
+    }
+    const group = Math.floor(index / this.wordSetLength);
+    const page = Math.floor((index - group * this.wordSetLength) / this.defaultPageLength);
+    const wordIndex = index - (group * this.wordSetLength) - (page * this.defaultPageLength);
+    const url = `${this.searchString}group=${group}&page=${page}`;
+    try {
+      const responce = await fetch(url);
+      const data = await responce.json();
+      const result = this.reformatWordData(data[wordIndex]);
+      return result;
+    } catch (e) {
+      return { error: true, errorText: this.serverErrorMessage };
+    }
   }
 
   // выдает случайное слово и 4 неправильных перевода к нему
@@ -395,7 +400,9 @@ export default class AppModel {
         return { error: true, errorText: 'Неверный логин/пароль' };
       }
       const content = await rawResponse.json();
-      //console.log(content);
+      console.log(content);
+      this.authToken = content.token;
+      this.userId = content.userId;
       return { data: content, error: false, errorText: '' };
     } catch (e) {
       return { error: true, errorText: 'Сервер авторизации недоступен' };
