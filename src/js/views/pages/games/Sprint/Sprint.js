@@ -2,7 +2,7 @@ import '../../../../../css/pages/games/Sprint/Sprint.scss';
 import '../../../../../css/pages/games/allGames.scss';
 import Utils from '../../../../services/Utils';
 import { generateNewWord, generateLearnWord, timerw } from './SprintGame';
-import Game from '../game';
+import Game from '../Game';
 
 const Sprint = {
   settings: {

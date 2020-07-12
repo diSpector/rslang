@@ -392,8 +392,11 @@
 .sprint--end__slide{
   display: flex;
   width: 36px;
-  margin: 10px auto
-;}
+  margin: 10px auto;
+  &.hidden {
+    display: none;
+  }
+}
 
 .sprint--end__slide > span {
   cursor: pointer;
@@ -407,7 +410,7 @@
   }
 }
 
-.sprint--end__button_repeat,.sprint--end__button_main, .sprint--end__button_continue, .sprint--end__button_global, .sprint--button__warn {
+.sprint--end__button_repeat,.sprint--end__button_main, .sprint--end__button_continue, .sprint--end__button_global, .sprint--button__warn, .globalStatistic__button {
   cursor: pointer;
   width: 85%;
   margin: 6px;
@@ -452,4 +455,38 @@
     height: 27px;
     width: 27px;
   }
+}
+
+.sprint--end__globalStatistic {
+  height: auto;
+}
+
+.globalStatistic__statTable {
+  width: 100%;
+  border-collapse: collapse;
+  height: 86%;
+  font-size: 1.9rem;
+}
+
+.statTable__headRow {
+  font-weight: bold;
+  background: #ffe9a6;;
+}
+
+.statTable__headData {
+  border: 1px solid #f1dea2;
+}
+
+.statTable__bodyRow {
+  &:nth-child(2n) {
+    background: #f4f4f4;
+  }
+  &:hover {
+    background: #fffde8;
+  }
+}
+
+.statTable__bodyData {
+  border: 1px solid #e8e9eb;
+  padding: 4px;
 }

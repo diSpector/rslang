@@ -6,7 +6,7 @@ const correctAudio = new Audio('src/audio/correct.mp3');
 const errorAudio = new Audio('src/audio/error.mp3');
 let obj = {};
 let timer;
-let time = 1;
+let time = 60;
 let wordNumber = 0;
 let arrayWord;
 let round;
@@ -14,7 +14,7 @@ let level;
 const lengthRound = 19;
 const lengthLevel = 6;
 let checkAnswer = true;
-
+let myModel = null;
 
 const generate = (words) => {
   const word = words[0];
@@ -122,10 +122,9 @@ const searchAudio = () => {
   });
 };
 
-async setGlobalStatisticData() {
+const setGlobalStatisticData = async () => {
   const tableBody = document.querySelector('.statTable__body');
-  const statistic = await Audition.settings.model.getStatForGame('au');
-  console.log(statistic);
+  const statistic = await myModel.getStatForGame('sp');
   let template = '';
   statistic.forEach((elem, num) => {
     template += `
@@ -138,9 +137,33 @@ async setGlobalStatisticData() {
     `;
   });
   tableBody.innerHTML = template;
-}
+};
 
-const generateStatistic = () => {
+const saveGlobalStatistic = async () => {
+  const correctAnswersCount = correctAnswer.length;
+  const wrongAnswersCount = errorAnswer.length;
+  await myModel.saveStatForGame({ name: 'sp', y: correctAnswersCount, n: wrongAnswersCount });
+};
+
+const addStatisticButtonsHandler = () => {
+  const statisticMessage = document.querySelector('.sprint--end__message');
+  const globalStatisticScreen = document.querySelector('.sprint--end__globalStatistic');
+  const statisticScreenDots = document.querySelector('.sprint--end__slide');
+  const statisticButton = document.querySelector('.sprint--end__button_global');
+  const globalStatisticButton = document.querySelector('.globalStatistic__button');
+  statisticButton.onclick = () => {
+    statisticMessage.classList.add('hidden');
+    statisticScreenDots.classList.add('hidden');
+    globalStatisticScreen.classList.remove('hidden');
+  };
+  globalStatisticButton.onclick = () => {
+    statisticMessage.classList.remove('hidden');
+    statisticScreenDots.classList.remove('hidden');
+    globalStatisticScreen.classList.add('hidden');
+  };
+};
+
+const generateStatistic = async () => {
   document.querySelector('.sprint--game').classList.add('hidden');
   document.querySelector('.sprint--end').classList.remove('hidden');
   const result = document.querySelector('.sprint--game__result_points').innerHTML;
@@ -150,7 +173,9 @@ const generateStatistic = () => {
   document.querySelector('.sprint__message__record').innerHTML = Math.max(...data);
   const average = data.reduce((accum, item) => Number(accum) + Number(item)) / data.length;
   document.querySelector('.sprint__message__average').innerHTML = Math.round(average);
-  setGlobalStatisticData();
+  await saveGlobalStatistic();
+  await setGlobalStatisticData();
+  addStatisticButtonsHandler();
   document.querySelector('.sprint--end__slide_main').onclick = () => {
     document.querySelector('.sprint--end__slide_main').classList.add('active');
     document.querySelector('.sprint--end__slide_statistic').classList.remove('active');
@@ -221,23 +246,28 @@ const game = (model, data) => {
       if (event.code === 'ArrowLeft' || event.code === 'ArrowRight') {
         if (event.code === 'ArrowLeft') {
           count += 1;
+          document.querySelector('.sprint--game__arrow_left').classList.add('click');
+          setTimeout(() => {
+            document.querySelector('.sprint--game__arrow_left').classList.remove('click');
+          }, 100);
         }
         if (event.code === 'ArrowRight') {
           count += 0;
+          document.querySelector('.sprint--game__arrow_right').classList.add('click');
+          setTimeout(() => {
+            document.querySelector('.sprint--game__arrow_right').classList.remove('click');
+          }, 100);
         }
         check(count);
         wordNumber += 1;
         game(model, arrayWord[wordNumber]);
-        document.querySelector('.sprint--game__arrow_left').classList.add('click');
-        setTimeout(() => {
-          document.querySelector('.sprint--game__arrow_left').classList.remove('click');
-        }, 100);
       }
     }
   };
 };
 
 const generateNewWord = (model, choiseRound, choiseLevel) => {
+  myModel = model;
   round = Number(choiseRound);
   level = Number(choiseLevel);
   model.getSetOfWordsAndTranslations(level, round, 30, 1).then((data) => {
@@ -255,6 +285,7 @@ const generateNewWord = (model, choiseRound, choiseLevel) => {
 };
 
 const generateLearnWord = (model) => {
+  myModel = model;
   model.getSetOfLearnedWordsAndTranslations(100, 1).then((data) => {
     arrayWord = data;
     game(model, arrayWord[wordNumber]);
