@@ -48,7 +48,7 @@ const SpeakIt = {
             
             <div class="pic__container">
                 <div class="pic__image">
-                    <img src="./src/img/games/speakit/dummy.jpg" alt="">
+                    <img alt="">
                 </div>
                 <!-- <div class="pic__translate">Cry</div> -->
                 <div class="pic__translate"></div>
