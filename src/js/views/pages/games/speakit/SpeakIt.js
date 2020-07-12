@@ -202,13 +202,11 @@ const SpeakIt = {
       return speakedWord;
     }
 
-
     async function reloadWords() { // загрузить новые слова
       words = await model.getSetOfWordsAndTranslations(Number(level) + 1, page, 10);
       words = words.reduce((accum, currentValue) => [...accum, currentValue.correct], []);
       words = common.shuffleWords(words);
     }
-
 
     const statsWordClick = (e) => {
       const target = e.target.closest('.stat__word');
@@ -310,7 +308,7 @@ const SpeakIt = {
               imgContainer.src = image;
               corrects += 1;
               if (isGameIsEnd()) {
- //               storage.saveGame(errors, wordsArr);
+                //               storage.saveGame(errors, wordsArr);
                 results();
               }
             } else {
