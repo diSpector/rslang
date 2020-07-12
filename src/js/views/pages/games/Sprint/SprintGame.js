@@ -196,8 +196,6 @@ const generateStatistic = async () => {
   searchAudio();
 };
 
-
-
 const timerw = () => {
   document.querySelector('.sprint--game__time').innerHTML = time;
   time -= 1;
