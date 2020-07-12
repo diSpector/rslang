@@ -21,17 +21,17 @@ const WordsHelper = {
    * */
   formLearnedArray: (wordsArraysObj, needToBeLearnedWords) => {
     const { todayWords, withoutDateWords, withDateWords } = wordsArraysObj;
-    let resArr = todayWords.slice(0, needToBeLearnedWords + 1);
+    let resArr = todayWords.slice(0, needToBeLearnedWords);
     if (resArr.length >= needToBeLearnedWords) {
       return resArr;
     }
 
-    resArr = resArr.concat(withoutDateWords).slice(0, needToBeLearnedWords + 1);
+    resArr = resArr.concat(withoutDateWords).slice(0, needToBeLearnedWords);
     if (resArr >= needToBeLearnedWords) {
       return resArr;
     }
 
-    resArr = resArr.concat(withDateWords).slice(0, needToBeLearnedWords + 1);
+    resArr = resArr.concat(withDateWords).slice(0, needToBeLearnedWords);
     return resArr;
   },
 
