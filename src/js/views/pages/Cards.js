@@ -65,10 +65,10 @@ const Cards = {
                 <p class="learn--card__wordTranslate"></p>
             </main>
             <footer class="learn--card__complexity learn--card__complexity-hidden">
-                <span class="learn--card__complexity-repeat">Снова</span>
-                <span class="learn--card__complexity-hard">Трудно</span>
-                <span class="learn--card__complexity-well">Хорошо</span>
-                <span class="learn--card__complexity-easy">Легко</span>
+                <button class="learn--card__complexity-repeat  learn--card__complexityBtn">Снова</button>
+                <button class="learn--card__complexity-hard  learn--card__complexityBtn">Трудно</button>
+                <button class="learn--card__complexity-well  learn--card__complexityBtn">Хорошо</button>
+                <button class="learn--card__complexity-easy  learn--card__complexityBtn">Легко</button>
             </footer>
         </section>
 
@@ -318,7 +318,6 @@ const Cards = {
     this.renderElement(false, null, 'learn--card__icon-delete', 'learn--card__icon-hidden');
     this.renderElement(false, null, 'learn--card__icon-brain', 'learn--card__icon-hidden');
     this.renderElement(Cards.settings.isAnswerButton, null, 'learn--button-show', 'learn--button-hidden');
-    // this.renderElement(Cards.settings.isIntervalButtons, null, 'learn--card__complexity', 'learn--card__complexity-hidden');
 
     // кнопка "вкл/выкл отображение переводов предложения"
     this.renderElement(Cards.settings.isTextMeaning, Cards.settings.isTextExample, 'learn--card__icon-book', 'learn--card__icon-hidden');
@@ -365,13 +364,13 @@ const Cards = {
     const percentOfCorrect = (CardsHandler.statistic.correctAnswers
     / CardsHandler.statistic.cardsCompleted) * 100;
     const cardContent = document.querySelector('.learn--card__content');
-    cardContent.innerHTML = ` <h2>Ура! На сегодня всё.</h2>
-                              <div class="learn--card__stopGame">
-                                <div class="stopGame__statistic">
-                                  <p>Карточек завершено: ${CardsHandler.statistic.cardsCompleted}</p>
-                                  <p>Правильные ответы: ${Math.trunc(percentOfCorrect)}%</p>
-                                  <p>Новые слова: ${CardsHandler.statistic.newWords}</p>
-                                  <p>Самая длинная серия правильных ответов: ${CardsHandler.statistic.bestCorrectSeries}</p>
+    cardContent.innerHTML = ` <div class="learn--card__stopGame">
+                              <h2>Ура! На сегодня всё.</h2>
+                                <div class="learn--card__statistic">
+                                  <p class="complited">Карточек завершено: ${CardsHandler.statistic.cardsCompleted}</p>
+                                  <p class="correct">Правильные ответы: ${Math.trunc(percentOfCorrect)}%</p>
+                                  <p class="new">Новые слова: ${CardsHandler.statistic.newWords}</p>
+                                  <p class="series">Самая длинная серия правильных ответов: ${CardsHandler.statistic.bestCorrectSeries}</p>
                                 </div>
                                 <p>Есть ещё новые карточки, но дневной лимит исчерпан.</p>
                                 <p>Вы можете увеличить лимит в настройках, но, 

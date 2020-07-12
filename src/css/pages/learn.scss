@@ -254,18 +254,25 @@
     justify-content: center;
     padding: 0 0 10px;
 
-    span {
-        margin: 0 5px;
-        cursor: pointer;
-        text-decoration: underline;
-
-        &:hover {
-            text-decoration: none;
-        }
-    }
-
     &-hidden {
         display: none;
+    }
+}
+
+.learn--card__complexityBtn {
+    @include button;
+    padding: 0;
+    margin: 0 5px;
+    background-color: transparent;
+    text-decoration: underline;
+    transition: transform 0.1s;
+
+    &:hover {
+        text-decoration: none;
+    }
+
+    &:active {
+        transform: scale(1.1);
     }
 }
 
@@ -288,5 +295,32 @@
     &:active {
         background: #efc74d;
         box-shadow: inset 3px 3px #caa433;
+    }
+}
+
+.learn--card__stopGame {
+    h2 {
+        text-align: center;
+    }
+}
+
+.learn--card__statistic {
+    text-align: center;
+    border-bottom: 1px solid #ffe9a6;
+
+    .complited {
+        color: #1f8b8d;
+    }
+
+    .correct {
+        color: #40c781;
+    }
+
+    .new {
+        color: orange;
+    }
+
+    .series {
+        color: #62c1c5;
     }
 }
