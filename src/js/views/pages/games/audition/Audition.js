@@ -220,8 +220,8 @@ const Audition = {
       </div>
       <hr>
       <div class="statistic__time">Время игры: ${gameTime.getMinutes()}:${gameTime.getSeconds()}</div>
-      <button class="statistic__button" onclick="document.location.reload()">Начать заново</button>
-      <button class="statistic__button" onclick="location.href='/'">Перейти на главную страницу</button>
+      <a href="/#/games/audition"><button class="statistic__button"">Начать заново</button></a>
+      <a href="/"><button class="statistic__button">Перейти на главную страницу</button></a>
       <button class="statistic__button global">Глобальная статистика</button>
     </section>
     `;
@@ -233,14 +233,17 @@ const Audition = {
     const statistic = await Audition.settings.model.getStatForGame('au');
     console.log(statistic);
     let template = '';
+    let num = 1;
     statistic.forEach((elem) => {
       template += `
         <tr class="statTable__bodyRow">
-          <td class="statTable__bodyData">${elem.d}</td>
+          <td class="statTable__bodyData">${num}</td>
           <td class="statTable__bodyData">${elem.y}</td>
           <td class="statTable__bodyData">${elem.n}</td>
+          <td class="statTable__bodyData">${elem.d}</td>
         </tr>
       `;
+      num += 1;
     });
     tableBody.innerHTML = template;
   },
@@ -253,9 +256,10 @@ const Audition = {
       <table class="globalStatistic__statTable">
         <thead class="statTable__head">
           <tr class="statTable__headRow">
-            <th class="statTable__headData">Дата игры</th>
+          <th class="statTable__headData">№</th>
             <th class="statTable__headData">Верных ответов</th>
             <th class="statTable__headData">Неверных ответов</th>
+            <th class="statTable__headData">Дата игры</th>
           </tr>
         </thead>
         <tbody class="statTable__body">
