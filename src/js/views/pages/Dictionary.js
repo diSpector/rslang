@@ -260,12 +260,11 @@ const Dictionary = {
     async function start() {
       const wordsForDictionary = await model.getWordsForDictionary();
       const { allWords: currentWords, hardWords, deletedWords } = wordsForDictionary;
-      if(!currentWords.length && !deletedWords.length){
+      if (!currentWords.length && !deletedWords.length) {
         const currentWordsContainer = document.querySelector('.dictionary--currentWords');
-        const emptyBlock = createNewElement('div', 'wordCard', `<p class="emptyText">Словарь пуст</p>`);
-        
+        const emptyBlock = createNewElement('div', 'wordCard', '<p class="emptyText">Словарь пуст</p>');
+
         currentWordsContainer.append(emptyBlock);
-        
       }
 
       await hardWords.forEach((word) => {
