@@ -6,7 +6,6 @@ let timer;
 let time = 3;
 
 export default function drawPlayField() {
-
   document.querySelector('.allGames__choice_learn').onclick = () => {
     document.querySelector('.allGames__choice_learn').classList.add('select');
     document.querySelector('.allGames__choice_new').classList.remove('select');

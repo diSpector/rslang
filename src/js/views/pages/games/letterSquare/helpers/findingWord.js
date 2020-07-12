@@ -43,18 +43,18 @@ export default function findingWord() {
       lineSort = line.split('').sort().join('');
       columnSort = column.split('').sort().join('');
 
-      let resultColumn = [];
-      let resultLine = [];
-        for (let str of columnSort) {
-          if (!resultColumn.includes(str)) {
-            resultColumn.push(str);
-          }
+      const resultColumn = [];
+      const resultLine = [];
+      for (const str of columnSort) {
+        if (!resultColumn.includes(str)) {
+          resultColumn.push(str);
         }
-        for (let str of lineSort) {
-          if (!resultLine.includes(str)) {
-            resultLine.push(str);
-          }
+      }
+      for (const str of lineSort) {
+        if (!resultLine.includes(str)) {
+          resultLine.push(str);
         }
+      }
 
       if (resultColumn.length !== 1) {
         for (let i = 1; i < lineSort.length; i += 1) {
@@ -80,8 +80,8 @@ export default function findingWord() {
         }
       }
       check();
-    }
-  };
+    };
+  }
 
   function check() {
     for (let i = 0; i < words.length; i += 1) {
