@@ -459,6 +459,7 @@ const Savannah = {
   },
 
   afterRender: async () => {
+    console.log('test');
     Game.initStartScreen();
 
     const startBtn = document.querySelector('.allGames__startBtn');
