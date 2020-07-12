@@ -197,7 +197,6 @@ const generateStatistic = async () => {
 };
 
 
-
 const timerw = () => {
   document.querySelector('.sprint--game__time').innerHTML = time;
   time -= 1;

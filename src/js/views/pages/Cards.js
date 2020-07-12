@@ -22,12 +22,14 @@ const Cards = {
   currentWord: null,
   dayWords: null,
   model: null,
+  addPercent: null,
 
   render: async () => {
     const view = `
     <div class="learn  wrapper">
+        <section class="learn-loader"></section>
         <section class="learn--progress">
-            <div class="learn--progress__done">10</div>
+            <div class="learn--progress__done">0</div>
             <div class="learn--progress__background">
                 <div class="learn--progress__bar"></div>
             </div>
@@ -59,14 +61,14 @@ const Cards = {
                     <div class="learn--card__enterAnswer" title="Ввести слово"></div>
                 </div>
 
-                <p class="learn--card__transcription  learn--card__transcription-hidden"></p>
+                <p class="learn--card__transcription"></p>
                 <p class="learn--card__wordTranslate"></p>
             </main>
             <footer class="learn--card__complexity learn--card__complexity-hidden">
-                <span class="learn--card__complexity-repeat">Снова</span>
-                <span class="learn--card__complexity-hard">Трудно</span>
-                <span class="learn--card__complexity-well">Хорошо</span>
-                <span class="learn--card__complexity-easy">Легко</span>
+                <button class="learn--card__complexity-repeat  learn--card__complexityBtn">Снова</button>
+                <button class="learn--card__complexity-hard  learn--card__complexityBtn">Трудно</button>
+                <button class="learn--card__complexity-well  learn--card__complexityBtn">Хорошо</button>
+                <button class="learn--card__complexity-easy  learn--card__complexityBtn">Легко</button>
             </footer>
         </section>
 
@@ -215,8 +217,6 @@ const Cards = {
       if (event.target.type === 'number') {
         this.settings[key] = Number(event.target.value);
       }
-
-      console.log('settings', this.settings);
     };
   },
 
@@ -240,15 +240,14 @@ const Cards = {
 
   saveSettings(model) {
     const form = document.querySelector('.settings--form');
-    form.addEventListener('submit', (event) => {
+    form.addEventListener('submit', async (event) => {
       event.preventDefault();
       this.hideError('settings__error-info');
       this.hideError('settings__error-max');
 
       if (this.isValid()) {
-        model.saveCardsSettings(this.settings);
-        console.log('saved settings', this.settings);
-        Cards.renderCard();
+        await model.saveCardsSettings(this.settings);
+        window.location.reload();
       }
     });
   },
@@ -295,20 +294,30 @@ const Cards = {
     element.textContent = '';
   },
 
+  hideWord(elementSelector) {
+    const element = document.querySelector(elementSelector);
+    if (element) {
+      element.textContent = '[...]';
+    }
+  },
+
   renderCard() {
     // информация на карточке
     this.renderElement(Cards.settings.isWordTranslate, null, 'learn--card__wordTranslate', 'learn--card__wordTranslate-hidden', this.currentWord.wordTranslate);
     this.renderElement(Cards.settings.isTextMeaning, null, 'learn--card__textMeaning', 'learn--card__textMeaning-hidden', this.currentWord.textMeaning);
     this.renderElement(Cards.settings.isTextExample, null, 'learn--card__textExample', 'learn--card__textExample-hidden', this.currentWord.textExample);
 
+    // спрятать изучаемое слово в предложениях-примерах
+    this.hideWord('.learn--card__textMeaning i');
+    this.hideWord('.learn--card__textExample b');
+
     // дополнительные элементы
     this.renderElement(Cards.settings.isImage, null, 'learn--card__image', 'learn--card__image-hidden', null, this.currentWord.image);
 
     // кнопки
-    this.renderElement(Cards.settings.isDeleteWordButton, null, 'learn--card__icon-delete', 'learn--card__icon-hidden');
-    this.renderElement(Cards.settings.isMoveToDifficultButton, null, 'learn--card__icon-brain', 'learn--card__icon-hidden');
+    this.renderElement(false, null, 'learn--card__icon-delete', 'learn--card__icon-hidden');
+    this.renderElement(false, null, 'learn--card__icon-brain', 'learn--card__icon-hidden');
     this.renderElement(Cards.settings.isAnswerButton, null, 'learn--button-show', 'learn--button-hidden');
-    // this.renderElement(Cards.settings.isIntervalButtons, null, 'learn--card__complexity', 'learn--card__complexity-hidden');
 
     // кнопка "вкл/выкл отображение переводов предложения"
     this.renderElement(Cards.settings.isTextMeaning, Cards.settings.isTextExample, 'learn--card__icon-book', 'learn--card__icon-hidden');
@@ -318,11 +327,94 @@ const Cards = {
     this.clearTranslation('learn--card__textExampleTranslate');
   },
 
+  addProgress: async () => {
+    const progressNumber = document.querySelector('.learn--progress__done');
+    const progressBar = document.querySelector('.learn--progress__bar');
+    const currentProgress = await Cards.model.getTodayWordsCount();
+    progressNumber.innerText = currentProgress;
+    progressBar.style.width = `${Number(progressBar.style.width.slice(0, -1)) + Cards.addPercent}%`;
+  },
+
+  initProgress: (wordsAlreadyPlayed) => {
+    const progressTotal = document.querySelector('.learn--progress__total');
+    const progressBar = document.querySelector('.learn--progress__bar');
+    const progressDone = document.querySelector('.learn--progress__done');
+    const numberOfWords = Cards.settings.maxWordsPerDay;
+
+    progressTotal.innerText = numberOfWords;
+    progressBar.style.width = '0%';
+    Cards.addPercent = 100 / numberOfWords;
+    if (wordsAlreadyPlayed) {
+      progressDone.innerText = wordsAlreadyPlayed;
+      progressBar.style.width = `${Cards.addPercent * wordsAlreadyPlayed}%`;
+    }
+  },
+
+  hideIcon(iconSelector) {
+    const icon = document.querySelector(iconSelector);
+    if (icon) {
+      icon.classList.add('learn--card__icon-hidden');
+    }
+  },
+
+  stopGame: async () => {
+    Cards.hideIcon('.learn--card__icon-book');
+    Cards.hideIcon('.learn--card__icon-headphones');
+    Cards.hideIcon('.learn--card__icon-brain');
+    Cards.hideIcon('.learn--card__icon-delete');
+
+    await Cards.model.setTodayWordsCount();
+
+    const showAnswerButton = document.querySelector('.learn--button-show');
+    showAnswerButton.classList.add('learn--button-hidden');
+
+    const percentOfCorrect = (CardsHandler.statistic.correctAnswers
+    / CardsHandler.statistic.cardsCompleted) * 100;
+    const cardContent = document.querySelector('.learn--card__content');
+    cardContent.innerHTML = ` <div class="learn--card__stopGame">
+                              <h2>Ура! На сегодня всё.</h2>
+                                <div class="learn--card__statistic">
+                                  <p class="complited">Карточек завершено: ${Cards.settings.maxWordsPerDay}</p>
+                                  <p class="correct">Правильные ответы: ${Math.trunc(percentOfCorrect)}%</p>
+                                  <p class="new">Новые слова: ${CardsHandler.statistic.newWords}</p>
+                                  <p class="series">Самая длинная серия правильных ответов: ${CardsHandler.statistic.bestCorrectSeries}</p>
+                                </div>
+                                <p>Есть ещё новые карточки, но дневной лимит исчерпан.</p>
+                                <p>Вы можете увеличить лимит в настройках, но, 
+                                  пожалуйста, имейте в виду, что чем больше новых 
+                                  карточек вы просмотрите, тем больше вам надо будет повторять в ближайшее
+                                  время.</p>
+                                <p>Для обучения сверх обычного расписания, нажмите кнопку «Учить ещё» ниже.</p>
+                              </div>
+                              <button class="learn--button  learn--button-learnMore" onclick="document.location.reload()">Учить ещё</button>
+    `;
+  },
+
+  removeLoader: () => {
+    const loader = document.querySelector('.learn-loader');
+    loader.remove();
+  },
+
+  getRandomInRange: (min, max) => Math.floor(Math.random() * (max - min + 1)) + min,
+
+  repeateWord: (word) => {
+    const wordIndex = Cards.getRandomInRange(0, Cards.dayWords.length - 1);
+    Cards.dayWords = [...Cards.dayWords.splice(0, wordIndex), word, ...Cards.dayWords.splice(1)];
+  },
+
   generateNextCard: async () => {
+    if (Cards.dayWords.length === 0) {
+      Cards.stopGame();
+      return;
+    }
+    Cards.addProgress();
+    if (CardsHandler.wordToRepeat && !Cards.dayWords.includes(CardsHandler.wordToRepeat)) {
+      Cards.repeateWord(CardsHandler.wordToRepeat);
+      CardsHandler.wordToRepeat.isNew = false;
+    }
+
     const ourWordObj = Cards.dayWords.pop();
     Cards.currentWord = await Cards.model.getNextWord(ourWordObj);
-    console.log(Cards.currentWord, 'backend');
-    console.log(ourWordObj, 'our word');
 
     Cards.renderCard();
 
@@ -331,22 +423,26 @@ const Cards = {
   },
 
   afterRender: async (model) => {
-    await model.loginUser({ email: '66group@gmail.com', password: 'Gfhjkm_123' });
     const settingsGetRaw = await model.getSettings();
+    const wordsAlreadyPlayed = await model.getTodayWordsCount();
     const { data: settings } = settingsGetRaw;
     Cards.settings = settings;
     Cards.model = model;
 
     Cards.dayWords = await model.getWordsForDay();
+    console.log(Cards.dayWords);
+    if (wordsAlreadyPlayed !== 0) Cards.dayWords.splice(0, wordsAlreadyPlayed);
     const ourWordObj = Cards.dayWords.pop();
     Cards.currentWord = await model.getNextWord(ourWordObj);
-    console.log(Cards.currentWord, 'backend');
-    console.log(ourWordObj, 'our word');
 
     Cards.initSettings(model);
     Cards.renderCard();
+    Cards.initProgress(wordsAlreadyPlayed);
 
-    CardsHandler.initCardHandler(Cards.currentWord, ourWordObj, model, Cards.generateNextCard, Cards.settings);
+    CardsHandler.initCardHandler(Cards.currentWord, ourWordObj, model,
+      Cards.generateNextCard, Cards.settings);
+
+    Cards.removeLoader();
   },
 };
 
