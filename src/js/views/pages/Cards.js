@@ -240,14 +240,14 @@ const Cards = {
 
   saveSettings(model) {
     const form = document.querySelector('.settings--form');
-    form.addEventListener('submit', (event) => {
+    form.addEventListener('submit', async (event) => {
       event.preventDefault();
       this.hideError('settings__error-info');
       this.hideError('settings__error-max');
 
       if (this.isValid()) {
-        model.saveCardsSettings(this.settings);
-        Cards.renderCard();
+        await model.saveCardsSettings(this.settings);
+        window.location.reload();
       }
     });
   },
