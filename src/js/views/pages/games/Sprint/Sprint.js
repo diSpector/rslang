@@ -135,7 +135,7 @@ const Sprint = {
             <tbody class="statTable__body">
             </tbody>  
           </table>
-          <button class="globalStatistic__button">Вернуться назад</button>
+          <button class="sprint-globalStatistic__button">Вернуться назад</button>
         </div>
 
         <div class ="sprint--end__slide">

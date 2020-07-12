@@ -51,7 +51,7 @@ const Home = {
                   </div>
                   <div class="mainPage_block-statistics mainPage-smallCard">
                     <h2 class="mainPage_block-title">Статистика</h2>
-                    <a class="mainPage-card-link" href="#/statistic"></a>
+                    <a class="mainPage-card-link" href="#/stats"></a>
                     <div class="mainPage-card-shadow"></div>
                     <div class="mainPage-card-locking"></div>
                   </div>

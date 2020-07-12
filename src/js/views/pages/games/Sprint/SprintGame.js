@@ -150,7 +150,7 @@ const addStatisticButtonsHandler = () => {
   const globalStatisticScreen = document.querySelector('.sprint--end__globalStatistic');
   const statisticScreenDots = document.querySelector('.sprint--end__slide');
   const statisticButton = document.querySelector('.sprint--end__button_global');
-  const globalStatisticButton = document.querySelector('.globalStatistic__button');
+  const globalStatisticButton = document.querySelector('.sprint-globalStatistic__button');
   statisticButton.onclick = () => {
     statisticMessage.classList.add('hidden');
     statisticScreenDots.classList.add('hidden');
@@ -195,7 +195,6 @@ const generateStatistic = async () => {
   };
   searchAudio();
 };
-
 
 const timerw = () => {
   document.querySelector('.sprint--game__time').innerHTML = time;

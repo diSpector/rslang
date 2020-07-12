@@ -11,6 +11,20 @@
     font-size: 1.6rem;
 }
 
+.learn-loader {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1;
+    background-color: white;
+    background-image: url(https://faviconer.net/generator.php?filmstrip&image=5&speed=9&fore_color=000000&back_color=FFFFFF&size=64x64&transparency=1&reverse=0&orig_colors=0&gray_transp=1&image_type=2&inverse=0&flip=0&frames_amount=8&word=237-261-157-41-266-237-41-257-237-266-57-41-227-41-36-36-36);
+    background-repeat: no-repeat;
+    background-size: 50px;
+    background-position: center;
+}
+
 .learn--progress {
     display: flex;
     align-items: center;
@@ -28,7 +42,7 @@
 
     flex-grow: 1;
     border-radius: 10px;
-    background-color: #9bc0c6;
+    background-color: rgba(#ffe9a6, 0.5);
 
     @include media-tablet {
         width: 90%;
@@ -36,10 +50,11 @@
 }
 
 .learn--progress__bar {
-    width: 33.33%;
+    width: 0%;
     height: 100%;
     border-radius: 10px;
-    background-color: #586187;
+    background-color: #efc74d;
+    transition: ease 1s;
 }
 
 .learn--progress__done,
@@ -66,7 +81,7 @@
     display: flex;
     justify-content: flex-end;
     padding: 5px;
-    background-color: #9bc0c6;
+    background-color: #ffe9a6;
     border-top-left-radius: 10px;
     border-top-right-radius: 10px;
 }
@@ -239,44 +254,73 @@
     justify-content: center;
     padding: 0 0 10px;
 
-    span {
-        margin: 0 5px;
-        cursor: pointer;
-        text-decoration: underline;
-
-        &:hover {
-            text-decoration: none;
-        }
-    }
-
     &-hidden {
         display: none;
+    }
+}
+
+.learn--card__complexityBtn {
+    @include button;
+    padding: 0;
+    margin: 0 5px;
+    background-color: transparent;
+    text-decoration: underline;
+    transition: transform 0.1s;
+
+    &:hover {
+        text-decoration: none;
+    }
+
+    &:active {
+        transform: scale(1.1);
     }
 }
 
 .learn--button {
     @include button; 
 
-    &-show {
-        background: transparent;
-        border: 1px solid #9bc0c6;
-    }
-
-    &-next {
-        background: #9bc0c6;     
-        border: 1px solid #9bc0c6; 
-    }
-
-    &-show,
-    &-next {
-        &:hover {
-            background: #586187;
-            border: 1px solid #586187;
-            color: white;
-        }
-    }
-
     &-hidden {
         display: none;
+    }
+
+    background: #fde28e;
+    box-shadow: inset -3px -3px #e2c774;
+    border-radius: 6px;
+    font-size: 2rem;
+
+    &:hover {
+        background: #ffe9a6;
+    }
+
+    &:active {
+        background: #efc74d;
+        box-shadow: inset 3px 3px #caa433;
+    }
+}
+
+.learn--card__stopGame {
+    h2 {
+        text-align: center;
+    }
+}
+
+.learn--card__statistic {
+    text-align: center;
+    border-bottom: 1px solid #ffe9a6;
+
+    .complited {
+        color: #1f8b8d;
+    }
+
+    .correct {
+        color: #40c781;
+    }
+
+    .new {
+        color: orange;
+    }
+
+    .series {
+        color: #62c1c5;
     }
 }
