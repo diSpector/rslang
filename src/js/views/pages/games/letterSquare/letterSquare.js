@@ -57,7 +57,7 @@ const letterSquare = {
     let round = 0;
     let difficulty = 0;
     let timer;
-    let time = 20;
+    let time = 120;
     let arr1 = '';
     let arr2 = '';
     const comma = ',';
@@ -442,7 +442,7 @@ const letterSquare = {
       if (difficulty && round) {
         words = [];
         time1 = 3;
-        time = 20;
+        time = 120;
         const data = await letterSquare.settings.model.getSetOfWordsAndTranslations(difficulty,
           round - 1, 8, 0);
         letterSquare.data = letterSquare.reformat(data);
