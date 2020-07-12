@@ -155,7 +155,7 @@ const CardsHandler = {
   },
 
   wrongAnswer: () => {
-    CardsHandler.wordToRepeat = CardsHandler.ourWordObj;
+    CardsHandler.addWordToRepeate();
     CardsHandler.setWrongLetters();
     CardsHandler.isGuessedOnFirstTry = false;
     CardsHandler.statistic.currentCorrectSeries = -1;
@@ -169,9 +169,15 @@ const CardsHandler = {
     return metrics.width;
   },
 
+  addWordToRepeate: () => {
+    CardsHandler.wordToRepeat = CardsHandler.ourWordObj;
+    CardsHandler.wordToRepeat.isNew = false;
+    console.log(CardsHandler.wordToRepeat);
+  },
+
   CardClickHandler: ({ target }) => {
     if (target.classList.contains('learn--card__complexity-repeat')) {
-      CardsHandler.wordToRepeat = CardsHandler.ourWordObj;
+      CardsHandler.addWordToRepeate();
       CardsHandler.model.setIntervalAsAgain(CardsHandler.currentWord.id);
     }
     if (target.classList.contains('learn--card__complexity-hard')) {
@@ -230,7 +236,7 @@ const CardsHandler = {
     if (target.classList.contains('learn--button-next')) {
       const userWord = document.querySelector('.learn--card__input').innerText;
       CardsHandler.hideCorrectButtons();
-      if (userWord === CardsHandler.currentWord.word) {
+      if (userWord.toLowerCase() === CardsHandler.currentWord.word.toLowerCase()) {
         CardsHandler.clearInput();
         CardsHandler.clearWordTranscription();
         CardsHandler.statistic.cardsCompleted += 1;

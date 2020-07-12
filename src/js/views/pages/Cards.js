@@ -389,9 +389,7 @@ const Cards = {
     loader.remove();
   },
 
-  getRandomInRange: (min, max) => {
-    return Math.floor(Math.random() * (max - min + 1)) + min;
-  },
+  getRandomInRange: (min, max) => Math.floor(Math.random() * (max - min + 1)) + min,
 
   repeateWord: (word) => {
     const wordIndex = Cards.getRandomInRange(0, Cards.dayWords.length - 1);
