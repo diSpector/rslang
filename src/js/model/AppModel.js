@@ -887,7 +887,7 @@ export default class AppModel {
   async getAggregateUserWords(wordsIdsArr) {
     const aggrObj = this.wordsHelper.getAggrWordsIds(wordsIdsArr);
     try {
-      const url = `${this.backendURL}users/${this.userId}/aggregatedWords?wordsPerPage=50&filter=${JSON.stringify(aggrObj)}`;
+      const url = `${this.backendURL}users/${this.userId}/aggregatedWords?wordsPerPage=100&filter=${JSON.stringify(aggrObj)}`;
       const rawResponse = await fetch(url, {
         method: 'GET',
         headers: {
@@ -1182,7 +1182,7 @@ export default class AppModel {
   async getWordsForDictionary() {
     const aggrAllLearnedWordsObj = this.wordsHelper.getAggrObgForAllLearnedWords();
     const allLearnedWordsWithDeletedRaw = await this
-      .getAggregateUserWordsByObj(aggrAllLearnedWordsObj);
+      .getAggregateUserWordsByObj(aggrAllLearnedWordsObj, 1000);
     const allLearnedWordsWithDeleted = allLearnedWordsWithDeletedRaw.data[0].paginatedResults
       .map((word) => this.reformatWordData(word, true));
     const mappedWordsForDictionary = this.wordsHelper
@@ -1216,7 +1216,7 @@ export default class AppModel {
   /** получить объекты всех изученных слова с указанной датой изучения, сгруппир. по датам */
   async groupLearnedWordsByDates() {
     const aggrObjForDatesLearned = this.wordsHelper.getAggrObgForDateLearned();
-    const aggrWordsRaw = await this.getAggregateUserWordsByObj(aggrObjForDatesLearned, 100);
+    const aggrWordsRaw = await this.getAggregateUserWordsByObj(aggrObjForDatesLearned, 1000);
     const aggrWords = aggrWordsRaw.data[0].paginatedResults
       .map((word) => this.reformatWordData(word, true));
     const mappedWords = this.wordsHelper.getWordsMappedByDates(aggrWords);
@@ -1261,7 +1261,7 @@ export default class AppModel {
    * @param {JSON} aggrObj - объект с агрегированным запросом (валидный JSON)
    * @param {Number} count - кол-во записей (по умолчанию 50)
   */
-  async getAggregateUserWordsByObj(aggrObj, count = 50) {
+  async getAggregateUserWordsByObj(aggrObj, count = 1000) {
     try {
       const url = `${this.backendURL}users/${this.userId}/aggregatedWords?wordsPerPage=${count}&filter=${aggrObj}`;
       const rawResponse = await fetch(url, {
