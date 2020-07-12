@@ -170,15 +170,13 @@ const CardsHandler = {
   },
 
   addWordToRepeate: () => {
-    CardsHandler.wordToRepeat = CardsHandler.ourWordObj;
-    CardsHandler.wordToRepeat.isNew = false;
-    console.log(CardsHandler.wordToRepeat);
+    CardsHandler.ourWordObj.isNew = false;
+    console.log(CardsHandler.ourWordObj);
   },
 
   CardClickHandler: ({ target }) => {
     if (target.classList.contains('learn--card__complexity-repeat')) {
       CardsHandler.addWordToRepeate();
-      CardsHandler.model.setIntervalAsAgain(CardsHandler.currentWord.id);
     }
     if (target.classList.contains('learn--card__complexity-hard')) {
       CardsHandler.model.setIntervalAsHard(CardsHandler.currentWord.id);
@@ -240,7 +238,7 @@ const CardsHandler = {
         CardsHandler.clearInput();
         CardsHandler.clearWordTranscription();
         CardsHandler.statistic.cardsCompleted += 1;
-        CardsHandler.generateNextCard(CardsHandler.wordToRepeat);
+        CardsHandler.generateNextCard(CardsHandler.ourWordObj);
       } else if (userWord !== '') {
         CardsHandler.wrongAnswer();
       }
@@ -355,7 +353,6 @@ const CardsHandler = {
     CardsHandler.generateNextCard = generateNextCard;
     CardsHandler.homeSettings = settings;
 
-    CardsHandler.wordToRepeat = null;
     CardsHandler.isGuessedOnFirstTry = true;
     CardsHandler.isWordCorrect = false;
     CardsHandler.setInputWidthAndFocus();
