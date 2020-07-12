@@ -220,7 +220,7 @@ const SpeakIt = {
     };
 
     const results = () => { // страница "Результаты"
-      storage.saveGame(errors, wordsArr);
+      storage.saveGame(errors, correctWords);
       view.showPage('results');
       gameInProcess = false;
       recognition.onsoundstart = null;
