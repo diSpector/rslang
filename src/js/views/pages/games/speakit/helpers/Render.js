@@ -30,6 +30,7 @@ export default class Render {
   async globalResults() {
     const model = new AppModel();
     const gamesInfo = await model.getStatForGame('si');
+    console.log(gamesInfo);
     if (gamesInfo) {
       gamesInfo.forEach((game) => this.gameRes(game));
     }
@@ -75,11 +76,11 @@ export default class Render {
     const globalResContainer = document.querySelector('.global__results table');
 
     const newTr = document.createElement('tr');
-    /*
+    
     const dateTd = document.createElement('td');
-    dateTd.innerText = gameObj.date;
+    dateTd.innerText = gameObj.d;
     newTr.append(dateTd);
-    */
+    
     const wordsTd = document.createElement('td');
     wordsTd.innerText = gameObj.y;
     newTr.append(wordsTd);

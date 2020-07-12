@@ -114,7 +114,7 @@ const SpeakIt = {
                 <table>
                     <tr>
                         <th class = "td__datetime">Дата</th>
-                        <th class = "td__words">Слова</th>
+                        <th class = "td__words">Верно</th>
                         <th class = "td__errors">Количество ошибок</th>
                     </tr>
                 </table>
@@ -222,6 +222,7 @@ const SpeakIt = {
     };
 
     const results = () => { // страница "Результаты"
+      storage.saveGame(errors, wordsArr);
       view.showPage('results');
       gameInProcess = false;
       recognition.onsoundstart = null;
@@ -309,7 +310,7 @@ const SpeakIt = {
               imgContainer.src = image;
               corrects += 1;
               if (isGameIsEnd()) {
-                storage.saveGame(errors, wordsArr);
+ //               storage.saveGame(errors, wordsArr);
                 results();
               }
             } else {
