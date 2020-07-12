@@ -82,12 +82,8 @@ const Header = {
       
       currentLink.forEach(el=>el.classList.add('nav_selected'));
     }
-    
-  
-
-    
+        
   },
-
 
 };
 
