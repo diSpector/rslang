@@ -27,7 +27,7 @@
 
 .allGames__choice {
     width: 500px;
-    height: 70px;
+    height: 80px;
     text-align: center;
     display: flex;
     flex-wrap: wrap;
@@ -43,6 +43,7 @@
       width: 220px;
       padding: 8px;
       border-radius: 6px;
+      border: 1px solid transparent;
       &.select {
         border: 1px solid #90d890;
       }
@@ -51,8 +52,8 @@
       }
     }
     @include media-tablet {
-      width: 300px;
-      height: 110px;
+        width: 300px;
+        height: 120px;
     }
     @include media-mobile-big {
       width: 95%;
@@ -63,8 +64,7 @@
     transition: 0.2s ease-in-out;
     width: 100%;
     &.hidden{
-        transition: 0.2s ease-in-out;
-        display: none;
+        visibility: hidden;
     }
 }
 

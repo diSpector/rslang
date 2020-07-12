@@ -327,22 +327,27 @@ const Cards = {
     this.clearTranslation('learn--card__textExampleTranslate');
   },
 
-  addProgress: () => {
+  addProgress: async () => {
     const progressNumber = document.querySelector('.learn--progress__done');
     const progressBar = document.querySelector('.learn--progress__bar');
-    const progressTotal = document.querySelector('.learn--progress__total');
-    const currentProgress = Number(progressTotal.innerText) - Cards.dayWords.length;
+    const currentProgress = await Cards.model.getTodayWordsCount();
     progressNumber.innerText = currentProgress;
     progressBar.style.width = `${Number(progressBar.style.width.slice(0, -1)) + Cards.addPercent}%`;
   },
 
-  initProgress: () => {
+  initProgress: (wordsAlreadyPlayed) => {
     const progressTotal = document.querySelector('.learn--progress__total');
     const progressBar = document.querySelector('.learn--progress__bar');
-    const numberOfWords = Cards.dayWords.length;
+    const progressDone = document.querySelector('.learn--progress__done');
+    const numberOfWords = Cards.settings.maxWordsPerDay;
+
     progressTotal.innerText = numberOfWords;
     progressBar.style.width = '0%';
     Cards.addPercent = 100 / numberOfWords;
+    if (wordsAlreadyPlayed) {
+      progressDone.innerText = wordsAlreadyPlayed;
+      progressBar.style.width = `${Cards.addPercent * wordsAlreadyPlayed}%`;
+    }
   },
 
   hideIcon(iconSelector) {
@@ -352,11 +357,13 @@ const Cards = {
     }
   },
 
-  stopGame: () => {
+  stopGame: async () => {
     Cards.hideIcon('.learn--card__icon-book');
     Cards.hideIcon('.learn--card__icon-headphones');
     Cards.hideIcon('.learn--card__icon-brain');
     Cards.hideIcon('.learn--card__icon-delete');
+
+    await Cards.model.setTodayWordsCount();
 
     const showAnswerButton = document.querySelector('.learn--button-show');
     showAnswerButton.classList.add('learn--button-hidden');
@@ -367,7 +374,7 @@ const Cards = {
     cardContent.innerHTML = ` <div class="learn--card__stopGame">
                               <h2>Ура! На сегодня всё.</h2>
                                 <div class="learn--card__statistic">
-                                  <p class="complited">Карточек завершено: ${CardsHandler.statistic.cardsCompleted}</p>
+                                  <p class="complited">Карточек завершено: ${Cards.settings.maxWordsPerDay}</p>
                                   <p class="correct">Правильные ответы: ${Math.trunc(percentOfCorrect)}%</p>
                                   <p class="new">Новые слова: ${CardsHandler.statistic.newWords}</p>
                                   <p class="series">Самая длинная серия правильных ответов: ${CardsHandler.statistic.bestCorrectSeries}</p>
@@ -391,21 +398,28 @@ const Cards = {
   getRandomInRange: (min, max) => Math.floor(Math.random() * (max - min + 1)) + min,
 
   repeateWord: (word) => {
+    // if (Cards.dayWords.length > 2) {
     const wordIndex = Cards.getRandomInRange(0, Cards.dayWords.length - 1);
     Cards.dayWords = [...Cards.dayWords.splice(0, wordIndex), word, ...Cards.dayWords.splice(1)];
+    // }
   },
 
-  generateNextCard: async (wordToRepeat) => {
-    if (Cards.dayWords.length === 0) {
+  generateNextCard: async () => {
+    Cards.addProgress();
+
+    if (Cards.dayWords.length <= 1) {
       Cards.stopGame();
+      return;
     }
-    if (wordToRepeat && !Cards.dayWords.includes(wordToRepeat)) Cards.repeateWord(wordToRepeat);
+    if (CardsHandler.wordToRepeat && !Cards.dayWords.includes(CardsHandler.wordToRepeat)) {
+      Cards.repeateWord(CardsHandler.wordToRepeat);
+      CardsHandler.wordToRepeat.isNew = false;
+    }
 
     const ourWordObj = Cards.dayWords.pop();
     Cards.currentWord = await Cards.model.getNextWord(ourWordObj);
 
     Cards.renderCard();
-    Cards.addProgress();
 
     CardsHandler.initCardHandler(Cards.currentWord, ourWordObj,
       Cards.model, Cards.generateNextCard, Cards.settings);
@@ -413,17 +427,19 @@ const Cards = {
 
   afterRender: async (model) => {
     const settingsGetRaw = await model.getSettings();
+    const wordsAlreadyPlayed = await model.getTodayWordsCount();
     const { data: settings } = settingsGetRaw;
     Cards.settings = settings;
     Cards.model = model;
 
     Cards.dayWords = await model.getWordsForDay();
+    if (wordsAlreadyPlayed !== 0) Cards.dayWords.splice(0, wordsAlreadyPlayed);
     const ourWordObj = Cards.dayWords.pop();
     Cards.currentWord = await model.getNextWord(ourWordObj);
 
     Cards.initSettings(model);
     Cards.renderCard();
-    Cards.initProgress();
+    Cards.initProgress(wordsAlreadyPlayed);
 
     CardsHandler.initCardHandler(Cards.currentWord, ourWordObj, model,
       Cards.generateNextCard, Cards.settings);

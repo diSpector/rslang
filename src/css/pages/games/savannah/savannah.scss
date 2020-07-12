@@ -24,6 +24,10 @@
         background: #efc74d;
         box-shadow: inset 3px 3px #caa433;
     }
+
+    &:hover {
+        background: #ffe9a6;
+    }
 }
 
 .savannah--btn-continue {
@@ -33,6 +37,16 @@
 .savannah--playScreen {
     position: relative;
     height: 100vh;
+}
+
+.savannah--progressBar {
+    height: 7px;
+    width: 0px;
+    position: absolute;
+    top: 0;
+    left: 0;
+    background-color: #efc74d;
+    transition: ease 1s;
 }
 
 .savannah--controls {
@@ -179,6 +193,33 @@
     }
 }
 
+.savannah--game__flower {
+    position: absolute;
+    bottom: 10vh;
+    background-image: url('../../../../img/games/savannah/lotus.svg');
+    background-size: contain;
+    width: 100px;
+    height: 100px;
+    animation: fly 2s ease-in-out infinite;
+    transition: all 0.5s;
+
+    @include media-tablet {
+        bottom: 3vh;
+    }
+}
+
+@keyframes fly {
+    0% {
+        transform: translateY(0);
+    }
+    50% {
+        transform: translateY(10px);
+    }
+    100% {
+        transform: translateY(0);
+    }
+  }
+
 .savannah--stat {
     box-sizing: border-box;
     position: absolute;
@@ -219,6 +260,7 @@
         width: 11px;
     }
     &::-webkit-scrollbar-track {
+        box-shadow: inset 0 0 6px rgba(0,0,0,0.3); 
         -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3); 
         border-radius: 10px;
     }
@@ -282,8 +324,44 @@
     align-self: center;
     text-align: center;
     color: inherit;
+    text-decoration: underline;
+    cursor: pointer;
 
     &:hover {
         text-decoration: none;
+    }
+
+    &-hidden {
+        display: none;
+    }
+}
+
+.savannah--stat__local {
+    &-hidden {
+        display: none;
+    }
+}
+
+.savannah--stat__global {
+    margin-bottom: 30px;
+
+    table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+
+    th {
+        width: 15%;
+        text-align: center;
+        border-bottom: 1px solid #d3d3d3;
+    }
+
+    td {
+        width: 15%;
+        text-align: center;
+    }
+
+    &-hidden {
+        display: none;
     }
 }

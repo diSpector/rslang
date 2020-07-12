@@ -108,6 +108,8 @@ const CardsHandler = {
     CardsHandler.addWordTranscription();
 
     CardsHandler.model.processSolvedWord(CardsHandler.ourWordObj);
+    if (!CardsHandler.isGuessedOnFirstTry) CardsHandler.addWordToRepeate();
+
     cardInput.innerText = CardsHandler.currentWord.word;
     cardInput.removeAttribute('contenteditable');
     cardInput.style.backgroundColor = 'rgb(145, 247, 112)';
@@ -155,7 +157,6 @@ const CardsHandler = {
   },
 
   wrongAnswer: () => {
-    CardsHandler.addWordToRepeate();
     CardsHandler.setWrongLetters();
     CardsHandler.isGuessedOnFirstTry = false;
     CardsHandler.statistic.currentCorrectSeries = -1;
@@ -171,14 +172,11 @@ const CardsHandler = {
 
   addWordToRepeate: () => {
     CardsHandler.wordToRepeat = CardsHandler.ourWordObj;
-    CardsHandler.wordToRepeat.isNew = false;
-    console.log(CardsHandler.wordToRepeat);
   },
 
   CardClickHandler: ({ target }) => {
     if (target.classList.contains('learn--card__complexity-repeat')) {
       CardsHandler.addWordToRepeate();
-      CardsHandler.model.setIntervalAsAgain(CardsHandler.currentWord.id);
     }
     if (target.classList.contains('learn--card__complexity-hard')) {
       CardsHandler.model.setIntervalAsHard(CardsHandler.currentWord.id);
@@ -240,7 +238,7 @@ const CardsHandler = {
         CardsHandler.clearInput();
         CardsHandler.clearWordTranscription();
         CardsHandler.statistic.cardsCompleted += 1;
-        CardsHandler.generateNextCard(CardsHandler.wordToRepeat);
+        CardsHandler.generateNextCard();
       } else if (userWord !== '') {
         CardsHandler.wrongAnswer();
       }
@@ -331,8 +329,8 @@ const CardsHandler = {
     cardInput.style.width = `${inputWidth}px`;
   },
 
-  wordProcessing: () => {
-    if (CardsHandler.ourWordObj.isNew) {
+  wordProcessing: async () => {
+    if (CardsHandler.ourWordObj.isNew || !CardsHandler.ourWordObj.userWord) {
       CardsHandler.currentWord.userWord = {
         difficulty: 'normal',
         optional: {
@@ -340,7 +338,7 @@ const CardsHandler = {
         },
       };
     } else {
-      CardsHandler.currentWord.userWord = CardsHandler.ourWordObj.userWord;
+      CardsHandler.currentWord = CardsHandler.ourWordObj;
     }
   },
 
@@ -348,6 +346,7 @@ const CardsHandler = {
     CardsHandler.currentWord = word;
     CardsHandler.ourWordObj = ourWordObj;
     CardsHandler.wordProcessing();
+    CardsHandler.wordToRepeat = null;
     if (CardsHandler.ourWordObj.isNew) {
       CardsHandler.statistic.newWords += 1;
     }
@@ -355,7 +354,6 @@ const CardsHandler = {
     CardsHandler.generateNextCard = generateNextCard;
     CardsHandler.homeSettings = settings;
 
-    CardsHandler.wordToRepeat = null;
     CardsHandler.isGuessedOnFirstTry = true;
     CardsHandler.isWordCorrect = false;
     CardsHandler.setInputWidthAndFocus();
