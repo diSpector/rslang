@@ -82,31 +82,31 @@ const Dictionary = {
 
       const newWordProgress = createNewElement('div', 'progress');
 
-      
-      if(wordObj.userWord.optional.dateLearned){
+
+      if (wordObj.userWord.optional.dateLearned) {
         const learnDate = wordObj.userWord.optional.dateLearned.split('-').join('.');
         const learnDateBlock = createNewElement('div', 'next-date', `Выучено ${learnDate}`);
         newWordProgress.append(learnDateBlock);
       }
-      
-      if(wordObj.userWord.optional.date){
-      const nextDate = wordObj.userWord.optional.date.split('-').join('.');
-      const nextDateBlock = createNewElement('div', 'next-date', `Следующее повторение ${nextDate}`);
-      if (nextDate !== 'none') newWordProgress.append(nextDateBlock);
-      }
-      
 
-      if(wordObj.userWord.optional.count) {
+      if (wordObj.userWord.optional.date) {
+        const nextDate = wordObj.userWord.optional.date.split('-').join('.');
+        const nextDateBlock = createNewElement('div', 'next-date', `Следующее повторение ${nextDate}`);
+        if (nextDate !== 'none') newWordProgress.append(nextDateBlock);
+      }
+
+
+      if (wordObj.userWord.optional.count) {
         const repeats = wordObj.userWord.optional.count;
-      const repeatsBlock = createNewElement('div', 'repeat-count');
-      if (repeats === 2 || repeats === 3 || repeats === 4) {
-        repeatsBlock.innerHTML = `Повторялось ${repeats} раза`;
-      } else {
-        repeatsBlock.innerHTML = `Повторялось ${repeats} раз`;
+        const repeatsBlock = createNewElement('div', 'repeat-count');
+        if (repeats === 2 || repeats === 3 || repeats === 4) {
+          repeatsBlock.innerHTML = `Повторялось ${repeats} раза`;
+        } else {
+          repeatsBlock.innerHTML = `Повторялось ${repeats} раз`;
+        }
+        newWordProgress.append(repeatsBlock);
       }
-       newWordProgress.append(repeatsBlock);
-      }
-        
+
 
       longRead.append(newWordProgress);
       const wordImg = createNewElement('img', 'wordImg');
