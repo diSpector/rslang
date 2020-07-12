@@ -46,10 +46,11 @@ const Utils = {
    * @param {string} text - innerHTML нового эл-та
    * @param {Object} propsObj - объект с обычными атрибутами (src, href)
    * @param {Object} datasetObj - объект с data-атрибутами
+   * @param {Object} styleObj - объект со style-атрибутами
    *
    * @return {HTMLElement} - новый созданный элемент
    */
-  createBlockInside: (tagName, cssClassArr, container = null, text = '', propsObj = {}, datasetObj = {}) => {
+  createBlockInside: (tagName, cssClassArr, container = null, text = '', propsObj = {}, datasetObj = {}, styleObj = {}) => {
     const blockName = document.createElement(tagName);
 
     // если стили пришли в массиве
@@ -77,6 +78,12 @@ const Utils = {
     if (Object.keys(datasetObj).length) { // если переданы data-атрибуты
       Object.entries(datasetObj).forEach(([key, value]) => {
         blockName.dataset[key] = value;
+      });
+    }
+
+    if (Object.keys(styleObj).length) { // если переданы style-атрибуты
+      Object.entries(styleObj).forEach(([key, value]) => {
+        blockName.style[key] = value;
       });
     }
 
