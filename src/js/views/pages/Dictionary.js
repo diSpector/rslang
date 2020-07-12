@@ -17,8 +17,6 @@ const Dictionary = {
           <div class = "dictionarry--buttonImg" title="Показывать изображения"></div>
         </div>
       </nav>
-           
-      
       
       <div class="dictionary--currentWords page">
        
