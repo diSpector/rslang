@@ -93,7 +93,7 @@
 
     input[type=number] {
         width: 40px;
-        border: 2px solid #586187;
+        border: 2px solid #e2c774;
         border-radius: 0.2em;
         text-align: center;
         font-family: inherit;
@@ -120,7 +120,7 @@
         position: absolute;
 
         content: "\2714";
-        border: 2px solid #586187;
+        border: 2px solid #e2c774;
         border-radius: 0.2em;
         display: inline-block;
         width: 1em;
@@ -140,9 +140,9 @@
     }
       
     input[type=checkbox]:checked + label:before {
-        background-color: #9bc0c6;
-        border-color: #9bc0c6;
-        color: #fff;
+        background-color: #ffe9a6;
+        border-color: #ffe9a6;
+        color: #000;
     }
 }
 
@@ -150,12 +150,17 @@
     @include button;
     align-self: center;
     margin: 0;
-    background: #9bc0c6;     
-    border: 1px solid #9bc0c6; 
+    background: #fde28e;
+    box-shadow: inset -3px -3px #e2c774;
+    border-radius: 6px;
+    font-size: 2rem;
 
     &:hover {
-        background: #586187;
-        border: 1px solid #586187;
-        color: white;
+        background: #ffe9a6;
+    }
+
+    &:active {
+        background: #efc74d;
+        box-shadow: inset 3px 3px #caa433;
     }
 }
