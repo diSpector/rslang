@@ -6,7 +6,7 @@ $hardColor: #586187;
 $deletedColor:indianred;
 .dictionary--container{
     margin: 0 auto;
-    max-width: 1200px;
+    max-width: 1024px;
     color: black;
 
 }
@@ -120,6 +120,11 @@ $deletedColor:indianred;
             
             align-items: center;
             margin: 5px;
+            .emptyText {
+                margin: 20px auto;
+                height: 35px;
+                
+            }
             .wordData{
                
                 flex-grow: 1;

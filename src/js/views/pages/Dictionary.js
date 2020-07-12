@@ -260,6 +260,13 @@ const Dictionary = {
     async function start() {
       const wordsForDictionary = await model.getWordsForDictionary();
       const { allWords: currentWords, hardWords, deletedWords } = wordsForDictionary;
+      if(!currentWords.length && !deletedWords.length){
+        const currentWordsContainer = document.querySelector('.dictionary--currentWords');
+        const emptyBlock = createNewElement('div', 'wordCard', `<p class="emptyText">Словарь пуст</p>`);
+        
+        currentWordsContainer.append(emptyBlock);
+        
+      }
 
       await hardWords.forEach((word) => {
         constructCurd(word, 'hard');
@@ -337,7 +344,6 @@ const Dictionary = {
     }
 
     async function go() {
-      await model.loginUser({ email: '66group@gmail.com', password: 'Gfhjkm_123' });
       setEventListeners();
       await getSettings();
       start();
