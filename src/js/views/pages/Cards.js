@@ -364,13 +364,13 @@ const Cards = {
     const percentOfCorrect = (CardsHandler.statistic.correctAnswers
     / CardsHandler.statistic.cardsCompleted) * 100;
     const cardContent = document.querySelector('.learn--card__content');
-    cardContent.innerHTML = ` <h2>Ура! На сегодня всё.</h2>
-                              <div class="learn--card__stopGame">
-                                <div class="stopGame__statistic">
-                                  <p>Карточек завершено: ${CardsHandler.statistic.cardsCompleted}</p>
-                                  <p>Правильные ответы: ${Math.trunc(percentOfCorrect)}%</p>
-                                  <p>Новые слова: ${CardsHandler.statistic.newWords}</p>
-                                  <p>Самая длинная серия правильных ответов: ${CardsHandler.statistic.bestCorrectSeries}</p>
+    cardContent.innerHTML = ` <div class="learn--card__stopGame">
+                              <h2>Ура! На сегодня всё.</h2>
+                                <div class="learn--card__statistic">
+                                  <p class="complited">Карточек завершено: ${CardsHandler.statistic.cardsCompleted}</p>
+                                  <p class="correct">Правильные ответы: ${Math.trunc(percentOfCorrect)}%</p>
+                                  <p class="new">Новые слова: ${CardsHandler.statistic.newWords}</p>
+                                  <p class="series">Самая длинная серия правильных ответов: ${CardsHandler.statistic.bestCorrectSeries}</p>
                                 </div>
                                 <p>Есть ещё новые карточки, но дневной лимит исчерпан.</p>
                                 <p>Вы можете увеличить лимит в настройках, но, 
