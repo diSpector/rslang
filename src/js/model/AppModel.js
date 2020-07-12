@@ -381,8 +381,8 @@ export default class AppModel {
     }
   }
 
-   // логин пользователя
-   async loginUser(user) {
+  // логин пользователя
+  async loginUser(user) {
     const validation = this.validateUserData(user);
     if (!validation.valid) {
       return { data: null, error: validation.error, errorText: validation.errorText };
