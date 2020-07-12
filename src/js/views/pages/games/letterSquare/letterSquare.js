@@ -1,6 +1,7 @@
 import '../../../../../css/pages/games/letterSquare/letterSquare.scss';
 import '../../../../../css/pages/games/allGames.scss';
 import Utils from '../../../../services/Utils';
+import Game from '../Game';
 
 import gamePageRendering from './helpers/gamePageRendering';
 import wordFilling from './helpers/addingWordsToTable';
@@ -32,9 +33,8 @@ const letterSquare = {
 
   render: (model) => {
     letterSquare.beforeRender();
-    const view = gamePageRendering();
     letterSquare.settings.model = model;
-
+    const view = gamePageRendering();
     return view;
   },
 
@@ -213,12 +213,14 @@ const letterSquare = {
 
           const resultColumn = [];
           const resultLine = [];
-          for (const str of columnSort) {
+          for (let i = 0; i < columnSort.length; i += 1) {
+            const str = columnSort[i];
             if (!resultColumn.includes(str)) {
               resultColumn.push(str);
             }
           }
-          for (const str of lineSort) {
+          for (let i = 0; i < lineSort.length; i += 1) {
+            const str = lineSort[i];
             if (!resultLine.includes(str)) {
               resultLine.push(str);
             }
@@ -331,7 +333,9 @@ const letterSquare = {
           if (playField.rows[r].cells[c].innerHTML === '') {
             let cellValue = '';
             const alphabet = 'abcdefghijklmnopqrstuvwxyz';
-            while (cellValue.length < 1) { cellValue += alphabet[Math.random() * alphabet.length | 0]; }
+            while (cellValue.length < 1) {
+              cellValue += alphabet[Math.random() * alphabet.length | 0];
+            }
             playField.rows[r].cells[c].innerHTML = cellValue;
           }
         }
@@ -414,8 +418,8 @@ const letterSquare = {
     };
     nextBtn.addEventListener('click', async () => {
       /** получить следующие level, page, round на основании текущих */
-      difficulty = parseInt(difficulty);
-      round = parseInt(round);
+      difficulty = parseInt(difficulty, 10);
+      round = parseInt(round, 10);
       const maxLevel = 6;
       const maxRound = 20;
 
@@ -437,6 +441,7 @@ const letterSquare = {
         words = [];
         time1 = 3;
         time = 120;
+        counterWord = 0;
         const data = await letterSquare.settings.model.getSetOfWordsAndTranslations(difficulty,
           round - 1, 8, 0);
         letterSquare.data = letterSquare.reformat(data);
