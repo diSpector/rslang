@@ -398,10 +398,8 @@ const Cards = {
   getRandomInRange: (min, max) => Math.floor(Math.random() * (max - min + 1)) + min,
 
   repeateWord: (word) => {
-    // if (Cards.dayWords.length > 2) {
     const wordIndex = Cards.getRandomInRange(0, Cards.dayWords.length - 1);
     Cards.dayWords = [...Cards.dayWords.splice(0, wordIndex), word, ...Cards.dayWords.splice(1)];
-    // }
   },
 
   generateNextCard: async () => {
