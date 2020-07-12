@@ -12,8 +12,8 @@ const Footer = {
             <li class="footer__navItem"><a href="#/stats">Статистика</a></li>
             <li class="footer__navItem"><a href="#/dictionary">Словарь</a></li>
             <li class="footer__navItem"><a href="#/games/all">Игры</a></li>
-            <li class="footer__navItem"><a href="#/promo">Промо-страница</a></li>
-            <li class="footer__navItem"><a href="#/team">О команде</a></li>
+            <li class="footer__navItem"><a href="#/promo">О приложении</a></li>
+            <li class="footer__navItem"><a href="#/team">Команда</a></li>
           </ul>
         </div>
         <div class="footer__copyright">
