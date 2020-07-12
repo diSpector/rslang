@@ -80,20 +80,20 @@ export default function gamePageRendering() {
       </div>
     </section>
 
-    <section class="letterSquare letterSquare__globalStatistic letterSquare-hidden">
-          <table class="globalStatistic__statTable">
-            <thead class="statTable__head">
-              <tr class="statTable__headRow">
-              <th class="statTable__headData">№</th>
-                <th class="statTable__headData">Верных ответов</th>
-                <th class="statTable__headData">Неверных ответов</th>
-                <th class="statTable__headData">Дата игры</th>
-              </tr>
-            </thead>
-            <tbody class="statTable__body">
-            </tbody>  
-          </table>
-          <button class="globalStatistic__button">Вернуться назад</button>
-        </section>
+    <section class="letterSquare letterSquare--globalStatistic letterSquare-hidden">
+      <table class="letterSquare--globalStatistic__statTable">
+        <thead class="letterSquare--statTable__head">
+          <tr class="letterSquare--statTable__headRow">
+          <th class="letterSquare--statTable__headData">№</th>
+            <th class="letterSquare--statTable__headData">Верных ответов</th>
+            <th class="letterSquare--statTable__headData">Неверных ответов</th>
+            <th class="letterSquare--statTable__headData">Дата игры</th>
+          </tr>
+          </thead>
+          <tbody class="letterSquare--statTable__body">
+        </tbody>  
+      </table>
+      <button class="letterSquare--globalStatistic__button">Вернуться назад</button>
+    </section>
         `;
 }

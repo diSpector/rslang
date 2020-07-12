@@ -149,7 +149,7 @@ html, body{
   height: 600px;
 }
   
-td {
+.letterSquare--td {
   height: 40px;
   width: 40px;
   text-align: center;
@@ -167,11 +167,11 @@ td {
   outline: none;
   background: rgb(105, 190, 98);
   }
-td:hover {
+.letterSquare--td:hover {
   background: rgb(136, 245, 126);
 }
 
-.td_active {
+.letterSquare--td_active {
   height: 4vh;
   text-align: center;
   cursor: pointer;
@@ -189,11 +189,11 @@ td:hover {
   background: #fa883c linear-gradient(#fca543, #fca258 80%);
 }
 
-.td_active:hover {
+.letterSquare--td_active:hover {
   background: #faa777 linear-gradient(#fc9856, #ff9252 80%);
 }
 
-.td_guessed {
+.letterSquare--td_guessed {
   height: 4vh;
   text-align: center;
   cursor: pointer;
@@ -407,29 +407,32 @@ td:hover {
   background-color: white;
   border-radius: 10px;
   padding: 20px;
-  width: 500px;
+  width: 100%;
 }
 
-.globalStatistic__title {
+.letterSquare--globalStatistic__title {
   font-size: 2.5rem;
   margin: 0 0 10px;
 }
 
-.globalStatistic__statTable {
-  width: 100%;
+.letterSquare--globalStatistic__statTable {
+  font-size: 2rem;
+  margin-left: 7%;
+  margin-top: 10%;
+  width: 80%;
   border-collapse: collapse;
 }
 
-.statTable__headRow {
+.letterSquare--statTable__headRow {
   font-weight: bold;
   background: #ffe9a6;;
 }
 
-.statTable__headData {
+.letterSquare--statTable__headData {
   border: 1px solid #f1dea2;
 }
 
-.statTable__bodyRow {
+.letterSquare--statTable__bodyRow {
   &:nth-child(2n) {
     background: #f4f4f4;
   }
@@ -438,16 +441,17 @@ td:hover {
   }
 }
 
-.statTable__bodyData {
+.letterSquare--statTable__bodyData {
   border: 1px solid #e8e9eb;
   padding: 4px;
 }
 
-.globalStatistic__button {
+.letterSquare--globalStatistic__button {
+  margin-top: 10px;
+  margin-left: 43%;
   font-family: 'Neucha', cursive;
-  margin: 10px;
   color: black;
-  font-size: 2.2rem;
+  font-size: 2rem;
   border: 1px solid black;
   border-radius: 10px;
   padding: 10px;
@@ -513,25 +517,30 @@ td:hover {
     height: 400px;
   }
 
-  td {
+  .letterSquare--td {
     height: 35px;
     width: 35px;
     border-radius: 3px;
     font-size: 2.4em;
   }
 
-  .td_active {
+  .letterSquare--td_active {
     height: 35px;
     width: 35px;
     border-radius: 3px;
     font-size: 2.4em;
   }
 
-  .td_guessed {
+  .letterSquare--td_guessed {
     height: 35px;
     width: 35px;
     border-radius: 3px;
     font-size: 2.4em;
+  }
+
+  .letterSquare--globalStatistic__button {
+    margin-left: 35%;
+    font-size: 1.8rem;
   }
 }
 
@@ -587,21 +596,21 @@ td:hover {
     height: 300px;
   }
 
-  td {
+  .letterSquare--td {
     height: 25px;
     width: 25px;
     border-radius: 1.5px;
     font-size: 2em;
   }
 
-  .td_active {
+  .letterSquare--td_active {
     height: 25px;
     width: 25px;
     border-radius: 1.5px;
     font-size: 2em;
   }
 
-  .td_guessed {
+  .letterSquare-- td_guessed {
     height: 25px;
     width: 25px;
     border-radius: 1.5px;
@@ -637,5 +646,16 @@ td:hover {
   .letterSquare--wordList__btnRemove {
     width: 120px;
     margin-top: 10px;
+  }
+
+  .letterSquare--globalStatistic__statTable {
+    font-size: 1.5rem;
+    margin-left: 3%;
+    margin-top: 10%;
+  }
+
+  .letterSquare--globalStatistic__button {
+    margin-left: 25%;
+    font-size: 1.5rem;
   }
 }

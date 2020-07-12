@@ -1,19 +1,21 @@
 import Utils from '../../services/Utils';
-// import Audition from './games/english-puzzle/Audition';
+import Audition from './games/audition/Audition';
 import EnglishPuzzle from './games/english-puzzle/EnglishPuzzle';
 import SpeakIt from './games/speakit/SpeakIt';
 import Savannah from './games/savannah/Savannah';
 // import Sprint from './games/english-puzzle/Sprint';
 import letterSquare from './games/letterSquare/letterSquare';
+import AllGames from './AllGames';
 import Error404 from './Error404';
 
 const gameList = {
-  // 'audition'        : Audition,
+  audition: Audition,
   'english-puzzle': EnglishPuzzle,
   speakit: SpeakIt,
   savannah: Savannah,
   // 'sprint'          : Sprint,
   'letter-square': letterSquare,
+  all: AllGames,
 };
 
 const Games = {
@@ -43,5 +45,4 @@ const Games = {
   },
 
 };
-
 export default Games;
