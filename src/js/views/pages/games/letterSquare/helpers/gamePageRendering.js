@@ -3,7 +3,7 @@ export default function gamePageRendering() {
   <section class="allGames__startScreen letterSquare letterSquare__startScreen">
     <h1 class="allGames__heading letterSquare__heading">Буквенный квадрат</h1>
       <p class="allGames--description letterSquare--description">Буквенный квадрат — классическое упражнение для запоминания новых слов.</p>
-      <div class="allGames__choice letterSquare__choice">
+      <div class="allGames allGames__choice">
             <p class="allGames__choice_learn select">Игра с изученными словами</p>
             <p class="allGames__choice_new">Игра с новыми словами</p>
             <div class="allGames__choice_levels hidden">
@@ -14,6 +14,7 @@ export default function gamePageRendering() {
                 <option value="3">3</option>
                 <option value="4">4</option>
                 <option value="5">5</option>
+                <option value="6">6</option>
               </select>
               <label>Раунд:</label>
               <select name="pages" id="pages">
@@ -73,10 +74,26 @@ export default function gamePageRendering() {
         <div class="letterSquare--statistic__numberWordsFound">Найденные слова: </div>
         <div class="letterSquare--statistic__numberWordsNotFound">Ненайденные слова: </div>
         <button class="letterSquare--statistic__button--play" onclick="document.location.reload()">Играть снова</button>
-        <button class="letterSquare--statistic__button--next" onclick="document.location.reload()">Продолжить</button><br>
+        <button class="letterSquare--statistic__button--next">Продолжить</button><br>
         <a class="letterSquare--statistic__button--back" onclick="location.href='/'">Перейти на главную страницу</a><br>
-        <a class="letterSquare--statistic__button--statistics" href='/#/statistic'>Статистика за все игры</a><br>
+        <a class="letterSquare--statistic__button--statistics">Статистика за все игры</a><br>
       </div>
+    </section>
+
+    <section class="letterSquare letterSquare--globalStatistic letterSquare-hidden">
+      <table class="letterSquare--globalStatistic__statTable">
+        <thead class="letterSquare--statTable__head">
+          <tr class="letterSquare--statTable__headRow">
+          <th class="letterSquare--statTable__headData">№</th>
+            <th class="letterSquare--statTable__headData">Верных ответов</th>
+            <th class="letterSquare--statTable__headData">Неверных ответов</th>
+            <th class="letterSquare--statTable__headData">Дата игры</th>
+          </tr>
+          </thead>
+          <tbody class="letterSquare--statTable__body">
+        </tbody>  
+      </table>
+      <button class="letterSquare--globalStatistic__button">Вернуться назад</button>
     </section>
         `;
 }
