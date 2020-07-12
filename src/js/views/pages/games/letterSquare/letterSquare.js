@@ -219,12 +219,12 @@ const letterSquare = {
 
           const resultColumn = [];
           const resultLine = [];
-          for (let str of columnSort) {
+          for (const str of columnSort) {
             if (!resultColumn.includes(str)) {
               resultColumn.push(str);
             }
           }
-          for (let str of lineSort) {
+          for (const str of lineSort) {
             if (!resultLine.includes(str)) {
               resultLine.push(str);
             }

@@ -4,8 +4,7 @@ import AppModel from '../../model/AppModel';
 
 const Header = {
   render: async () => {
-    const view = 
-`
+    const view = `
 <div class="header__wrapper">
             <div id="burger">
                 <button class="header__burger"></button>
@@ -42,9 +41,7 @@ const Header = {
 
             </nav>
         </div>
-  `
-
-    ;
+  `;
     return view;
   },
   afterRender: async () => {
@@ -52,39 +49,34 @@ const Header = {
     const BURGER_BUTTON = document.querySelector('.header #burger');
     const HEADER = document.querySelector('.header');
     BURGER_BUTTON.addEventListener('click', (event) => {
-    if (event.target.classList.contains('header__burger')) {
+      if (event.target.classList.contains('header__burger')) {
         if (document.querySelector('.header__burger-navigation').classList.contains('notdisplay')) {
-            document.querySelector('.header__burger-navigation').classList.remove('notdisplay')
+          document.querySelector('.header__burger-navigation').classList.remove('notdisplay');
+        } else {
+          document.querySelector('.header__burger-navigation').classList.add('notdisplay');
         }
-        else {
-            document.querySelector('.header__burger-navigation').classList.add('notdisplay')
-          }
       }
-    })
+    });
 
     const logList = document.querySelectorAll('.header .logout');
     const logArray = Array.from(logList);
 
-    if (await model.checkUser()){
-      logArray.forEach(log => {
+    if (await model.checkUser()) {
+      logArray.forEach((log) => {
         log.onclick = () => model.logOutUser();
         log.textContent = 'Выйти';
         log.setAttribute('href', '#/');
       });
     }
 
-    const href = window.location.href;
+    const { href } = window.location;
     const hrefArray = href.split('/');
-    const currentPage = hrefArray[hrefArray.length-1];
-    HEADER.querySelectorAll('a').forEach(el=>el.classList.remove('nav_selected'));
+    const currentPage = hrefArray[hrefArray.length - 1];
+    HEADER.querySelectorAll('a').forEach((el) => el.classList.remove('nav_selected'));
     if (currentPage) {
       const currentLink = HEADER.querySelectorAll(`.${currentPage}`);
-      currentLink.forEach(el=>el.classList.add('nav_selected'));
+      currentLink.forEach((el) => el.classList.add('nav_selected'));
     }
-    
-  
-
-    
   },
 
 
