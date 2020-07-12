@@ -136,6 +136,9 @@
   width: 600px;
   padding-left: calc(50vw - 300px);
   padding-top: calc(50vh - 150px);
+  &.allGames__playScreen-hidden {
+    display: none;
+  }
   @include media-tablet {
     padding-left: calc(50vw - 200px);
     width: 400px;
