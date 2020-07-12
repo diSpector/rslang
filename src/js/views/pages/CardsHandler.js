@@ -108,7 +108,7 @@ const CardsHandler = {
     CardsHandler.addWordTranscription();
 
     CardsHandler.model.processSolvedWord(CardsHandler.ourWordObj);
-    if (CardsHandler.isGuessedOnFirstTry) CardsHandler.addWordToRepeate();
+    if (!CardsHandler.isGuessedOnFirstTry) CardsHandler.addWordToRepeate();
 
     cardInput.innerText = CardsHandler.currentWord.word;
     cardInput.removeAttribute('contenteditable');
