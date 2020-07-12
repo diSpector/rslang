@@ -1,7 +1,6 @@
 import '../../../../../css/pages/games/letterSquare/letterSquare.scss';
 import '../../../../../css/pages/games/allGames.scss';
 import Utils from '../../../../services/Utils';
-import Game from '../Game';
 
 import gamePageRendering from './helpers/gamePageRendering';
 import wordFilling from './helpers/addingWordsToTable';
@@ -334,7 +333,7 @@ const letterSquare = {
             let cellValue = '';
             const alphabet = 'abcdefghijklmnopqrstuvwxyz';
             while (cellValue.length < 1) {
-              cellValue += alphabet[Math.random() * alphabet.length | 0];
+              cellValue += alphabet[Math.random() * alphabet.length || 0];
             }
             playField.rows[r].cells[c].innerHTML = cellValue;
           }

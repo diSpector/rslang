@@ -430,7 +430,6 @@ const Cards = {
     Cards.model = model;
 
     Cards.dayWords = await model.getWordsForDay();
-    console.log(Cards.dayWords);
     if (wordsAlreadyPlayed !== 0) Cards.dayWords.splice(0, wordsAlreadyPlayed);
     const ourWordObj = Cards.dayWords.pop();
     Cards.currentWord = await model.getNextWord(ourWordObj);
