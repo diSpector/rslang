@@ -1,20 +1,20 @@
 import Utils from '../../services/Utils';
 import Audition from './games/audition/Audition';
 import EnglishPuzzle from './games/english-puzzle/EnglishPuzzle';
-// import SpeakIt from './games/english-puzzle/SpeakIt';
-// import Savanna from './games/english-puzzle/Savanna';
 import Sprint from './games/Sprint/Sprint';
-// import Square from './games/english-puzzle/Square';
+import SpeakIt from './games/speakit/SpeakIt';
+import Savannah from './games/savannah/Savannah';
 import AllGames from './AllGames';
+import letterSquare from './games/letterSquare/letterSquare';
 import Error404 from './Error404';
 
 const gameList = {
   audition: Audition,
   'english-puzzle': EnglishPuzzle,
-  // 'speakit'         : SpeakIt,
-  // 'savanna'         : Savanna,
   sprint: Sprint,
-  // 'square'          : Square,
+  speakit: SpeakIt,
+  savannah: Savannah,
+  'letter-square': letterSquare,
   all: AllGames,
 };
 
