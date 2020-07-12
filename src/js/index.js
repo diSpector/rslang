@@ -67,7 +67,7 @@ const router = async () => {
   // для каждого элемента вызывается метод render(), чтобы создать html-разметку,
   // а затем - afterRender(), чтобы повесить на разметку обработчики событий
   header.innerHTML = await Header.render();
-  await Header.afterRender();
+  await Header.afterRender(model);
   footer.innerHTML = await Footer.render();
   await Footer.afterRender();
 
