@@ -86,64 +86,6 @@ export default class AppModel {
     return result;
   }
 
-  // initialize user data for the first load
-  setDefaultUserData(userName) {
-    this.userName = userName;
-    // this.wordsCounter = 0;
-    this.difficultWords = [];
-    this.deletedWords = [];
-    localStorage.setItem(this.userName, {
-      learnedWordsCounter: this.learnedWordsCounter,
-      difficultWords: [],
-      deletedWords: [],
-      gameStatistics: {
-        englishPuzzle: {
-          level: 0,
-          page: 0,
-          round: 0,
-        },
-        savannah: {},
-        speakIt: {},
-        sprint: {},
-        square: {},
-      },
-    });
-  }
-
-  // save current user data in local storage(on document.unload)
-  saveUserData() {
-    localStorage.setItem('defaultUser', {
-      learnedWordsCounter: this.learnedWordsCounter,
-      difficultWords: this.difficultWords,
-      deletedWords: this.deletedWords,
-      gameStatistics: this.gameStatistics,
-    });
-  }
-
-  // load user data from local storage(currently happens on document.load)
-  loadUserData() {
-    const UserData = localStorage.getItem('defaultUser');
-    // console.log(UserData);
-    if (!UserData) {
-      this.setDefaultUserData();
-    } else {
-      this.learnedWordsCounter = UserData.learnedWordsCounter ? UserData.learnedWordsCounter : 100;
-      this.difficultWords = UserData.difficultWords ? UserData.difficultWords : []; // ?? check this
-      this.deletedWords = UserData.deletedWords ? UserData.deletedWords : [];
-      this.gameStatistics = UserData.gameStatistics ? UserData.gameStatistics : {
-        englishPuzzle: {
-          level: 0,
-          page: 0,
-          round: 0,
-        },
-        savannah: {},
-        speakIt: {},
-        sprint: {},
-        square: {},
-      };
-    }
-  }
-
   // manually set counter for learned words, supposed to be used only for debugging!!
   setLearnedWords(num) {
     this.learnedWordsCounter = num;
