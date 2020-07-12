@@ -122,6 +122,22 @@ const Sprint = {
             <p class="sprint--end__statistic_error_text">Ответы с ошибками</p>
           </div>
         </div>
+        <div class="sprint--end__globalStatistic hidden">
+          <table class="globalStatistic__statTable">
+            <thead class="statTable__head">
+              <tr class="statTable__headRow">
+              <th class="statTable__headData">№</th>
+                <th class="statTable__headData">Верных ответов</th>
+                <th class="statTable__headData">Неверных ответов</th>
+                <th class="statTable__headData">Дата игры</th>
+              </tr>
+            </thead>
+            <tbody class="statTable__body">
+            </tbody>  
+          </table>
+          <button class="globalStatistic__button">Вернуться назад</button>
+        </div>
+
         <div class ="sprint--end__slide">
           <span class="sprint--end__slide_main active"></span>
           <span class="sprint--end__slide_statistic"></span>

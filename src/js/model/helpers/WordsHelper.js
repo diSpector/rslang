@@ -189,6 +189,48 @@ const WordsHelper = {
       deletedWords,
     };
   },
+
+  /** объект настроек по умолчанию для словаря и карточек */
+  getDefaultWordsSettings: () => ({
+    newWordsPerDay: 20,
+    maxWordsPerDay: 40,
+    isWordTranslate: true,
+    isTextMeaning: true,
+    isTextExample: true,
+    isTextMeaningTranslate: true,
+    isTextExampleTranslate: true,
+    isTranscription: true,
+    isImage: false,
+    isAnswerButton: false,
+    isDeleteWordButton: false,
+    isMoveToDifficultButton: false,
+    isIntervalButtons: false,
+    dictionary: {
+      example: true,
+      meaning: true,
+      transcription: true,
+      img: true,
+    },
+  }),
+
+  /** объект статистики по умолчанию для словаря и карточек */
+  getDefaultStatsObj: () => ({
+    learnedWords: 0,
+    optional: {
+      todayWords: {
+        date: '',
+        counter: 0,
+      },
+      games: {
+        au: [],
+        ep: [],
+        sv: [],
+        si: [],
+        sp: [],
+        sq: [],
+      },
+    },
+  }),
 };
 
 export default WordsHelper;

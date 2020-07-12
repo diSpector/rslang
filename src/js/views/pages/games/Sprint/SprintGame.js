@@ -6,7 +6,7 @@ const correctAudio = new Audio('src/audio/correct.mp3');
 const errorAudio = new Audio('src/audio/error.mp3');
 let obj = {};
 let timer;
-let time = 60;
+let time = 1;
 let wordNumber = 0;
 let arrayWord;
 let round;
@@ -122,6 +122,24 @@ const searchAudio = () => {
   });
 };
 
+async setGlobalStatisticData() {
+  const tableBody = document.querySelector('.statTable__body');
+  const statistic = await Audition.settings.model.getStatForGame('au');
+  console.log(statistic);
+  let template = '';
+  statistic.forEach((elem, num) => {
+    template += `
+      <tr class="statTable__bodyRow">
+        <td class="statTable__bodyData">${num + 1}</td>
+        <td class="statTable__bodyData">${elem.y}</td>
+        <td class="statTable__bodyData">${elem.n}</td>
+        <td class="statTable__bodyData">${elem.d}</td>
+      </tr>
+    `;
+  });
+  tableBody.innerHTML = template;
+}
+
 const generateStatistic = () => {
   document.querySelector('.sprint--game').classList.add('hidden');
   document.querySelector('.sprint--end').classList.remove('hidden');
@@ -132,7 +150,7 @@ const generateStatistic = () => {
   document.querySelector('.sprint__message__record').innerHTML = Math.max(...data);
   const average = data.reduce((accum, item) => Number(accum) + Number(item)) / data.length;
   document.querySelector('.sprint__message__average').innerHTML = Math.round(average);
-
+  setGlobalStatisticData();
   document.querySelector('.sprint--end__slide_main').onclick = () => {
     document.querySelector('.sprint--end__slide_main').classList.add('active');
     document.querySelector('.sprint--end__slide_statistic').classList.remove('active');
@@ -152,6 +170,7 @@ const generateStatistic = () => {
   };
   searchAudio();
 };
+
 
 
 const timerw = () => {
