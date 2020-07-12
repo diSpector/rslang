@@ -68,7 +68,7 @@ const AllGames = {
             </div>
           </div>
 
-          <div class="allGames__gameCard square" id="square">
+          <div class="allGames__gameCard square" id="letter-square">
             <div class="gameCard__title">Буквенный квадрат</div>
             <div class="gameCard__icon"></div>
             <div class="gameCard__hint square">
