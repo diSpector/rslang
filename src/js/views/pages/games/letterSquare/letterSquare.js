@@ -88,7 +88,6 @@ const letterSquare = {
         arr2 += item.innerHTML + comma;
       });
       foundWord = [];
-      console.log(document.querySelectorAll('.letterSquare--wordList__foundWord'));
       foundWord = document.querySelectorAll('.letterSquare--wordList__foundWord');
       foundWord.forEach((item) => {
         arr1 += item.innerHTML + comma;
@@ -99,8 +98,6 @@ const letterSquare = {
       subStr2 = '';
       subStr2 = arr2.split(',');
       subStr2.splice(-1, 1);
-
-      console.log(subStr1);
 
       document.querySelector('.letterSquare__game').classList.add('letterSquare-hidden');
       document.querySelector('.letterSquare__statistic').classList.remove('letterSquare-hidden');
@@ -121,9 +118,6 @@ const letterSquare = {
           list.appendChild(listItem);
         }
       }
-
-      console.log(subStr1);
-      console.log(subStr2);
       letterSquare.correctAnswers = subStr1;
       letterSquare.wrongAnswers = subStr2;
 
