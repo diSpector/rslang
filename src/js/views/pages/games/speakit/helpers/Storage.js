@@ -1,17 +1,9 @@
+import AppModel from '../../../../../model/AppModel';
+
 export default class Storage {
   saveGame(errors, wordsArr) { // записать результаты игры в localStorage
-    let gameInfo = JSON.parse(localStorage.getItem('speakItStat'));
-    if (gameInfo === null) {
-      gameInfo = [];
-    }
-
-    gameInfo.push({
-      date: new Date().toLocaleString(),
-      errors,
-      words: wordsArr,
-    });
-
-    localStorage.setItem('speakItStat', JSON.stringify(gameInfo));
+    const model = new AppModel();
+    model.saveStatForGame({name: 'si', y: wordsArr.length, n: errors});
   }
 
   saveLevelAndPage(level, page) {

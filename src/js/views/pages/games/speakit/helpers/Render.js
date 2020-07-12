@@ -1,3 +1,4 @@
+import AppModel from '../../../../../model/AppModel';
 export default class Render {
   async results(words, errors) { // вывести страницу с результатом
     const errorsContainer = document.querySelector('.results__errors');
@@ -26,9 +27,10 @@ export default class Render {
     unCorrectWords.forEach((word) => this.statForWord(word, '.results__uncorrect__words'));
   }
 
-  globalResults() {
-    const gamesInfo = JSON.parse(localStorage.getItem('speakItStat'));
-    if (gamesInfo !== null) {
+  async globalResults() {
+    const model = new AppModel();
+    const gamesInfo = await model.getStatForGame('si');
+    if (gamesInfo) {
       gamesInfo.forEach((game) => this.gameRes(game));
     }
   }
@@ -73,17 +75,17 @@ export default class Render {
     const globalResContainer = document.querySelector('.global__results table');
 
     const newTr = document.createElement('tr');
-
+    /*
     const dateTd = document.createElement('td');
     dateTd.innerText = gameObj.date;
     newTr.append(dateTd);
-
+    */
     const wordsTd = document.createElement('td');
-    wordsTd.innerText = gameObj.words.join(', ');
+    wordsTd.innerText = gameObj.y;
     newTr.append(wordsTd);
 
     const errorsTd = document.createElement('td');
-    errorsTd.innerText = gameObj.errors;
+    errorsTd.innerText = gameObj.n;
     newTr.append(errorsTd);
 
     globalResContainer.append(newTr);
