@@ -1,6 +1,4 @@
 import '../../../css/layout/header.scss';
-import AppModel from '../../model/AppModel';
-
 
 const Header = {
   render: async () => {
@@ -44,8 +42,7 @@ const Header = {
   `;
     return view;
   },
-  afterRender: async () => {
-    const model = new AppModel();
+  afterRender: async (model) => {
     const BURGER_BUTTON = document.querySelector('.header #burger');
     const HEADER = document.querySelector('.header');
     BURGER_BUTTON.addEventListener('click', (event) => {
