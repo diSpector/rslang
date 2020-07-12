@@ -216,25 +216,26 @@ const Dictionary = {
           // Устонавливаем onclick для карточек из блока Hard
           const sameHardWordButtonContainer = sameHardWord.querySelector('.wordButtonContainer');
           const sameHardDeleteButton = createNewElement('div', 'wordDeleteButton', '', 'Удалить');
-          sameHardWordButtonContainer.append(sameHardDeleteButton);
+          if (sameHardWordButtonContainer) {
+            sameHardWordButtonContainer.append(sameHardDeleteButton);
+            const sameHardCurrentButton = createNewElement('div', 'wordCurrentButton', '', 'В несложные');
+            sameHardWordButtonContainer.append(sameHardCurrentButton);
 
-          const sameHardCurrentButton = createNewElement('div', 'wordCurrentButton', '', 'В несложные');
-          sameHardWordButtonContainer.append(sameHardCurrentButton);
+            sameHardDeleteButton.onclick = () => {
+              newWord.remove();
+              sameHardWord.remove();
+              constructCurd(wordObj, 'hard');
+              constructCurd(wordObj, 'deleted');
+              model.addWordToDeleted(wordObj.id);
+            };
 
-          sameHardDeleteButton.onclick = () => {
-            newWord.remove();
-            sameHardWord.remove();
-            constructCurd(wordObj, 'hard');
-            constructCurd(wordObj, 'deleted');
-            model.addWordToDeleted(wordObj.id);
-          };
-
-          sameHardCurrentButton.onclick = () => {
-            newWord.remove();
-            sameHardWord.remove();
-            constructCurd(wordObj, 'current');
-            model.addWordToNormal(wordObj.id);
-          };
+            sameHardCurrentButton.onclick = () => {
+              newWord.remove();
+              sameHardWord.remove();
+              constructCurd(wordObj, 'current');
+              model.addWordToNormal(wordObj.id);
+            };
+          }
         } else {
           const wordHardButton = createNewElement('div', 'wordHardButton', '', 'В сложные');
           wordButtonContainer.append(wordHardButton);
@@ -273,11 +274,11 @@ const Dictionary = {
         constructCurd(word, 'hard');
       });
 
-      currentWords.forEach((word) => {
+      await currentWords.forEach((word) => {
         constructCurd(word, 'current');
       });
 
-      deletedWords.forEach((word) => {
+      await deletedWords.forEach((word) => {
         constructCurd(word, 'deleted');
       });
     }
@@ -345,7 +346,7 @@ const Dictionary = {
     }
 
     async function go() {
-      setEventListeners();
+      await setEventListeners();
       await getSettings();
       start();
     }
