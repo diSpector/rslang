@@ -37,7 +37,6 @@ const SpeakIt = {
               <div class="allGames__choice_levels hidden"></div>
           </div>
           <button class="allGames__startBtn  ">Начать</button>
-           
             
         </div>
         <div class="allGames__timerScreen allGames__timerScreen-hidden">
