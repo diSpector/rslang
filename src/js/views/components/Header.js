@@ -12,7 +12,7 @@ const Header = {
                 <div class="header__burger-navigation notdisplay">
                     <div class="header__burger-nav">
                         <button class="header__burger rotate"></button>
-                        <a href="#" class="logo logo-burger">
+                        <a href="#/" class="logo logo-burger">
                             <h1>RS Lang</h1>
                         </a>
                         <nav class="header__navigation">
@@ -22,13 +22,13 @@ const Header = {
                             <a href="#/games/all" class="all">Игры</a>
                             <a href="#/promo" class="promo">О приложении</a>
                             <a href="#/team" class="team">Команда</a>
-                            <a href="#/login" class='logout login'>Войти</a>
+                            <a href="#/login" class="logout login">Войти</a>
                         </nav>
                     </div>
                 </div>
 
             </div>
-            <a href="#" class="logo">
+            <a href="#/" class="logo">
                 <h1>RS Lang</h1>
             </a>
             <nav class="header__navigation">
@@ -37,7 +37,7 @@ const Header = {
                     <li class="nav-item__navigation"><a href="#/stats" class="stats">Статистика</a></li>
                     <li class="nav-item__navigation"><a href="#/dictionary" class="dictionary">Словарь</a></li>
                     <li class="nav-item__navigation"><a href="#/games/all" class="all">Игры</a></li>
-                    <li class="nav-item__navigation "><a href="#/login" class='logout login'>Войти</a></li>
+                    <li class="nav-item__navigation "><a href="#/login" class="logout login">Войти</a></li>
                 </ul>
 
             </nav>
@@ -77,8 +77,9 @@ const Header = {
     const hrefArray = href.split('/');
     const currentPage = hrefArray[hrefArray.length-1];
     HEADER.querySelectorAll('a').forEach(el=>el.classList.remove('nav_selected'));
-    if (currentPage) {
+    if (currentPage && currentPage !=='#') {
       const currentLink = HEADER.querySelectorAll(`.${currentPage}`);
+      
       currentLink.forEach(el=>el.classList.add('nav_selected'));
     }
     
