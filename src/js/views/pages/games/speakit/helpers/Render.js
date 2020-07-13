@@ -51,8 +51,8 @@ export default class Render {
     });
 
     // поставить стандартную картинку
-    //  const imgContainer = document.querySelector('.pic__image img');
-    // imgContainer.src = './src/img/games/speakit/dummy.jpg';
+    const imgContainer = document.querySelector('.pic__image img');
+    imgContainer.src = '';
     const translateContainer = document.querySelector('.pic__translate');
     translateContainer.innerText = '';
     translateContainer.classList.remove('translation-correct');
