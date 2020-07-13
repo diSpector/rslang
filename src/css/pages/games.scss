@@ -36,11 +36,11 @@
   @include media-mobile-big {
     background-position: 100% 100%;
   }
-  &.audition {
+  &.auditionGame {
     background-color: #9bc0c6;
     background-image: url(../../img/games/allGames/banners/audition-banner.svg);  
   }
-  &.sprint {
+  &.sprintGame {
     background-color: rgb(88, 97, 135);
     background-image: url(../../img/games/allGames/banners/sprint-banner.svg);  
     background-size: 45%;
@@ -49,20 +49,20 @@
       background-position: 100% 100%;
     }  
   }
-  &.speakit {
+  &.speakitGame {
     background-color: rgb(30, 128, 240);
     background-image: url(../../img/games/allGames/banners/speakit-banner.svg);
     background-size: 50%;
   }
-  &.english-puzzle {
+  &.english-puzzleGame {
     background-color: #c28f80;
     background-image: url(../../img/games/allGames/banners/english-puzzle-banner.svg);
   }
-  &.savannah {
+  &.savannahGame {
     background-color: darkolivegreen;
     background-image: url(../../img/games/allGames/banners/savannah-banner.svg);
   }
-  &.square {
+  &.squareGame {
     background-image: url(../../img/games/allGames/banners/square-banner.svg);
     background-size: 75%;
     background-position: 195px;
@@ -105,24 +105,24 @@
   opacity: 0;
   transform: translateY(-100%);
   transition: transform .2s ease,opacity .2s ease;
-  &.audition {
+  &.auditionGame {
     background-color: #9bc0c6;
   }
-  &.sprint {
+  &.sprintGame {
     background-color: rgb(88, 97, 135);
   }
-  &.speakit {
+  &.speakitGame {
     background-color: rgb(30, 128, 240);
   }
-  &.english-puzzle {
+  &.english-puzzleGame {
     background-color: #c28f80;
   }
-  &.savannah {
+  &.savannahGame {
     background-color: darkolivegreen;
     margin: 0;
     background-image: none;
   }
-  &.square{
+  &.squareGame{
     background-color: indianred;
   }
   &.visible {
