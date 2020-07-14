@@ -83,6 +83,23 @@ const Promo = {
             Хочешь знать, какими шагами ты приближаешься к заветной цели каждый день? Удобный график и статистика всегда под рукой!            </p>
           </div>
         </div>
+        <div class="promo__content_video">
+          <div class="promo__content_video-text">
+            <h2 class="promo__content_video-title">Вот как это выглядит</h2>
+            <p class="promo__content_statistic-description">
+            А здесь, в коротком 10-минутном ролике мы постарались показать все возможности приложения. Не хочется читать текст? Смотри видео!
+            </p>
+          </div>
+
+          <iframe class="promo_video"
+              src="https://www.youtube.com/embed/aKkeSQBBX84"
+              modestbranding ="1"
+              allow="accelerometer; encrypted-media; gyroscope; picture-in-picture"
+              allowfullscreen>
+          </iframe>
+        </div>
+
+
         <div class="promo__content_next promo__content-block">
           <div class="promo__content_next-text">
             <h2 class="promo__content_next-title">А что дальше?</h2>
