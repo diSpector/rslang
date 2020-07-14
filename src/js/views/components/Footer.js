@@ -17,7 +17,8 @@ const Footer = {
           </ul>
         </div>
         <div class="footer__copyright">
-          <a class="footer_link" href="https://github.com/diSpector/rslang">RSLang</a>
+          <div class="footer__copyright-githubImage"></div>
+          <a class="footer_link" href="https://github.com/diSpector/rslang">github</a>
         </div>
       </div>
     </div>
