@@ -144,6 +144,8 @@
 }
 
 .promo__content_video-description {
+  width: 94%;
+  margin: auto;
   font-size: 1.8rem;
   text-align: justify;
 }
@@ -289,7 +291,8 @@
 .promo__content_next {
   height: 365px;
   @include media-tablet {
-    margin-bottom: 0;
+    width: 94%;
+    margin: auto;
     height: 350px;
   }
   @include media-mobile-big {
