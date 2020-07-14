@@ -11,6 +11,15 @@
   padding: 0;
 }
 
+.footer_link {
+  font-size: 1.5rem;
+  color: #e6e9ee;
+  text-decoration: none;
+  &:hover {
+    color: #eef083;
+  }
+}
+
 .footer__navList {
   padding: 0;
 }

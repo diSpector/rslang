@@ -17,7 +17,7 @@ const Footer = {
           </ul>
         </div>
         <div class="footer__copyright">
-          <span>© 2020 RSSchool Students</span>
+          <a class="footer_link" href="https://github.com/diSpector/rslang">RSLang</a>
         </div>
       </div>
     </div>
