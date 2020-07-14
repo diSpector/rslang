@@ -333,7 +333,7 @@ const letterSquare = {
             let cellValue = '';
             const alphabet = 'abcdefghijklmnopqrstuvwxyz';
             while (cellValue.length < 1) {
-              cellValue += alphabet[Math.random() * alphabet.length || 0];
+              cellValue += alphabet[Math.floor(Math.random() * alphabet.length)];
             }
             playField.rows[r].cells[c].innerHTML = cellValue;
           }
