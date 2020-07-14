@@ -9,10 +9,10 @@ const AllGames = {
         <p class="allGames__description"> В наших играх ты сможешь потренировать свои навыки и улучшить знания английского языка.</p>
         <div class="allGames__cards">
 
-          <div class="allGames__gameCard audition" id="audition">
+          <div class="allGames__gameCard auditionGame" id="audition">
             <div class="gameCard__title">Аудиовызов</div>
             <div class="gameCard__icon"></div>
-            <div class="gameCard__hint audition">
+            <div class="gameCard__hint auditionGame">
               <div class="gameCard__hint-description">Улучшает восприятие английской речи на слух.</div>
               <div class="gameCard__hint-skills">
                 <div class="gameCard__hint-icon listening"></div>
@@ -21,10 +21,10 @@ const AllGames = {
             </div>
           </div>
 
-          <div class="allGames__gameCard sprint" id="sprint">
+          <div class="allGames__gameCard sprintGame" id="sprint">
             <div class="gameCard__title">Спринт</div>
             <div class="gameCard__icon"></div>
-            <div class="gameCard__hint sprint">
+            <div class="gameCard__hint sprintGame">
                 <div class="gameCard__hint-description">Учит быстро переводить с английского на ваш родной язык.</div>
                 <div class="gameCard__hint-skills">
                   <div class="gameCard__hint-icon vocabulary"></div>
@@ -32,10 +32,10 @@ const AllGames = {
             </div>
           </div>
 
-          <div class="allGames__gameCard speakit" id="speakit">
+          <div class="allGames__gameCard speakitGame" id="speakit">
             <div class="gameCard__title">Скажи это</div>
             <div class="gameCard__icon"></div>
-            <div class="gameCard__hint speakit">
+            <div class="gameCard__hint speakitGame">
               <div class="gameCard__hint-description">Тренировка произношения слов.</div>
               <div class="gameCard__hint-skills">
                 <div class="gameCard__hint-icon vocabulary"></div>
@@ -44,10 +44,10 @@ const AllGames = {
             </div>
           </div>
 
-          <div class="allGames__gameCard english-puzzle" id="english-puzzle">
+          <div class="allGames__gameCard english-puzzleGame" id="english-puzzle">
             <div class="gameCard__title">Пазл</div>
             <div class="gameCard__icon"></div>
-            <div class="gameCard__hint english-puzzle">
+            <div class="gameCard__hint english-puzzleGame">
               <div class="gameCard__hint-description">Учит правильно составлять предложения.</div>
               <div class="gameCard__hint-skills">
                 <div class="gameCard__hint-icon grammar"></div>
@@ -56,10 +56,10 @@ const AllGames = {
             </div>
           </div>
 
-          <div class="allGames__gameCard savannah" id="savannah">
+          <div class="allGames__gameCard savannahGame" id="savannah">
             <div class="gameCard__title">Саванна</div>
             <div class="gameCard__icon"></div>
-            <div class="gameCard__hint savannah">
+            <div class="gameCard__hint savannahGame">
               <div class="gameCard__hint-description">Тренировка развивает словарный запас.</div>
               <div class="gameCard__hint-skills">
                 <div class="gameCard__hint-icon vocabulary"></div>
@@ -68,10 +68,10 @@ const AllGames = {
             </div>
           </div>
 
-          <div class="allGames__gameCard square" id="square">
+          <div class="allGames__gameCard squareGame" id="letter-square">
             <div class="gameCard__title">Буквенный квадрат</div>
             <div class="gameCard__icon"></div>
-            <div class="gameCard__hint square">
+            <div class="gameCard__hint squareGame">
               <div class="gameCard__hint-description">Буквенный квадрат — классическое упражнение для запоминания новых слов.</div>
               <div class="gameCard__hint-skills">
                 <div class="gameCard__hint-icon vocabulary"></div>

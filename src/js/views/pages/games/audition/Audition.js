@@ -231,7 +231,6 @@ const Audition = {
   async setGlobalStatisticData() {
     const tableBody = document.querySelector('.statTable__body');
     const statistic = await Audition.settings.model.getStatForGame('au');
-    console.log(statistic);
     let template = '';
     statistic.forEach((elem, num) => {
       template += `
@@ -304,7 +303,6 @@ const Audition = {
   async saveGlobalStatistic() {
     const CorrectAnswers = Audition.correctAnswers.length;
     const WrongAnswers = Audition.wrongAnswers.length;
-    console.log('correct: ', CorrectAnswers, 'wrong: ', WrongAnswers);
     await Audition.settings.model.saveStatForGame({ name: 'au', y: CorrectAnswers, n: WrongAnswers });
   },
 
