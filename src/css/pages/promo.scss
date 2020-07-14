@@ -71,7 +71,7 @@
   font-family: 'Neucha';
 }
 
-.promo__content_text-title {
+.promo__content_text-title, .promo__content_video-title {
   color:#2d374c;
   font-size: 3rem;
   text-align: center;
@@ -141,6 +141,14 @@
     height: 100%;
     margin: 50px 0;
   }
+}
+
+.promo__content_video-description {
+  width: 94%;
+  margin: auto;
+  font-size: 1.8rem;
+  text-align: justify;
+  margin-bottom: 25px;
 }
 
 .content-block-image {
@@ -284,10 +292,20 @@
 .promo__content_next {
   height: 365px;
   @include media-tablet {
-    margin-bottom: 0;
+    width: 94%;
+    margin: auto;
     height: 350px;
   }
   @include media-mobile-big {
     height: 410px;
   }
+}
+
+.promo_video {
+  max-width: 1020px;
+  max-height: 630px;
+  height: 47.25vw;
+  width: 76.5vw;
+  border-radius: 12px;
+  border: 0;
 }
